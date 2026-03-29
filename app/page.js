@@ -8,15 +8,15 @@ function TriadDots({ className = '' }) {
     <div className={`flex items-center justify-center gap-12 md:gap-20 ${className}`}>
       <div className="flex flex-col items-center gap-3">
         <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-black triad-dot-1" />
-        <span className="text-sm md:text-base tracking-widest uppercase text-gray-400">Being</span>
+        <span className="text-sm md:text-base tracking-widest uppercase text-gray-600">Being</span>
       </div>
       <div className="flex flex-col items-center gap-3">
         <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-black triad-dot-2" />
-        <span className="text-sm md:text-base tracking-widest uppercase text-gray-400">Paradox</span>
+        <span className="text-sm md:text-base tracking-widest uppercase text-gray-600">Paradox</span>
       </div>
       <div className="flex flex-col items-center gap-3">
         <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-black triad-dot-3" />
-        <span className="text-sm md:text-base tracking-widest uppercase text-gray-400">Transcendence</span>
+        <span className="text-sm md:text-base tracking-widest uppercase text-gray-600">Transcendence</span>
       </div>
     </div>
   );
@@ -61,7 +61,7 @@ export default function Home() {
       {/* Hero */}
       <section className="relative flex-1 flex items-center justify-center px-6 py-20 md:py-32">
         <div className="max-w-2xl relative z-10">
-          <p className="text-sm md:text-base tracking-[0.3em] uppercase text-gray-400 mb-10 animate-fade-in">
+          <p className="text-sm md:text-base tracking-[0.3em] uppercase text-gray-600 mb-10 animate-fade-in">
             The Eden Project
           </p>
 
@@ -71,7 +71,7 @@ export default function Home() {
             that you can&rsquo;t yet say.
           </h1>
 
-          <div className="space-y-6 text-xl md:text-xl text-gray-700 leading-relaxed animate-fade-in-delay-2">
+          <div className="space-y-6 text-xl md:text-xl text-gray-800 leading-relaxed animate-fade-in-delay-2">
             <p>
               There is something at the edge of your thinking that you&rsquo;ve
               been circling for years. A pattern. A suspicion. A feeling that
@@ -113,11 +113,11 @@ export default function Home() {
       {/* What You Get */}
       <section className="px-6 py-20 md:py-24">
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-sm md:text-base tracking-[0.3em] uppercase text-gray-400 mb-12">
+          <h2 className="text-sm md:text-base tracking-[0.3em] uppercase text-gray-600 mb-12">
             What you receive
           </h2>
 
-          <div className="space-y-10 text-gray-700">
+          <div className="space-y-10 text-gray-800">
             <div>
               <p className="text-black text-lg md:text-xl font-medium mb-3">A custom manifesto.</p>
               <p className="text-lg md:text-xl leading-relaxed">
@@ -132,15 +132,15 @@ export default function Home() {
             {/* Triad diagram */}
             <div className="flex justify-center py-8 md:py-12">
               <svg width="320" height="270" viewBox="0 0 320 270" className="animate-float">
-                <line x1="160" y1="30" x2="40" y2="210" stroke="black" strokeWidth="1" opacity="0.15" />
-                <line x1="160" y1="30" x2="280" y2="210" stroke="black" strokeWidth="1" opacity="0.15" />
-                <line x1="40" y1="210" x2="280" y2="210" stroke="black" strokeWidth="1" opacity="0.15" />
+                <line x1="160" y1="30" x2="40" y2="210" stroke="black" strokeWidth="1" opacity="0.3" />
+                <line x1="160" y1="30" x2="280" y2="210" stroke="black" strokeWidth="1" opacity="0.3" />
+                <line x1="40" y1="210" x2="280" y2="210" stroke="black" strokeWidth="1" opacity="0.3" />
                 <circle cx="160" cy="30" r="8" fill="black" opacity="0.7" />
                 <circle cx="40" cy="210" r="8" fill="black" opacity="0.3" />
                 <circle cx="280" cy="210" r="8" fill="black" opacity="0.3" />
-                <text x="160" y="14" textAnchor="middle" fontSize="13" fill="#999" fontFamily="Inter, sans-serif" letterSpacing="2">TRANSCENDENCE</text>
-                <text x="40" y="240" textAnchor="middle" fontSize="13" fill="#999" fontFamily="Inter, sans-serif" letterSpacing="2">BEING</text>
-                <text x="280" y="240" textAnchor="middle" fontSize="13" fill="#999" fontFamily="Inter, sans-serif" letterSpacing="2">PARADOX</text>
+                <text x="160" y="14" textAnchor="middle" fontSize="13" fill="#555" fontFamily="Inter, sans-serif" letterSpacing="2">TRANSCENDENCE</text>
+                <text x="40" y="240" textAnchor="middle" fontSize="13" fill="#555" fontFamily="Inter, sans-serif" letterSpacing="2">BEING</text>
+                <text x="280" y="240" textAnchor="middle" fontSize="13" fill="#555" fontFamily="Inter, sans-serif" letterSpacing="2">PARADOX</text>
               </svg>
             </div>
 
@@ -172,11 +172,11 @@ export default function Home() {
       {/* About */}
       <section className="px-6 py-20 md:py-24">
         <div className="max-w-2xl mx-auto">
-          <h2 className="text-sm md:text-base tracking-[0.3em] uppercase text-gray-400 mb-12">
+          <h2 className="text-sm md:text-base tracking-[0.3em] uppercase text-gray-600 mb-12">
             Who writes this
           </h2>
 
-          <div className="space-y-6 text-lg md:text-xl text-gray-700 leading-relaxed">
+          <div className="space-y-6 text-lg md:text-xl text-gray-800 leading-relaxed">
             <p>
               My name is Daniel Edmondson. I&rsquo;m a writer, not a guru.
               I have an English degree, a decade of hallucinogenic
@@ -205,7 +205,7 @@ export default function Home() {
       {/* Pricing — at the bottom */}
       <section className="px-6 py-20 md:py-24">
         <div className="max-w-2xl mx-auto text-center">
-          <p className="text-base md:text-lg text-gray-500 mb-8">
+          <p className="text-base md:text-lg text-gray-700 mb-8">
             Choose what feels right. Every manifesto gets the same depth.
           </p>
 
@@ -251,7 +251,7 @@ export default function Home() {
             {loading ? 'Redirecting to checkout...' : 'Get Your Manifesto'}
           </button>
 
-          <p className="mt-5 text-sm text-gray-400">
+          <p className="mt-5 text-sm text-gray-500">
             Secure payment via Stripe. You&rsquo;ll answer a questionnaire after checkout.
           </p>
 
@@ -302,7 +302,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="px-6 py-12">
         <div className="gradient-divider w-full max-w-2xl mx-auto mb-12" />
-        <div className="max-w-2xl mx-auto flex justify-between items-center text-xs text-gray-400">
+        <div className="max-w-2xl mx-auto flex justify-between items-center text-xs text-gray-500">
           <span>The Eden Project &copy; {new Date().getFullYear()}</span>
           <a href="mailto:danieledmondson45@gmail.com" className="hover:text-black transition-colors">
             Contact
