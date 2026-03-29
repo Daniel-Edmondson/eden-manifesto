@@ -61,15 +61,15 @@ export default function Home() {
       {/* Hero */}
       <section className="relative flex-1 flex items-center justify-center px-6 py-20 md:py-32">
         <div className="max-w-2xl relative z-10">
-          <p className="text-sm md:text-base tracking-[0.3em] uppercase text-gray-600 mb-10 animate-fade-in">
+          <h1 className="text-5xl md:text-8xl font-light tracking-tight text-black mb-10 animate-fade-in">
             The Eden Project
-          </p>
+          </h1>
 
-          <h1 className="text-4xl md:text-6xl font-light leading-tight mb-10 animate-fade-in-delay-1">
+          <p className="text-2xl md:text-3xl font-light leading-tight mb-10 animate-fade-in-delay-1">
             You already know<br />
             something is true<br />
             that you can&rsquo;t yet say.
-          </h1>
+          </p>
 
           <div className="space-y-6 text-xl md:text-xl text-gray-800 leading-relaxed animate-fade-in-delay-2">
             <p>
