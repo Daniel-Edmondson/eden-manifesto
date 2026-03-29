@@ -2,33 +2,6 @@
 
 import { useState } from 'react';
 
-// The O Symbol — central to the Eden Project philosophy
-function OSymbol({ className = '' }) {
-  return (
-    <div className={`relative ${className}`}>
-      <svg viewBox="0 0 200 200" className="w-full h-full animate-breathe">
-        <circle
-          cx="100" cy="100" r="70"
-          fill="none"
-          stroke="black"
-          strokeWidth="0.5"
-          className="animate-draw-circle"
-        />
-      </svg>
-      <svg viewBox="0 0 200 200" className="w-full h-full absolute inset-0 animate-spin-slow">
-        <circle
-          cx="100" cy="100" r="85"
-          fill="none"
-          stroke="black"
-          strokeWidth="0.3"
-          strokeDasharray="4 12"
-          opacity="0.15"
-        />
-      </svg>
-    </div>
-  );
-}
-
 // Three dots representing Being / Paradox / Transcendence
 function TriadDots({ className = '' }) {
   return (
@@ -87,11 +60,6 @@ export default function Home() {
     <main className="min-h-screen flex flex-col overflow-hidden">
       {/* Hero */}
       <section className="relative flex-1 flex items-center justify-center px-6 py-20 md:py-32">
-        {/* Background O symbol */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] md:w-[700px] md:h-[700px] pointer-events-none">
-          <OSymbol />
-        </div>
-
         <div className="max-w-2xl relative z-10">
           <p className="text-sm md:text-base tracking-[0.3em] uppercase text-gray-400 mb-10 animate-fade-in">
             The Eden Project
@@ -163,16 +131,16 @@ export default function Home() {
 
             {/* Triad diagram */}
             <div className="flex justify-center py-8 md:py-12">
-              <svg width="280" height="260" viewBox="0 0 280 260" className="animate-float">
-                <line x1="140" y1="25" x2="30" y2="220" stroke="black" strokeWidth="1" opacity="0.15" />
-                <line x1="140" y1="25" x2="250" y2="220" stroke="black" strokeWidth="1" opacity="0.15" />
-                <line x1="30" y1="220" x2="250" y2="220" stroke="black" strokeWidth="1" opacity="0.15" />
-                <circle cx="140" cy="25" r="8" fill="black" opacity="0.7" />
-                <circle cx="30" cy="220" r="8" fill="black" opacity="0.3" />
-                <circle cx="250" cy="220" r="8" fill="black" opacity="0.3" />
-                <text x="140" y="10" textAnchor="middle" fontSize="13" fill="#999" fontFamily="Inter, sans-serif" letterSpacing="2">TRANSCENDENCE</text>
-                <text x="30" y="248" textAnchor="middle" fontSize="13" fill="#999" fontFamily="Inter, sans-serif" letterSpacing="2">BEING</text>
-                <text x="250" y="248" textAnchor="middle" fontSize="13" fill="#999" fontFamily="Inter, sans-serif" letterSpacing="2">PARADOX</text>
+              <svg width="320" height="270" viewBox="0 0 320 270" className="animate-float">
+                <line x1="160" y1="30" x2="40" y2="210" stroke="black" strokeWidth="1" opacity="0.15" />
+                <line x1="160" y1="30" x2="280" y2="210" stroke="black" strokeWidth="1" opacity="0.15" />
+                <line x1="40" y1="210" x2="280" y2="210" stroke="black" strokeWidth="1" opacity="0.15" />
+                <circle cx="160" cy="30" r="8" fill="black" opacity="0.7" />
+                <circle cx="40" cy="210" r="8" fill="black" opacity="0.3" />
+                <circle cx="280" cy="210" r="8" fill="black" opacity="0.3" />
+                <text x="160" y="14" textAnchor="middle" fontSize="13" fill="#999" fontFamily="Inter, sans-serif" letterSpacing="2">TRANSCENDENCE</text>
+                <text x="40" y="240" textAnchor="middle" fontSize="13" fill="#999" fontFamily="Inter, sans-serif" letterSpacing="2">BEING</text>
+                <text x="280" y="240" textAnchor="middle" fontSize="13" fill="#999" fontFamily="Inter, sans-serif" letterSpacing="2">PARADOX</text>
               </svg>
             </div>
 
@@ -233,13 +201,6 @@ export default function Home() {
       </section>
 
       <SectionDivider />
-
-      {/* O symbol before pricing */}
-      <div className="flex justify-center py-12">
-        <div className="w-32 h-32 md:w-40 md:h-40">
-          <OSymbol />
-        </div>
-      </div>
 
       {/* Pricing — at the bottom */}
       <section className="px-6 py-20 md:py-24">
