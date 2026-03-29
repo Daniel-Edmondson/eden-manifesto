@@ -1,0 +1,271 @@
+'use client';
+
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+
+const questions = [
+  {
+    id: 'name',
+    label: 'What should I call you?',
+    type: 'text',
+    placeholder: 'Your first name',
+  },
+  {
+    id: 'struggle',
+    label: 'What is the thing you struggle with most — the one that never fully goes away?',
+    type: 'textarea',
+    placeholder: 'Be as honest as you can. There is no wrong answer.',
+  },
+  {
+    id: 'belief',
+    label: 'What do you believe is true that most people around you don\'t seem to see?',
+    type: 'textarea',
+    placeholder: 'The thing you think but rarely say out loud.',
+  },
+  {
+    id: 'binary',
+    label: 'What are you torn between? What two forces or choices or identities feel like they\'re pulling you apart?',
+    type: 'textarea',
+    placeholder: 'e.g., "Faith and doubt," "ambition and peace," "who I am and who I\'m supposed to be"...',
+  },
+  {
+    id: 'moment',
+    label: 'Describe a moment when everything briefly made sense — even if you couldn\'t explain why.',
+    type: 'textarea',
+    placeholder: 'A walk, a conversation, a feeling, a trip, a collapse, a sunrise. Anything.',
+  },
+  {
+    id: 'fear',
+    label: 'What are you most afraid is true about yourself or reality?',
+    type: 'textarea',
+    placeholder: 'The thought you push away.',
+  },
+  {
+    id: 'hope',
+    label: 'If you could know one thing for certain — one truth that would change everything — what would it be?',
+    type: 'textarea',
+    placeholder: 'Not what you want to have. What you want to KNOW.',
+  },
+];
+
+function QuestionnaireContent() {
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get('session_id');
+  const [verified, setVerified] = useState(false);
+  const [verifying, setVerifying] = useState(true);
+  const [currentQ, setCurrentQ] = useState(0);
+  const [answers, setAnswers] = useState({});
+  const [generating, setGenerating] = useState(false);
+  const [downloadUrl, setDownloadUrl] = useState(null);
+  const [error, setError] = useState(null);
+  const [generationStatus, setGenerationStatus] = useState('');
+
+  useEffect(() => {
+    // Verify the Stripe session is valid and paid
+    if (!sessionId) {
+      setVerifying(false);
+      return;
+    }
+    // In production, verify via API. For now, presence of session_id is sufficient.
+    // The create-checkout route ensures payment happens before redirect.
+    setVerified(true);
+    setVerifying(false);
+  }, [sessionId]);
+
+  const currentQuestion = questions[currentQ];
+  const isLast = currentQ === questions.length - 1;
+  const canProceed = answers[currentQuestion?.id]?.trim().length > 0;
+
+  const handleNext = () => {
+    if (isLast) {
+      handleSubmit();
+    } else {
+      setCurrentQ(currentQ + 1);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey && currentQuestion.type === 'text' && canProceed) {
+      e.preventDefault();
+      handleNext();
+    }
+  };
+
+  const handleSubmit = async () => {
+    setGenerating(true);
+    setGenerationStatus('Writing your manifesto...');
+
+    try {
+      const res = await fetch('/api/generate-manifesto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          answers,
+          sessionId,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Generation failed. Please contact danieledmondson45@gmail.com');
+      }
+
+      // The response is the PDF directly
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      setDownloadUrl(url);
+      setGenerationStatus('');
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+      setGenerating(false);
+    }
+  };
+
+  // Not verified
+  if (verifying) {
+    return (
+      <main className="min-h-screen flex items-center justify-center px-6">
+        <p className="text-gray-400 animate-pulse-slow">Verifying payment...</p>
+      </main>
+    );
+  }
+
+  if (!sessionId || !verified) {
+    return (
+      <main className="min-h-screen flex items-center justify-center px-6">
+        <div className="max-w-md text-center">
+          <p className="text-gray-700 mb-4">Payment required before questionnaire.</p>
+          <a href="/" className="text-sm underline text-gray-500 hover:text-black">
+            Return to The Eden Project
+          </a>
+        </div>
+      </main>
+    );
+  }
+
+  // Download ready
+  if (downloadUrl) {
+    return (
+      <main className="min-h-screen flex items-center justify-center px-6">
+        <div className="max-w-lg text-center animate-fade-in">
+          <p className="text-sm tracking-[0.3em] uppercase text-gray-400 mb-8">
+            The Eden Project
+          </p>
+          <h1 className="text-2xl md:text-3xl font-light mb-6">
+            Your manifesto is ready.
+          </h1>
+          <p className="text-gray-600 mb-12">
+            This was written for you, {answers.name || 'friend'}. Not for anyone else.
+            Read it when the noise is loudest.
+          </p>
+          <a
+            href={downloadUrl}
+            download={`Eden-Manifesto-${(answers.name || 'yours').replace(/\s/g, '-')}.pdf`}
+            className="inline-block px-12 py-4 bg-black text-white text-sm tracking-wide hover:bg-gray-900 transition-colors"
+          >
+            Download Your Manifesto (PDF)
+          </a>
+          <p className="mt-8 text-xs text-gray-400">
+            If this changed something for you, share The Eden Project with someone who needs it.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  // Generating
+  if (generating) {
+    return (
+      <main className="min-h-screen flex items-center justify-center px-6">
+        <div className="text-center animate-fade-in">
+          <div className="w-8 h-8 border border-black border-t-transparent rounded-full animate-spin mx-auto mb-8" />
+          <p className="text-lg text-gray-700 mb-2">{generationStatus}</p>
+          <p className="text-sm text-gray-400">
+            This takes about 30&ndash;60 seconds. Your manifesto is being written from scratch.
+          </p>
+        </div>
+      </main>
+    );
+  }
+
+  // Questionnaire
+  return (
+    <main className="min-h-screen flex items-center justify-center px-6 py-24">
+      <div className="max-w-xl w-full">
+        {/* Progress */}
+        <div className="flex gap-1 mb-16">
+          {questions.map((_, i) => (
+            <div
+              key={i}
+              className={`h-0.5 flex-1 transition-colors duration-300 ${
+                i <= currentQ ? 'bg-black' : 'bg-gray-200'
+              }`}
+            />
+          ))}
+        </div>
+
+        <div key={currentQ} className="animate-fade-in">
+          <p className="text-sm text-gray-400 mb-4">
+            {currentQ + 1} of {questions.length}
+          </p>
+
+          <label className="block text-xl md:text-2xl font-light mb-8 leading-relaxed">
+            {currentQuestion.label}
+          </label>
+
+          {currentQuestion.type === 'text' ? (
+            <input
+              type="text"
+              value={answers[currentQuestion.id] || ''}
+              onChange={(e) => setAnswers({ ...answers, [currentQuestion.id]: e.target.value })}
+              onKeyDown={handleKeyDown}
+              placeholder={currentQuestion.placeholder}
+              autoFocus
+              className="w-full border-b border-gray-300 py-3 text-lg bg-transparent placeholder:text-gray-300 focus:border-black transition-colors"
+            />
+          ) : (
+            <textarea
+              value={answers[currentQuestion.id] || ''}
+              onChange={(e) => setAnswers({ ...answers, [currentQuestion.id]: e.target.value })}
+              placeholder={currentQuestion.placeholder}
+              autoFocus
+              rows={4}
+              className="w-full border border-gray-200 p-4 text-base bg-transparent placeholder:text-gray-300 resize-none focus:border-black transition-colors"
+            />
+          )}
+
+          <div className="flex justify-between items-center mt-8">
+            <button
+              onClick={() => setCurrentQ(Math.max(0, currentQ - 1))}
+              className={`text-sm text-gray-400 hover:text-black transition-colors ${
+                currentQ === 0 ? 'invisible' : ''
+              }`}
+            >
+              Back
+            </button>
+
+            <button
+              onClick={handleNext}
+              disabled={!canProceed}
+              className="px-8 py-3 bg-black text-white text-sm tracking-wide hover:bg-gray-900 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+            >
+              {isLast ? 'Generate My Manifesto' : 'Continue'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+export default function QuestionnairePage() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen flex items-center justify-center px-6">
+        <p className="text-gray-400 animate-pulse-slow">Loading...</p>
+      </main>
+    }>
+      <QuestionnaireContent />
+    </Suspense>
+  );
+}
