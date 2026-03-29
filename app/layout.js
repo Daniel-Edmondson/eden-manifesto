@@ -1,17 +1,17 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'The Eden Project — Your Personal Manifesto of Enlightenment',
-  description: 'A custom-written manifesto that applies a rigorous philosophical framework to your specific life. Not self-help. Not generic. Yours.',
+  title: 'The Eden Project — Your Personal Philosophical Guidebook of Enlightenment',
+  description: 'A custom-written philosophical guidebook that applies a rigorous philosophical framework to your specific life. Not self-help. Not generic. Yours.',
   openGraph: {
-    title: 'The Eden Project — Your Personal Manifesto of Enlightenment',
-    description: 'A custom-written manifesto that applies a rigorous philosophical framework to your specific life.',
+    title: 'The Eden Project — Your Personal Philosophical Guidebook of Enlightenment',
+    description: 'A custom-written philosophical guidebook that applies a rigorous philosophical framework to your specific life.',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'The Eden Project — Your Personal Manifesto of Enlightenment',
-    description: 'A custom-written manifesto that applies a rigorous philosophical framework to your specific life.',
+    title: 'The Eden Project — Your Personal Philosophical Guidebook of Enlightenment',
+    description: 'A custom-written philosophical guidebook that applies a rigorous philosophical framework to your specific life.',
   },
 };
 

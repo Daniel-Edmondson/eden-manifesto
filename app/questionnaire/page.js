@@ -213,24 +213,54 @@ function QuestionnaireContent() {
 
   const handleSubmit = async () => {
     setGenerating(true);
-    setGenerationStatus('Writing your manifesto...');
+    setError(null);
+    setGenerationStatus('Writing your philosophical guidebook...');
 
     try {
-      const res = await fetch('/api/generate-manifesto', {
+      // Step 1: Generate the philosophical guidebook text (streaming, Edge Runtime)
+      const textRes = await fetch('/api/generate-text', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          answers,
-          sessionId,
-        }),
+        body: JSON.stringify({ answers }),
       });
 
-      if (!res.ok) {
-        throw new Error('Generation failed. Please contact danieledmondson45@gmail.com');
+      if (!textRes.ok) {
+        const errData = await textRes.json().catch(() => ({}));
+        throw new Error(errData.error || 'Failed to generate text. Please contact danieledmondson45@gmail.com');
       }
 
-      // The response is the PDF directly
-      const blob = await res.blob();
+      // Read the streamed text
+      const reader = textRes.body.getReader();
+      const decoder = new TextDecoder();
+      let manifestoText = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        manifestoText += decoder.decode(value, { stream: true });
+        // Update status to show progress
+        const wordCount = manifestoText.split(/\s+/).length;
+        setGenerationStatus(`Writing your philosophical guidebook... (${wordCount} words)`);
+      }
+
+      if (!manifestoText || manifestoText.length < 100) {
+        throw new Error('Philosophical guidebook generation returned empty. Please contact danieledmondson45@gmail.com');
+      }
+
+      // Step 2: Generate the PDF from the text (fast, <2 seconds)
+      setGenerationStatus('Formatting your PDF...');
+
+      const pdfRes = await fetch('/api/generate-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: manifestoText, name: answers.name }),
+      });
+
+      if (!pdfRes.ok) {
+        throw new Error('PDF generation failed. Please contact danieledmondson45@gmail.com');
+      }
+
+      const blob = await pdfRes.blob();
       const url = URL.createObjectURL(blob);
       setDownloadUrl(url);
       setGenerationStatus('');
@@ -272,7 +302,7 @@ function QuestionnaireContent() {
             The Eden Project
           </p>
           <h1 className="text-2xl md:text-3xl font-light mb-6">
-            Your manifesto is ready.
+            Your philosophical guidebook is ready.
           </h1>
           <p className="text-gray-600 mb-12">
             This was written for you, {answers.name || 'friend'}. Not for anyone else.
@@ -280,14 +310,42 @@ function QuestionnaireContent() {
           </p>
           <a
             href={downloadUrl}
-            download={`Eden-Manifesto-${(answers.name || 'yours').replace(/\s/g, '-')}.pdf`}
+            download={`Eden-Guidebook-${(answers.name || 'yours').replace(/\s/g, '-')}.pdf`}
             className="inline-block px-12 py-4 bg-black text-white text-sm tracking-wide hover:bg-gray-900 transition-colors"
           >
-            Download Your Manifesto (PDF)
+            Download Your Philosophical Guidebook (PDF)
           </a>
           <p className="mt-8 text-xs text-gray-400">
             If this changed something for you, share The Eden Project with someone who needs it.
           </p>
+        </div>
+      </main>
+    );
+  }
+
+  // Error
+  if (error && !generating) {
+    return (
+      <main className="min-h-screen flex items-center justify-center px-6">
+        <div className="max-w-lg text-center animate-fade-in">
+          <p className="text-xl text-black mb-4">Something went wrong.</p>
+          <p className="text-base text-gray-600 mb-8">{error}</p>
+          <button
+            onClick={() => {
+              setError(null);
+              setGenerating(false);
+              handleSubmit();
+            }}
+            className="px-8 py-3 bg-black text-white text-sm tracking-wide hover:bg-gray-900 transition-colors mr-4"
+          >
+            Try Again
+          </button>
+          <a
+            href="mailto:danieledmondson45@gmail.com"
+            className="text-sm underline text-gray-500 hover:text-black"
+          >
+            Contact Daniel
+          </a>
         </div>
       </main>
     );
@@ -369,7 +427,7 @@ function QuestionnaireContent() {
               disabled={!canProceed}
               className="px-8 py-3 bg-black text-white text-sm tracking-wide hover:bg-gray-900 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
-              {isLast ? 'Generate My Manifesto' : 'Continue'}
+              {isLast ? 'Generate My Philosophical Guidebook' : 'Continue'}
             </button>
           </div>
         </div>

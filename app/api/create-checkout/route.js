@@ -15,8 +15,8 @@ export async function POST(req) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: 'The Eden Project — Personal Manifesto',
-              description: 'A custom manifesto of enlightenment written for you.',
+              name: 'The Eden Project — Personal Philosophical Guidebook',
+              description: 'A custom philosophical guidebook of enlightenment written for you.',
             },
             unit_amount: unitAmount,
           },

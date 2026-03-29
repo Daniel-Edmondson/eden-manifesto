@@ -12,7 +12,7 @@ function getStandardFonts() {
   };
 }
 
-async function generateManifestoText(answers) {
+async function generateGuidebookText(answers) {
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -51,8 +51,8 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Missing answers' }, { status: 400 });
     }
 
-    // Generate the manifesto text using Claude
-    const manifestoText = await generateManifestoText(answers);
+    // Generate the philosophical guidebook text using Claude
+    const manifestoText = await generateGuidebookText(answers);
 
     // Generate PDF
     const pdfBuffer = await generatePDF(manifestoText, answers.name);
@@ -62,13 +62,13 @@ export async function POST(req) {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="Eden-Manifesto-${(answers.name || 'yours').replace(/[^a-zA-Z0-9]/g, '-')}.pdf"`,
+        'Content-Disposition': `attachment; filename="Eden-Guidebook-${(answers.name || 'yours').replace(/[^a-zA-Z0-9]/g, '-')}.pdf"`,
       },
     });
   } catch (err) {
     console.error('Generation error:', err);
     return NextResponse.json(
-      { error: 'Failed to generate manifesto. Please try again or contact support.' },
+      { error: 'Failed to generate philosophical guidebook. Please try again or contact support.' },
       { status: 500 }
     );
   }
@@ -106,7 +106,7 @@ function generatePDF(text, name) {
     doc.font(fonts.serif)
       .fontSize(28)
       .fillColor('#000000')
-      .text(`A Manifesto for ${name}`, {
+      .text(`A Philosophical Guidebook for ${name}`, {
         align: 'center',
       });
 

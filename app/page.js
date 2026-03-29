@@ -119,7 +119,7 @@ export default function Home() {
 
           <div className="space-y-10 text-gray-800">
             <div>
-              <p className="text-black text-lg md:text-xl font-medium mb-3">A custom manifesto.</p>
+              <p className="text-black text-lg md:text-xl font-medium mb-3">A custom philosophical guidebook.</p>
               <p className="text-lg md:text-xl leading-relaxed">
                 Not a template with your name pasted in. A document that takes
                 your specific answers &mdash; your struggles, your beliefs,
@@ -150,7 +150,7 @@ export default function Home() {
                 The framework works like this: every conflict in your life
                 has three positions, not two. The binary you&rsquo;re stuck in,
                 the paradox that dissolves it, and the transcendence that was
-                always already there. Your manifesto maps this to the exact
+                always already there. Your philosophical guidebook maps this to the exact
                 territory of your mind.
               </p>
             </div>
@@ -206,7 +206,7 @@ export default function Home() {
       <section className="px-6 py-20 md:py-24">
         <div className="max-w-2xl mx-auto text-center">
           <p className="text-base md:text-lg text-gray-700 mb-8">
-            Choose what feels right. Every manifesto gets the same depth.
+            Choose what feels right. Every philosophical guidebook gets the same depth.
           </p>
 
           <div className="flex flex-wrap justify-center gap-3 mb-8">
@@ -248,7 +248,7 @@ export default function Home() {
             disabled={loading}
             className="px-14 py-5 bg-black text-white text-base tracking-wide hover:bg-gray-900 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
-            {loading ? 'Redirecting to checkout...' : 'Get Your Manifesto'}
+            {loading ? 'Redirecting to checkout...' : 'Get Your Philosophical Guidebook'}
           </button>
 
           <p className="mt-5 text-sm text-gray-500">
