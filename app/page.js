@@ -32,18 +32,18 @@ function OSymbol({ className = '' }) {
 // Three dots representing Being / Paradox / Transcendence
 function TriadDots({ className = '' }) {
   return (
-    <div className={`flex items-center justify-center gap-6 ${className}`}>
-      <div className="flex flex-col items-center gap-2">
-        <div className="w-2.5 h-2.5 rounded-full bg-black triad-dot-1" />
-        <span className="text-[10px] tracking-widest uppercase text-gray-400">Being</span>
+    <div className={`flex items-center justify-center gap-12 md:gap-20 ${className}`}>
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-black triad-dot-1" />
+        <span className="text-sm md:text-base tracking-widest uppercase text-gray-400">Being</span>
       </div>
-      <div className="flex flex-col items-center gap-2">
-        <div className="w-2.5 h-2.5 rounded-full bg-black triad-dot-2" />
-        <span className="text-[10px] tracking-widest uppercase text-gray-400">Paradox</span>
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-black triad-dot-2" />
+        <span className="text-sm md:text-base tracking-widest uppercase text-gray-400">Paradox</span>
       </div>
-      <div className="flex flex-col items-center gap-2">
-        <div className="w-2.5 h-2.5 rounded-full bg-black triad-dot-3" />
-        <span className="text-[10px] tracking-widest uppercase text-gray-400">Transcendence</span>
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-black triad-dot-3" />
+        <span className="text-sm md:text-base tracking-widest uppercase text-gray-400">Transcendence</span>
       </div>
     </div>
   );
@@ -136,7 +136,7 @@ export default function Home() {
       <SectionDivider />
 
       {/* Triad Visual */}
-      <section className="px-6 py-16">
+      <section className="px-6 py-20 md:py-24">
         <TriadDots className="animate-fade-in" />
       </section>
 
@@ -161,18 +161,18 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Mini triad diagram */}
-            <div className="flex justify-center py-4">
-              <svg width="120" height="110" viewBox="0 0 120 110" className="animate-float">
-                <line x1="60" y1="10" x2="15" y2="95" stroke="black" strokeWidth="0.5" opacity="0.2" />
-                <line x1="60" y1="10" x2="105" y2="95" stroke="black" strokeWidth="0.5" opacity="0.2" />
-                <line x1="15" y1="95" x2="105" y2="95" stroke="black" strokeWidth="0.5" opacity="0.2" />
-                <circle cx="60" cy="10" r="4" fill="black" opacity="0.7" />
-                <circle cx="15" cy="95" r="4" fill="black" opacity="0.3" />
-                <circle cx="105" cy="95" r="4" fill="black" opacity="0.3" />
-                <text x="60" y="0" textAnchor="middle" fontSize="7" fill="#999" fontFamily="Inter, sans-serif" letterSpacing="1">TRANSCENDENCE</text>
-                <text x="15" y="108" textAnchor="middle" fontSize="7" fill="#999" fontFamily="Inter, sans-serif" letterSpacing="1">BEING</text>
-                <text x="105" y="108" textAnchor="middle" fontSize="7" fill="#999" fontFamily="Inter, sans-serif" letterSpacing="1">PARADOX</text>
+            {/* Triad diagram */}
+            <div className="flex justify-center py-8 md:py-12">
+              <svg width="280" height="260" viewBox="0 0 280 260" className="animate-float">
+                <line x1="140" y1="25" x2="30" y2="220" stroke="black" strokeWidth="1" opacity="0.15" />
+                <line x1="140" y1="25" x2="250" y2="220" stroke="black" strokeWidth="1" opacity="0.15" />
+                <line x1="30" y1="220" x2="250" y2="220" stroke="black" strokeWidth="1" opacity="0.15" />
+                <circle cx="140" cy="25" r="8" fill="black" opacity="0.7" />
+                <circle cx="30" cy="220" r="8" fill="black" opacity="0.3" />
+                <circle cx="250" cy="220" r="8" fill="black" opacity="0.3" />
+                <text x="140" y="10" textAnchor="middle" fontSize="13" fill="#999" fontFamily="Inter, sans-serif" letterSpacing="2">TRANSCENDENCE</text>
+                <text x="30" y="248" textAnchor="middle" fontSize="13" fill="#999" fontFamily="Inter, sans-serif" letterSpacing="2">BEING</text>
+                <text x="250" y="248" textAnchor="middle" fontSize="13" fill="#999" fontFamily="Inter, sans-serif" letterSpacing="2">PARADOX</text>
               </svg>
             </div>
 
@@ -234,9 +234,9 @@ export default function Home() {
 
       <SectionDivider />
 
-      {/* Small O before pricing */}
-      <div className="flex justify-center py-8">
-        <div className="w-16 h-16">
+      {/* O symbol before pricing */}
+      <div className="flex justify-center py-12">
+        <div className="w-32 h-32 md:w-40 md:h-40">
           <OSymbol />
         </div>
       </div>
