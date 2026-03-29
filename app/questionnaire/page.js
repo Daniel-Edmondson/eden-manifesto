@@ -11,6 +11,18 @@ const questions = [
     placeholder: 'Your first name',
   },
   {
+    id: 'age',
+    label: 'How old are you?',
+    type: 'text',
+    placeholder: 'Your age',
+  },
+  {
+    id: 'whatyoudo',
+    label: 'What do you do with your days — and is it what you want to be doing?',
+    type: 'textarea',
+    placeholder: 'Work, school, caregiving, creating, surviving — whatever it is.',
+  },
+  {
     id: 'struggle',
     label: 'What is the thing you struggle with most — the one that never fully goes away?',
     type: 'textarea',
@@ -29,10 +41,64 @@ const questions = [
     placeholder: 'e.g., "Faith and doubt," "ambition and peace," "who I am and who I\'m supposed to be"...',
   },
   {
+    id: 'control',
+    label: 'Do you feel like you\'re in control of your own mind? Be honest.',
+    type: 'textarea',
+    placeholder: 'What does control look like for you — or the absence of it?',
+  },
+  {
+    id: 'pattern',
+    label: 'What pattern do you keep repeating, even though you know you\'re doing it?',
+    type: 'textarea',
+    placeholder: 'The cycle you can\'t seem to break.',
+  },
+  {
+    id: 'body',
+    label: 'Where do you carry your stress? What does your body know that your mind won\'t admit?',
+    type: 'textarea',
+    placeholder: 'Chest, jaw, stomach, shoulders — or something else entirely.',
+  },
+  {
     id: 'moment',
     label: 'Describe a moment when everything briefly made sense — even if you couldn\'t explain why.',
     type: 'textarea',
-    placeholder: 'A walk, a conversation, a feeling, a trip, a collapse, a sunrise. Anything.',
+    placeholder: 'A walk, a conversation, a trip, a sunrise. Anything.',
+  },
+  {
+    id: 'art',
+    label: 'What song, book, film, or piece of art has gotten closest to saying the thing you can\'t say?',
+    type: 'textarea',
+    placeholder: 'Name it and say why, even loosely.',
+  },
+  {
+    id: 'consciousness',
+    label: 'What do you think consciousness is? Don\'t overthink it — just say what comes.',
+    type: 'textarea',
+    placeholder: 'There\'s no right answer. Your instinct is the point.',
+  },
+  {
+    id: 'person',
+    label: 'Who is the person who shaped you most — for better or worse?',
+    type: 'textarea',
+    placeholder: 'What did they give you, or what did they take?',
+  },
+  {
+    id: 'love',
+    label: 'What is the most honest thing you could say about love right now?',
+    type: 'textarea',
+    placeholder: 'Romantic, familial, divine, absent — whatever love means to you today.',
+  },
+  {
+    id: 'faith',
+    label: 'What is your relationship with God, spirituality, or whatever you\'d call the thing beyond yourself?',
+    type: 'textarea',
+    placeholder: 'Belief, doubt, anger, longing, nothing — all valid.',
+  },
+  {
+    id: 'death',
+    label: 'What do you think happens when you die?',
+    type: 'textarea',
+    placeholder: 'Say what you actually think, not what you were taught.',
   },
   {
     id: 'fear',
@@ -41,16 +107,59 @@ const questions = [
     placeholder: 'The thought you push away.',
   },
   {
+    id: 'lie',
+    label: 'What is the lie you tell yourself most often?',
+    type: 'textarea',
+    placeholder: 'You know the one.',
+  },
+  {
+    id: 'paradox',
+    label: 'Is there something in your life that feels true and impossible at the same time?',
+    type: 'textarea',
+    placeholder: 'Two things that can\'t both be real — but are.',
+  },
+  {
+    id: 'freedom',
+    label: 'What would freedom actually look like for you? Not the word — the feeling.',
+    type: 'textarea',
+    placeholder: 'Describe what your life looks like when you\'re free.',
+  },
+  {
+    id: 'create',
+    label: 'If you could build, make, or start anything with no fear of failure — what would it be?',
+    type: 'textarea',
+    placeholder: 'The thing you\'d do if nobody was watching.',
+  },
+  {
+    id: 'younger',
+    label: 'What would you say to the version of yourself from five years ago?',
+    type: 'textarea',
+    placeholder: 'One honest thing.',
+  },
+  {
+    id: 'future',
+    label: 'What do you think the version of yourself five years from now needs you to do right now?',
+    type: 'textarea',
+    placeholder: 'What are you putting off?',
+  },
+  {
     id: 'hope',
     label: 'If you could know one thing for certain — one truth that would change everything — what would it be?',
     type: 'textarea',
     placeholder: 'Not what you want to have. What you want to KNOW.',
+  },
+  {
+    id: 'lastword',
+    label: 'Is there anything else you want me to know before I write this for you?',
+    type: 'textarea',
+    placeholder: 'Anything. This is your space.',
   },
 ];
 
 function QuestionnaireContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
+  const promoCode = searchParams.get('promo');
   const [verified, setVerified] = useState(false);
   const [verifying, setVerifying] = useState(true);
   const [currentQ, setCurrentQ] = useState(0);
@@ -61,16 +170,27 @@ function QuestionnaireContent() {
   const [generationStatus, setGenerationStatus] = useState('');
 
   useEffect(() => {
-    // Verify the Stripe session is valid and paid
-    if (!sessionId) {
+    // Verify access via Stripe session or valid promo code
+    if (sessionId) {
+      setVerified(true);
       setVerifying(false);
-      return;
+    } else if (promoCode) {
+      // Verify promo code server-side
+      fetch('/api/verify-promo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: promoCode }),
+      })
+        .then(res => res.json())
+        .then(data => {
+          setVerified(data.valid);
+          setVerifying(false);
+        })
+        .catch(() => setVerifying(false));
+    } else {
+      setVerifying(false);
     }
-    // In production, verify via API. For now, presence of session_id is sufficient.
-    // The create-checkout route ensures payment happens before redirect.
-    setVerified(true);
-    setVerifying(false);
-  }, [sessionId]);
+  }, [sessionId, promoCode]);
 
   const currentQuestion = questions[currentQ];
   const isLast = currentQ === questions.length - 1;
@@ -130,7 +250,7 @@ function QuestionnaireContent() {
     );
   }
 
-  if (!sessionId || !verified) {
+  if ((!sessionId && !promoCode) || !verified) {
     return (
       <main className="min-h-screen flex items-center justify-center px-6">
         <div className="max-w-md text-center">
