@@ -24,7 +24,7 @@ export async function POST(req) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 8000,
+        max_tokens: 16000,
         stream: true,
         system: SYSTEM_PROMPT,
         messages: [
