@@ -1,15 +1,5 @@
-import PDFDocument from 'pdfkit';
+import { jsPDF } from 'jspdf';
 import { NextResponse } from 'next/server';
-
-function getStandardFonts() {
-  return {
-    serif: 'Times-Roman',
-    serifBold: 'Times-Bold',
-    serifItalic: 'Times-Italic',
-    sans: 'Helvetica',
-    sansBold: 'Helvetica-Bold',
-  };
-}
 
 export async function POST(req) {
   try {
@@ -19,9 +9,9 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Missing text or name' }, { status: 400 });
     }
 
-    const pdfBuffer = await generatePDF(text, name);
+    const pdfBytes = generatePDF(text, name);
 
-    return new NextResponse(pdfBuffer, {
+    return new NextResponse(pdfBytes, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
@@ -35,94 +25,107 @@ export async function POST(req) {
 }
 
 function generatePDF(text, name) {
-  return new Promise((resolve, reject) => {
-    const fonts = getStandardFonts();
-    const doc = new PDFDocument({
-      size: 'letter',
-      margins: { top: 96, bottom: 96, left: 96, right: 96 },
-    });
+  const doc = new jsPDF({
+    unit: 'pt',
+    format: 'letter',
+  });
 
-    const chunks = [];
-    doc.on('data', (chunk) => chunks.push(chunk));
-    doc.on('end', () => resolve(Buffer.concat(chunks)));
-    doc.on('error', reject);
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const marginLeft = 72;
+  const marginRight = 72;
+  const marginTop = 72;
+  const marginBottom = 72;
+  const contentWidth = pageWidth - marginLeft - marginRight;
 
-    // Title page
-    doc.font(fonts.sans)
-      .fontSize(9).fillColor('#999999')
-      .text('THE EDEN PROJECT', { align: 'center', characterSpacing: 3 });
+  // ---- Title Page ----
+  // "THE EDEN PROJECT" small header
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(153, 153, 153);
+  doc.text('T H E   E D E N   P R O J E C T', pageWidth / 2, 200, { align: 'center' });
 
-    doc.moveDown(8);
+  // Main title
+  doc.setFont('times', 'normal');
+  doc.setFontSize(26);
+  doc.setTextColor(0, 0, 0);
+  const titleLines = doc.splitTextToSize(`A Philosophical Guidebook for ${name}`, contentWidth);
+  doc.text(titleLines, pageWidth / 2, 320, { align: 'center' });
 
-    doc.font(fonts.serif)
-      .fontSize(28).fillColor('#000000')
-      .text(`A Philosophical Guidebook for ${name}`, { align: 'center' });
+  // Subtitle lines
+  doc.setFont('times', 'italic');
+  doc.setFontSize(11);
+  doc.setTextColor(102, 102, 102);
+  doc.text('Written specifically for you.', pageWidth / 2, 400, { align: 'center' });
+  doc.text('Not a template. Not a copy. Yours.', pageWidth / 2, 418, { align: 'center' });
 
-    doc.moveDown(2);
+  // ---- Body Pages ----
+  doc.addPage();
+  let y = marginTop;
 
-    doc.font(fonts.serifItalic)
-      .fontSize(11).fillColor('#666666')
-      .text('Written specifically for you.', { align: 'center' });
+  const paragraphs = text.split('\n\n').filter(p => p.trim());
 
-    doc.moveDown(1);
+  for (const para of paragraphs) {
+    const trimmed = para.trim();
 
-    doc.font(fonts.serifItalic)
-      .fontSize(11).fillColor('#666666')
-      .text('Not a template. Not a copy. Yours.', { align: 'center' });
-
-    doc.addPage();
+    // Section divider
+    if (trimmed.length < 10 && (trimmed === '---' || trimmed === '***' || trimmed === '* * *')) {
+      y += 20;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.setTextColor(200, 200, 200);
+      doc.text('*', pageWidth / 2, y, { align: 'center' });
+      y += 20;
+      continue;
+    }
 
     // Body text
-    const paragraphs = text.split('\n\n').filter(p => p.trim());
+    doc.setFont('times', 'normal');
+    doc.setFontSize(11.5);
+    doc.setTextColor(26, 26, 26);
 
-    paragraphs.forEach((para) => {
-      const trimmed = para.trim();
+    const lines = doc.splitTextToSize(trimmed, contentWidth);
+    const lineHeight = 17;
+    const blockHeight = lines.length * lineHeight;
 
-      if (doc.y > doc.page.height - 150) {
+    // Check if we need a new page
+    if (y + blockHeight > pageHeight - marginBottom) {
+      doc.addPage();
+      y = marginTop;
+    }
+
+    for (const line of lines) {
+      if (y > pageHeight - marginBottom) {
         doc.addPage();
+        y = marginTop;
       }
+      doc.text(line, marginLeft, y);
+      y += lineHeight;
+    }
 
-      if (trimmed.length < 10 && (trimmed === '---' || trimmed === '***' || trimmed === '* * *')) {
-        doc.moveDown(1.5);
-        doc.font(fonts.sans).fontSize(10).fillColor('#cccccc')
-          .text('*', { align: 'center' });
-        doc.moveDown(1.5);
-        return;
-      }
+    y += 10; // paragraph gap
+  }
 
-      doc.font(fonts.serif)
-        .fontSize(11.5).fillColor('#1a1a1a')
-        .text(trimmed, { align: 'left', lineGap: 6, paragraphGap: 0 });
+  // ---- Closing Page ----
+  doc.addPage();
 
-      doc.moveDown(0.8);
-    });
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.setTextColor(153, 153, 153);
+  doc.text('T H E   E D E N   P R O J E C T', pageWidth / 2, 280, { align: 'center' });
 
-    // Closing page
-    doc.addPage();
-    doc.moveDown(6);
+  doc.setFont('times', 'italic');
+  doc.setFontSize(10);
+  doc.setTextColor(102, 102, 102);
+  doc.text('If this changed something for you, share it.', pageWidth / 2, 330, { align: 'center' });
+  doc.text('Not this document \u2014 the idea that someone wrote this for you.', pageWidth / 2, 348, { align: 'center' });
 
-    doc.font(fonts.sans)
-      .fontSize(8).fillColor('#999999')
-      .text('THE EDEN PROJECT', { align: 'center', characterSpacing: 3 });
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(153, 153, 153);
+  doc.text('edenmanifesto.com', pageWidth / 2, 400, { align: 'center' });
 
-    doc.moveDown(1.5);
-
-    doc.font(fonts.serifItalic)
-      .fontSize(10).fillColor('#666666')
-      .text('If this changed something for you, share it.', { align: 'center' });
-
-    doc.moveDown(0.5);
-
-    doc.font(fonts.serifItalic)
-      .fontSize(10).fillColor('#666666')
-      .text('Not this document \u2014 the idea that someone wrote this for you.', { align: 'center' });
-
-    doc.moveDown(2);
-
-    doc.font(fonts.sans)
-      .fontSize(9).fillColor('#999999')
-      .text('edenmanifesto.com', { align: 'center' });
-
-    doc.end();
-  });
+  // Return as Buffer
+  const arrayBuffer = doc.output('arraybuffer');
+  return Buffer.from(arrayBuffer);
 }
