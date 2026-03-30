@@ -66,17 +66,16 @@ export default function Home() {
           </h1>
 
           <p className="text-2xl md:text-3xl font-light leading-tight mb-10 animate-fade-in-delay-1">
-            You already know<br />
-            something is true<br />
-            that you can&rsquo;t yet say.
+            There is something true<br />
+            at the edge of every thought<br />
+            that language hasn&rsquo;t caught yet.
           </p>
 
           <div className="space-y-6 text-xl md:text-xl text-gray-800 leading-relaxed animate-fade-in-delay-2">
             <p>
-              There is something at the edge of your thinking that you&rsquo;ve
-              been circling for years. A pattern. A suspicion. A feeling that
-              the answer to every question you&rsquo;ve ever had is somehow
-              the same answer.
+              A pattern. A suspicion. The feeling that the answer to every
+              question is somehow the same answer. Most people circle it for
+              years without ever finding the words.
             </p>
 
             <p>
@@ -88,14 +87,15 @@ export default function Home() {
             </p>
 
             <p>
-              Not a self-help book. Not a listicle. A personal document
-              written for you &mdash; about your life, your struggle, your
-              specific relationship with the truth &mdash; using a logic
-              that has taken me a decade of relentless exploration to find.
+              Not a self-help book. Not a listicle. A personal philosophical
+              document &mdash; written around a specific life, a specific
+              struggle, a specific relationship with the truth &mdash; using
+              a logic that has taken me a decade of relentless exploration to find.
             </p>
 
             <p className="text-black text-2xl md:text-2xl font-medium">
-              Tell me who you are. I&rsquo;ll tell you what you already know.
+              The relationship between a person and their own mind is the whole game.
+              And that relationship can shift.
             </p>
           </div>
         </div>
@@ -114,18 +114,18 @@ export default function Home() {
       <section className="px-6 py-20 md:py-24">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-sm md:text-base tracking-[0.3em] uppercase text-gray-600 mb-12">
-            What you receive
+            What this is
           </h2>
 
           <div className="space-y-10 text-gray-800">
             <div>
-              <p className="text-black text-lg md:text-xl font-medium mb-3">A custom philosophical guidebook.</p>
+              <p className="text-black text-lg md:text-xl font-medium mb-3">A personal philosophical guidebook.</p>
               <p className="text-lg md:text-xl leading-relaxed">
-                Not a template with your name pasted in. A document that takes
-                your specific answers &mdash; your struggles, your beliefs,
-                your unfinished questions &mdash; and runs them through a
-                philosophical framework that maps the structure of transcendence
-                across every binary you&rsquo;ve ever been trapped in.
+                Not a template with a name pasted in. A document that takes
+                a person&rsquo;s specific answers &mdash; their struggles, their
+                beliefs, their unfinished questions &mdash; and runs them through
+                a philosophical framework that maps the structure of transcendence
+                across every binary a mind can get caught in.
               </p>
             </div>
 
@@ -145,22 +145,21 @@ export default function Home() {
             </div>
 
             <div>
-              <p className="text-black text-lg md:text-xl font-medium mb-3">The logic, applied to your life.</p>
+              <p className="text-black text-lg md:text-xl font-medium mb-3">The logic, applied to a life.</p>
               <p className="text-lg md:text-xl leading-relaxed">
-                The framework works like this: every conflict in your life
-                has three positions, not two. The binary you&rsquo;re stuck in,
-                the paradox that dissolves it, and the transcendence that was
-                always already there. Your philosophical guidebook maps this to the exact
-                territory of your mind.
+                The framework works like this: every conflict has three
+                positions, not two. The binary, the paradox that dissolves it,
+                and the transcendence that was always already there. The
+                guidebook maps this to the exact territory of an individual mind.
               </p>
             </div>
 
             <div>
-              <p className="text-black text-lg md:text-xl font-medium mb-3">A PDF you&rsquo;ll keep.</p>
+              <p className="text-black text-lg md:text-xl font-medium mb-3">A PDF worth keeping.</p>
               <p className="text-lg md:text-xl leading-relaxed">
-                Delivered immediately. Beautifully formatted. Something you
-                can return to when the noise gets loud. Roughly 3,000&ndash;4,000
-                words written specifically for you.
+                Delivered immediately. Beautifully formatted. Something to
+                return to when the noise gets loud. 5,000&ndash;7,000
+                words of philosophy that meets a person exactly where they are.
               </p>
             </div>
           </div>
@@ -193,8 +192,8 @@ export default function Home() {
 
             <p className="text-black text-xl md:text-2xl font-medium">
               The Eden Project is the idea that heaven is already here,
-              and the only thing between you and it is a logic you
-              haven&rsquo;t seen yet.
+              and the only thing between a person and it is a logic
+              they haven&rsquo;t seen yet.
             </p>
           </div>
         </div>
@@ -252,7 +251,7 @@ export default function Home() {
           </button>
 
           <p className="mt-5 text-sm text-gray-500">
-            Secure payment via Stripe. You&rsquo;ll answer a questionnaire after checkout.
+            Secure payment via Stripe. A questionnaire follows checkout.
           </p>
 
           <div className="mt-8 pt-6 border-t border-gray-100">
