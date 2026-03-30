@@ -49,10 +49,10 @@ function generatePDF(text, name) {
 
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  const marginLeft = 72;
-  const marginRight = 72;
-  const marginTop = 72;
-  const marginBottom = 72;
+  const marginLeft = 48;
+  const marginRight = 48;
+  const marginTop = 56;
+  const marginBottom = 56;
   const contentWidth = pageWidth - marginLeft - marginRight;
 
   // ---- Title Page ----
@@ -95,11 +95,11 @@ function generatePDF(text, name) {
 
     // Body text
     doc.setFont('times', 'normal');
-    doc.setFontSize(11.5);
+    doc.setFontSize(13);
     doc.setTextColor(26, 26, 26);
 
     const lines = doc.splitTextToSize(trimmed, contentWidth);
-    const lineHeight = 17;
+    const lineHeight = 20;
 
     for (const line of lines) {
       if (y > pageHeight - marginBottom) {
@@ -110,7 +110,7 @@ function generatePDF(text, name) {
       y += lineHeight;
     }
 
-    y += 10; // paragraph gap
+    y += 14; // paragraph gap
   }
 
   // ---- Closing Page ----
