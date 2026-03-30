@@ -359,7 +359,7 @@ function QuestionnaireContent() {
           <div className="w-8 h-8 border border-black border-t-transparent rounded-full animate-spin mx-auto mb-8" />
           <p className="text-lg text-gray-700 mb-2">{generationStatus}</p>
           <p className="text-sm text-gray-400">
-            This takes about 30&ndash;60 seconds. Your manifesto is being written from scratch.
+            This takes about 30&ndash;60 seconds. Your philosophical guidebook is being written from scratch.
           </p>
         </div>
       </main>

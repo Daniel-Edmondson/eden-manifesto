@@ -1,26 +1,35 @@
 import { jsPDF } from 'jspdf';
-import { NextResponse } from 'next/server';
+
+// Explicitly use Node.js runtime for PDF generation
+export const runtime = 'nodejs';
 
 export async function POST(req) {
   try {
     const { text, name } = await req.json();
 
     if (!text || !name) {
-      return NextResponse.json({ error: 'Missing text or name' }, { status: 400 });
+      return new Response(JSON.stringify({ error: 'Missing text or name' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     const pdfBytes = generatePDF(text, name);
+    const safeName = name.replace(/[^a-zA-Z0-9]/g, '-');
 
-    return new NextResponse(pdfBytes, {
+    return new Response(pdfBytes, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="Eden-Guidebook-${name.replace(/[^a-zA-Z0-9]/g, '-')}.pdf"`,
+        'Content-Disposition': `attachment; filename="Eden-Guidebook-${safeName}.pdf"`,
       },
     });
   } catch (err) {
     console.error('PDF error:', err);
-    return NextResponse.json({ error: 'Failed to generate PDF.' }, { status: 500 });
+    return new Response(JSON.stringify({ error: 'Failed to generate PDF.' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }
 
@@ -39,20 +48,17 @@ function generatePDF(text, name) {
   const contentWidth = pageWidth - marginLeft - marginRight;
 
   // ---- Title Page ----
-  // "THE EDEN PROJECT" small header
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   doc.setTextColor(153, 153, 153);
   doc.text('T H E   E D E N   P R O J E C T', pageWidth / 2, 200, { align: 'center' });
 
-  // Main title
   doc.setFont('times', 'normal');
   doc.setFontSize(26);
   doc.setTextColor(0, 0, 0);
   const titleLines = doc.splitTextToSize(`A Philosophical Guidebook for ${name}`, contentWidth);
   doc.text(titleLines, pageWidth / 2, 320, { align: 'center' });
 
-  // Subtitle lines
   doc.setFont('times', 'italic');
   doc.setFontSize(11);
   doc.setTextColor(102, 102, 102);
@@ -86,13 +92,6 @@ function generatePDF(text, name) {
 
     const lines = doc.splitTextToSize(trimmed, contentWidth);
     const lineHeight = 17;
-    const blockHeight = lines.length * lineHeight;
-
-    // Check if we need a new page
-    if (y + blockHeight > pageHeight - marginBottom) {
-      doc.addPage();
-      y = marginTop;
-    }
 
     for (const line of lines) {
       if (y > pageHeight - marginBottom) {

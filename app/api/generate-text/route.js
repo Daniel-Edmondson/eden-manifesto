@@ -45,45 +45,64 @@ export async function POST(req) {
       });
     }
 
-    // Create a readable stream that extracts text from SSE events
-    // with proper buffering to handle chunks split across boundaries
+    // Use a TransformStream with proper SSE line buffering
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
-    const reader = response.body.getReader();
+    let buffer = '';
 
-    const stream = new ReadableStream({
-      async pull(controller) {
-        let buffer = '';
+    const transformStream = new TransformStream({
+      transform(chunk, controller) {
+        buffer += decoder.decode(chunk, { stream: true });
 
-        while (true) {
-          const { done, value } = await reader.read();
+        // Process only complete lines
+        const lines = buffer.split('\n');
+        // Keep the last (possibly incomplete) line in the buffer
+        buffer = lines.pop() || '';
 
-          if (done) {
-            // Process any remaining buffer
-            if (buffer.trim()) {
-              processLines(buffer, controller, encoder);
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6).trim();
+            if (data === '[DONE]') continue;
+
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+                controller.enqueue(encoder.encode(parsed.delta.text));
+              }
+            } catch (e) {
+              // Skip unparseable lines
             }
-            controller.close();
-            return;
           }
-
-          buffer += decoder.decode(value, { stream: true });
-
-          // Process complete lines (ending with \n)
-          const lastNewline = buffer.lastIndexOf('\n');
-          if (lastNewline !== -1) {
-            const complete = buffer.substring(0, lastNewline);
-            buffer = buffer.substring(lastNewline + 1);
-            processLines(complete, controller, encoder);
+        }
+      },
+      flush(controller) {
+        // Process any remaining buffer when stream ends
+        if (buffer.trim()) {
+          const lines = buffer.split('\n');
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.slice(6).trim();
+              if (data === '[DONE]') continue;
+              try {
+                const parsed = JSON.parse(data);
+                if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+                  controller.enqueue(encoder.encode(parsed.delta.text));
+                }
+              } catch (e) {
+                // Skip
+              }
+            }
           }
         }
       },
     });
 
-    return new Response(stream, {
+    // Pipe the Anthropic SSE stream through our text-extracting transform
+    const readable = response.body.pipeThrough(transformStream);
+
+    return new Response(readable, {
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
-        'Transfer-Encoding': 'chunked',
       },
     });
   } catch (err) {
@@ -92,24 +111,5 @@ export async function POST(req) {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
-  }
-}
-
-function processLines(text, controller, encoder) {
-  const lines = text.split('\n');
-  for (const line of lines) {
-    if (line.startsWith('data: ')) {
-      const data = line.slice(6).trim();
-      if (data === '[DONE]') continue;
-
-      try {
-        const parsed = JSON.parse(data);
-        if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
-          controller.enqueue(encoder.encode(parsed.delta.text));
-        }
-      } catch (e) {
-        // Skip unparseable lines
-      }
-    }
   }
 }
