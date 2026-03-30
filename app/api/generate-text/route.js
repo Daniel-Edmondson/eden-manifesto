@@ -45,37 +45,42 @@ export async function POST(req) {
       });
     }
 
-    // Create a transform stream that extracts text from SSE events
+    // Create a readable stream that extracts text from SSE events
+    // with proper buffering to handle chunks split across boundaries
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
+    const reader = response.body.getReader();
 
-    const transformStream = new TransformStream({
-      transform(chunk, controller) {
-        const text = decoder.decode(chunk);
-        const lines = text.split('\n');
+    const stream = new ReadableStream({
+      async pull(controller) {
+        let buffer = '';
 
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6);
-            if (data === '[DONE]') continue;
+        while (true) {
+          const { done, value } = await reader.read();
 
-            try {
-              const parsed = JSON.parse(data);
-              if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
-                controller.enqueue(encoder.encode(parsed.delta.text));
-              }
-            } catch (e) {
-              // Skip unparseable lines
+          if (done) {
+            // Process any remaining buffer
+            if (buffer.trim()) {
+              processLines(buffer, controller, encoder);
             }
+            controller.close();
+            return;
+          }
+
+          buffer += decoder.decode(value, { stream: true });
+
+          // Process complete lines (ending with \n)
+          const lastNewline = buffer.lastIndexOf('\n');
+          if (lastNewline !== -1) {
+            const complete = buffer.substring(0, lastNewline);
+            buffer = buffer.substring(lastNewline + 1);
+            processLines(complete, controller, encoder);
           }
         }
       },
     });
 
-    // Pipe the Anthropic stream through our transform
-    response.body.pipeThrough(transformStream);
-
-    return new Response(transformStream.readable, {
+    return new Response(stream, {
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
         'Transfer-Encoding': 'chunked',
@@ -87,5 +92,24 @@ export async function POST(req) {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
+  }
+}
+
+function processLines(text, controller, encoder) {
+  const lines = text.split('\n');
+  for (const line of lines) {
+    if (line.startsWith('data: ')) {
+      const data = line.slice(6).trim();
+      if (data === '[DONE]') continue;
+
+      try {
+        const parsed = JSON.parse(data);
+        if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+          controller.enqueue(encoder.encode(parsed.delta.text));
+        }
+      } catch (e) {
+        // Skip unparseable lines
+      }
+    }
   }
 }
