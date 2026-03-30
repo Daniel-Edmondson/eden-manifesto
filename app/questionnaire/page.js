@@ -95,6 +95,12 @@ const questions = [
     placeholder: 'Belief, doubt, anger, longing, nothing — all valid.',
   },
   {
+    id: 'faithsystem',
+    label: 'What faith tradition, if any, do you identify with?',
+    type: 'textarea',
+    placeholder: 'e.g., Christian, Muslim, Buddhist, Hindu, Jewish, Agnostic, Atheist, Spiritual but not religious, or something else entirely.',
+  },
+  {
     id: 'death',
     label: 'What do you think happens when you die?',
     type: 'textarea',

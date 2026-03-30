@@ -14,7 +14,15 @@ export async function POST(req) {
       });
     }
 
-    const pdfBytes = generatePDF(text, name);
+    // Strip markdown formatting: headers, bold, italic, list markers
+    const cleanText = text
+      .replace(/^#{1,6}\s+/gm, '')
+      .replace(/\*\*/g, '')
+      .replace(/(?<!\w)\*(?!\*)/g, '')
+      .replace(/^[-*]\s+/gm, '')
+      .replace(/^>\s+/gm, '');
+
+    const pdfBytes = generatePDF(cleanText, name);
     const safeName = name.replace(/[^a-zA-Z0-9]/g, '-');
 
     return new Response(pdfBytes, {
@@ -122,7 +130,7 @@ function generatePDF(text, name) {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   doc.setTextColor(153, 153, 153);
-  doc.text('edenmanifesto.com', pageWidth / 2, 400, { align: 'center' });
+  doc.text('danieledmondson45@gmail.com', pageWidth / 2, 400, { align: 'center' });
 
   // Return as Buffer
   const arrayBuffer = doc.output('arraybuffer');
