@@ -66,36 +66,35 @@ export default function Home() {
           </h1>
 
           <p className="text-2xl md:text-3xl font-light leading-tight mb-10 animate-fade-in-delay-1">
-            There is something true<br />
-            at the edge of every thought<br />
-            that language hasn&rsquo;t caught yet.
+            There&rsquo;s something true<br />
+            sitting just past what you can say.<br />
+            You&rsquo;ve felt it. Everyone has.
           </p>
 
           <div className="space-y-6 text-xl md:text-xl text-gray-800 leading-relaxed animate-fade-in-delay-2">
             <p>
-              A pattern. A suspicion. The feeling that the answer to every
-              question is somehow the same answer. Most people circle it for
-              years without ever finding the words.
+              That feeling where the answer to every question seems like
+              it might be the same answer. Most people spend years circling
+              it without ever pinning it down.
             </p>
 
             <p>
-              I&rsquo;ve spent a decade exploring the edges of consciousness
-              &mdash; through hallucinogens, through philosophy, through the
-              kind of searching that leaves marks. And on the other side, I
-              found a logical framework that I believe maps the structure of
-              transcendence itself.
+              I spent a decade looking for it &mdash; through psychedelics,
+              through books, through the kind of searching that costs you
+              something. And on the other side, I found a pattern. Not a
+              feeling. A real structure. A logic to how people wake up.
             </p>
 
             <p>
-              Not a self-help book. Not a listicle. A personal philosophical
-              document &mdash; written around a specific life, a specific
-              struggle, a specific relationship with the truth &mdash; using
-              a logic that has taken me a decade of relentless exploration to find.
+              This isn&rsquo;t a self-help book. It&rsquo;s not a list of
+              tips. It&rsquo;s a personal document &mdash; written for one
+              life, one struggle, one mind &mdash; using a framework it
+              took me ten years to find.
             </p>
 
             <p className="text-black text-2xl md:text-2xl font-medium">
-              The relationship between a person and their own mind is the whole game.
-              And that relationship can shift.
+              The way you relate to your own mind is the whole game.
+              And it can change.
             </p>
           </div>
         </div>
@@ -119,13 +118,13 @@ export default function Home() {
 
           <div className="space-y-10 text-gray-800">
             <div>
-              <p className="text-black text-lg md:text-xl font-medium mb-3">A personal philosophical guidebook.</p>
+              <p className="text-black text-lg md:text-xl font-medium mb-3">A guidebook written just for you.</p>
               <p className="text-lg md:text-xl leading-relaxed">
-                Not a template with a name pasted in. A document that takes
-                a person&rsquo;s specific answers &mdash; their struggles, their
-                beliefs, their unfinished questions &mdash; and runs them through
-                a philosophical framework that maps the structure of transcendence
-                across every binary a mind can get caught in.
+                Not a template with your name pasted in. You answer real
+                questions &mdash; about what you believe, what you&rsquo;re
+                stuck on, what keeps you up at night &mdash; and the result
+                is a document built around your actual life, using a framework
+                that shows how every either/or has a third option hiding inside it.
               </p>
             </div>
 
@@ -145,21 +144,22 @@ export default function Home() {
             </div>
 
             <div>
-              <p className="text-black text-lg md:text-xl font-medium mb-3">The logic, applied to a life.</p>
+              <p className="text-black text-lg md:text-xl font-medium mb-3">Every conflict has three sides, not two.</p>
               <p className="text-lg md:text-xl leading-relaxed">
-                The framework works like this: every conflict has three
-                positions, not two. The binary, the paradox that dissolves it,
-                and the transcendence that was always already there. The
-                guidebook maps this to the exact territory of an individual mind.
+                That&rsquo;s the core idea. You think you&rsquo;re stuck
+                between two things, but there&rsquo;s always a third position
+                &mdash; the one where the fight dissolves. The guidebook
+                maps that pattern onto whatever you&rsquo;re actually going through.
               </p>
             </div>
 
             <div>
-              <p className="text-black text-lg md:text-xl font-medium mb-3">A PDF worth keeping.</p>
+              <p className="text-black text-lg md:text-xl font-medium mb-3">Something worth coming back to.</p>
               <p className="text-lg md:text-xl leading-relaxed">
-                Delivered immediately. Beautifully formatted. Something to
-                return to when the noise gets loud. 5,000&ndash;7,000
-                words of philosophy that meets a person exactly where they are.
+                You get a beautifully formatted PDF, delivered right away.
+                5,000&ndash;7,000 words of real thinking about your
+                real life. The kind of thing you read again when the noise
+                gets loud.
               </p>
             </div>
           </div>
@@ -178,22 +178,22 @@ export default function Home() {
           <div className="space-y-6 text-lg md:text-xl text-gray-800 leading-relaxed">
             <p>
               My name is Daniel Edmondson. I&rsquo;m a writer, not a guru.
-              I have an English degree, a decade of hallucinogenic
-              experimentation, and hundreds of pages of philosophical
-              writing that nobody asked me to produce.
+              I have an English degree, a decade of experience with
+              psychedelics, and hundreds of pages of writing that nobody
+              asked me to produce.
             </p>
 
             <p>
-              What I found in that work is a logical framework &mdash; not
-              a feeling, not a vibe, an actual structure &mdash; that I believe
-              maps how transcendence works. This project is my attempt to make
-              it useful for someone other than me.
+              What I found in all of that is a pattern &mdash; not a
+              feeling, not a vibe, but an actual structure &mdash; that
+              I think explains how people break through. This project is
+              my attempt to make it useful for someone other than me.
             </p>
 
             <p className="text-black text-xl md:text-2xl font-medium">
               The Eden Project is the idea that heaven is already here,
-              and the only thing between a person and it is a logic
-              they haven&rsquo;t seen yet.
+              and the only thing between you and it is a way of seeing
+              you haven&rsquo;t found yet.
             </p>
           </div>
         </div>
