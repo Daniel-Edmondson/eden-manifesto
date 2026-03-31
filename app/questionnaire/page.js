@@ -317,9 +317,10 @@ function QuestionnaireContent() {
           <a
             href={downloadUrl}
             download={`Eden-Guidebook-${(answers.name || 'yours').replace(/\s/g, '-')}.pdf`}
-            className="inline-block px-12 py-4 bg-black text-white text-sm tracking-wide hover:bg-gray-900 transition-colors"
+            className="inline-block px-8 md:px-12 py-4 bg-black text-white text-sm tracking-wide hover:bg-gray-900 transition-colors max-w-full text-center"
           >
-            Download Your Philosophical Guidebook (PDF)
+            <span className="hidden md:inline">Download Your Philosophical Guidebook (PDF)</span>
+            <span className="md:hidden">Download Your Guidebook</span>
           </a>
           <p className="mt-8 text-xs text-gray-400">
             If this changed something for you, share The Eden Project with someone who needs it.
