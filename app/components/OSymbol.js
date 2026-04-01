@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 // The O — animated, breathing, alive
-export function OBreathing({ size = 120, color = 'rgba(200, 185, 140, 0.2)', strokeWidth = 1, className = '' }) {
+export function OBreathing({ size = 120, color = 'rgba(200, 185, 140, 0.08)', strokeWidth = 1, className = '' }) {
   return (
     <div className={`relative ${className}`}>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
@@ -85,7 +85,7 @@ export function ODrawing({ size = 200, className = '' }) {
         cy={size / 2}
         r={radius}
         fill="none"
-        stroke="rgba(200, 185, 140, 0.5)"
+        stroke="rgba(200, 185, 140, 0.12)"
         strokeWidth="2"
         strokeLinecap="round"
         strokeDasharray={circumference}

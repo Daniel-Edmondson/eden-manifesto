@@ -15,7 +15,7 @@ const phases = [
     id: 'breath',
     type: 'statement',
     text: 'Take a breath.',
-    subtext: 'The music is playing. Let it settle.',
+    subtext: 'Let it settle.',
     delay: 4000,
   },
   // Phase 1 — Grounding

@@ -1,5 +1,4 @@
 import './globals.css';
-import MusicPlayer from './components/MusicPlayer';
 
 export const metadata = {
   title: 'The Eden Project — Psychedelic Life Design',
@@ -41,12 +40,9 @@ export default function RootLayout({ children }) {
         </nav>
 
         {/* Page content */}
-        <div className="pt-14 pb-16">
+        <div className="pt-14">
           {children}
         </div>
-
-        {/* Persistent music player */}
-        <MusicPlayer />
       </body>
     </html>
   );
