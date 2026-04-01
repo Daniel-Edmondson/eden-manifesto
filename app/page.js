@@ -1,309 +1,345 @@
 'use client';
 
-import { useState } from 'react';
-
-// Three dots representing Being / Paradox / Transcendence
-function TriadDots({ className = '' }) {
-  return (
-    <div className={`flex items-center justify-center gap-12 md:gap-20 ${className}`}>
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-black triad-dot-1" />
-        <span className="text-sm md:text-base tracking-widest uppercase text-gray-600">Being</span>
-      </div>
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-black triad-dot-2" />
-        <span className="text-sm md:text-base tracking-widest uppercase text-gray-600">Paradox</span>
-      </div>
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-black triad-dot-3" />
-        <span className="text-sm md:text-base tracking-widest uppercase text-gray-600">Transcendence</span>
-      </div>
-    </div>
-  );
-}
-
-// Decorative section divider
-function SectionDivider() {
-  return (
-    <div className="flex items-center justify-center py-2">
-      <div className="gradient-divider w-full max-w-2xl" />
-    </div>
-  );
-}
+import { useState, useEffect } from 'react';
+import { ODrawing, OBreathing, ParticleField, TriadDots } from './components/OSymbol';
 
 export default function Home() {
-  const [selectedAmount, setSelectedAmount] = useState(2000);
-  const [customAmount, setCustomAmount] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [promoCode, setPromoCode] = useState('');
-  const [promoLoading, setPromoLoading] = useState(false);
-  const [promoError, setPromoError] = useState('');
+  const [scrollY, setScrollY] = useState(0);
+  const [entered, setEntered] = useState(false);
 
-  const handleCheckout = async () => {
-    setLoading(true);
-    try {
-      const amount = customAmount ? Math.max(2000, parseInt(customAmount) * 100) : selectedAmount;
-      const res = await fetch('/api/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount }),
-      });
-      const { url } = await res.json();
-      if (url) window.location.href = url;
-    } catch (err) {
-      console.error(err);
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    const timer = setTimeout(() => setEntered(true), 300);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <main className="min-h-screen flex flex-col overflow-hidden">
-      {/* Hero */}
-      <section className="relative flex-1 flex items-center justify-center px-6 py-20 md:py-32">
-        <div className="max-w-2xl relative z-10">
-          <h1 className="text-5xl md:text-8xl font-light tracking-tight text-black mb-10 animate-fade-in">
-            The Eden Project
-          </h1>
+    <main className="min-h-screen relative overflow-hidden">
+      <ParticleField count={25} />
 
-          <p className="text-2xl md:text-3xl font-light leading-tight mb-10 animate-fade-in-delay-1">
-            There&rsquo;s something true<br />
-            sitting just past what you can say.<br />
-            You&rsquo;ve felt it. Everyone has.
+      {/* ============================================
+          HERO — THE FIRST ENCOUNTER
+          ============================================ */}
+      <section className="relative min-h-screen flex items-center justify-center px-6">
+        {/* Background O */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <ODrawing size={Math.min(500, typeof window !== 'undefined' ? window.innerWidth * 0.7 : 400)} />
+        </div>
+
+        <div className="relative z-10 max-w-3xl text-center">
+          {entered && (
+            <>
+              <p className="text-xs tracking-[0.4em] uppercase text-gold/50 mb-8 animate-fade-in">
+                The Eden Project
+              </p>
+
+              <h1 className="font-serif text-4xl md:text-7xl font-light leading-tight mb-8 animate-fade-in-d1">
+                Did you choose<br />
+                <span className="text-gold-gradient">to come here?</span>
+              </h1>
+
+              <p className="text-lg md:text-xl text-white/50 leading-relaxed max-w-xl mx-auto mb-12 animate-fade-in-d2">
+                Think about it. The thought that brought you here. Did you
+                control that thought? What about the thought before it?
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-d3">
+                <a
+                  href="/journey"
+                  className="px-10 py-4 bg-gold/10 border border-gold/30 text-gold tracking-wider text-sm hover:bg-gold/20 hover:border-gold/50 transition-all btn-glow"
+                >
+                  Begin the Journey
+                </a>
+                <a
+                  href="#discover"
+                  className="px-10 py-4 text-white/30 text-sm tracking-wider hover:text-white/60 transition-colors"
+                >
+                  What is this?
+                </a>
+              </div>
+
+              {/* Scroll indicator */}
+              <div className="mt-20 animate-fade-in-d5">
+                <div className="scroll-indicator text-white/15">
+                  <svg width="20" height="30" viewBox="0 0 20 30" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <rect x="1" y="1" width="18" height="28" rx="9" />
+                    <circle cx="10" cy="8" r="2" fill="currentColor" className="animate-float" />
+                  </svg>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* ============================================
+          DISCOVERY SECTION — WHAT IS THIS?
+          ============================================ */}
+      <section id="discover" className="relative py-32 px-6">
+        <div className="max-w-2xl mx-auto">
+          <div className="gradient-divider-gold w-full mb-20" />
+
+          <p className="font-serif text-2xl md:text-4xl font-light leading-snug mb-10 text-white/80">
+            There is something true sitting just past what you can say.
+            You have felt it. Everyone has.
           </p>
 
-          <div className="space-y-6 text-xl md:text-xl text-gray-800 leading-relaxed animate-fade-in-delay-2">
+          <div className="space-y-8 text-base md:text-lg text-white/45 leading-relaxed">
             <p>
-              That feeling where the answer to every question seems like
-              it might be the same answer. Most people spend years circling
-              it without ever pinning it down.
+              That feeling where the answer to every question seems like it might be the same answer.
+              Most people spend years circling it without ever pinning it down.
             </p>
 
             <p>
-              I spent a decade looking for it &mdash; through psychedelics,
-              through books, through the kind of searching that costs you
-              something. And on the other side, I found a pattern. Not a
-              feeling. A real structure. A logic to how people wake up.
+              This is a guided experience. Not a lecture, not a quiz, not a self-help program.
+              You walk through it. It walks through you. And at the end, what you discover gets
+              rendered into a philosophical guidebook written for your life alone.
             </p>
 
-            <p>
-              This isn&rsquo;t a self-help book. It&rsquo;s not a list of
-              tips. It&rsquo;s a personal document &mdash; written for one
-              life, one struggle, one mind &mdash; using a framework it
-              took me ten years to find.
-            </p>
-
-            <p className="text-black text-2xl md:text-2xl font-medium">
-              The way you relate to your own mind is the whole game.
-              And it can change.
+            <p className="text-white/70 text-lg md:text-xl font-serif">
+              The language of psychedelics is realizing the complete loss of control is complete control.
+              Think about it.
             </p>
           </div>
         </div>
       </section>
 
-      <SectionDivider />
+      {/* ============================================
+          THE TRIAD — VISUAL
+          ============================================ */}
+      <section className="py-24 px-6">
+        <TriadDots dark className="mb-16" />
 
-      {/* Triad Visual */}
-      <section className="px-6 py-20 md:py-24">
-        <TriadDots className="animate-fade-in" />
-      </section>
-
-      <SectionDivider />
-
-      {/* What You Get */}
-      <section className="px-6 py-20 md:py-24">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-sm md:text-base tracking-[0.3em] uppercase text-gray-600 mb-12">
-            What this is
-          </h2>
-
-          <div className="space-y-10 text-gray-800">
-            <div>
-              <p className="text-black text-lg md:text-xl font-medium mb-3">A guidebook written just for you.</p>
-              <p className="text-lg md:text-xl leading-relaxed">
-                Not a template with your name pasted in. You answer real
-                questions &mdash; about what you believe, what you&rsquo;re
-                stuck on, what keeps you up at night &mdash; and the result
-                is a document built around your actual life, using a framework
-                that shows how every either/or has a third option hiding inside it.
-              </p>
-            </div>
-
-            {/* Triad diagram */}
-            <div className="flex justify-center py-8 md:py-12">
-              <svg width="320" height="270" viewBox="0 0 320 270" className="animate-float">
-                <line x1="160" y1="30" x2="40" y2="210" stroke="black" strokeWidth="1" opacity="0.3" />
-                <line x1="160" y1="30" x2="280" y2="210" stroke="black" strokeWidth="1" opacity="0.3" />
-                <line x1="40" y1="210" x2="280" y2="210" stroke="black" strokeWidth="1" opacity="0.3" />
-                <circle cx="160" cy="30" r="8" fill="black" opacity="0.7" />
-                <circle cx="40" cy="210" r="8" fill="black" opacity="0.3" />
-                <circle cx="280" cy="210" r="8" fill="black" opacity="0.3" />
-                <text x="160" y="14" textAnchor="middle" fontSize="13" fill="#555" fontFamily="Inter, sans-serif" letterSpacing="2">TRANSCENDENCE</text>
-                <text x="40" y="240" textAnchor="middle" fontSize="13" fill="#555" fontFamily="Inter, sans-serif" letterSpacing="2">BEING</text>
-                <text x="280" y="240" textAnchor="middle" fontSize="13" fill="#555" fontFamily="Inter, sans-serif" letterSpacing="2">PARADOX</text>
-              </svg>
-            </div>
-
-            <div>
-              <p className="text-black text-lg md:text-xl font-medium mb-3">Every conflict has three sides, not two.</p>
-              <p className="text-lg md:text-xl leading-relaxed">
-                That&rsquo;s the core idea. You think you&rsquo;re stuck
-                between two things, but there&rsquo;s always a third position
-                &mdash; the one where the fight dissolves. The guidebook
-                maps that pattern onto whatever you&rsquo;re actually going through.
-              </p>
-            </div>
-
-            <div>
-              <p className="text-black text-lg md:text-xl font-medium mb-3">Something worth coming back to.</p>
-              <p className="text-lg md:text-xl leading-relaxed">
-                You get a beautifully formatted PDF, delivered right away.
-                5,000&ndash;7,000 words of real thinking about your
-                real life. The kind of thing you read again when the noise
-                gets loud.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <SectionDivider />
-
-      {/* About */}
-      <section className="px-6 py-20 md:py-24">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-sm md:text-base tracking-[0.3em] uppercase text-gray-600 mb-12">
-            Who writes this
-          </h2>
-
-          <div className="space-y-6 text-lg md:text-xl text-gray-800 leading-relaxed">
-            <p>
-              My name is Daniel Edmondson. I&rsquo;m a writer, not a guru.
-              I have an English degree, a decade of experience with
-              psychedelics, and hundreds of pages of writing that nobody
-              asked me to produce.
-            </p>
-
-            <p>
-              What I found in all of that is a pattern &mdash; not a
-              feeling, not a vibe, but an actual structure &mdash; that
-              I think explains how people break through. This project is
-              my attempt to make it useful for someone other than me.
-            </p>
-
-            <p className="text-black text-xl md:text-2xl font-medium">
-              The Eden Project is the idea that heaven is already here,
-              and the only thing between you and it is a way of seeing
-              you haven&rsquo;t found yet.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <SectionDivider />
-
-      {/* Pricing — at the bottom */}
-      <section className="px-6 py-20 md:py-24">
         <div className="max-w-2xl mx-auto text-center">
-          <p className="text-base md:text-lg text-gray-700 mb-8">
-            Choose what feels right. Every philosophical guidebook gets the same depth.
+          <p className="text-white/30 text-base md:text-lg leading-relaxed mb-6">
+            Every conflict you carry has three sides, not two. You think you are stuck between
+            two forces, but there is always a third position — the one where the fight dissolves.
+          </p>
+          <p className="text-gold/60 text-sm tracking-wider">
+            Being. Paradox. Transcendence.
+          </p>
+        </div>
+      </section>
+
+      {/* ============================================
+          THE EXPERIENCE — WHAT YOU GET
+          ============================================ */}
+      <section className="py-32 px-6 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gold/[0.02] to-transparent pointer-events-none" />
+
+        <div className="max-w-3xl mx-auto relative z-10">
+          <p className="text-xs tracking-[0.3em] uppercase text-gold/40 mb-16 text-center">
+            The Experience
           </p>
 
-          <div className="flex flex-wrap justify-center gap-3 mb-8">
-            {[
-              { label: '$20', value: 2000 },
-              { label: '$50', value: 5000 },
-              { label: '$100', value: 10000 },
-            ].map(({ label, value }) => (
-              <button
-                key={value}
-                onClick={() => { setSelectedAmount(value); setCustomAmount(''); }}
-                className={`px-8 py-4 border text-base transition-all duration-200 ${
-                  selectedAmount === value && !customAmount
-                    ? 'bg-black text-white border-black'
-                    : 'bg-white text-black border-gray-300 hover:border-black'
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-base text-gray-400">$</span>
-              <input
-                type="number"
-                min="20"
-                placeholder="Other"
-                value={customAmount}
-                onChange={(e) => {
-                  setCustomAmount(e.target.value);
-                  setSelectedAmount(0);
-                }}
-                className="w-28 pl-7 pr-3 py-4 border border-gray-300 text-base focus:border-black transition-colors"
-              />
+          <div className="grid md:grid-cols-3 gap-12 md:gap-8">
+            {/* Step 1 */}
+            <div className="text-center">
+              <div className="w-12 h-12 mx-auto mb-6 rounded-full border border-gold/20 flex items-center justify-center">
+                <span className="text-gold/60 text-sm font-serif">1</span>
+              </div>
+              <h3 className="text-white/70 text-sm tracking-wider mb-3">The Journey</h3>
+              <p className="text-white/30 text-sm leading-relaxed">
+                An interactive experience that maps the terrain of your inner world. Not a questionnaire.
+                A mirror.
+              </p>
             </div>
-          </div>
 
-          <button
-            onClick={handleCheckout}
-            disabled={loading}
-            className="px-14 py-5 bg-black text-white text-base tracking-wide hover:bg-gray-900 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-          >
-            {loading ? 'Redirecting to checkout...' : 'Get Your Philosophical Guidebook'}
-          </button>
-
-          <p className="mt-5 text-sm text-gray-500">
-            Secure payment via Stripe. A questionnaire follows checkout.
-          </p>
-
-          <div className="mt-8 pt-6 border-t border-gray-100">
-            <div className="flex justify-center items-center gap-2">
-              <input
-                type="text"
-                value={promoCode}
-                onChange={(e) => { setPromoCode(e.target.value); setPromoError(''); }}
-                placeholder="Promo code"
-                className="w-40 px-3 py-2 border border-gray-300 text-sm text-center focus:border-black transition-colors"
-              />
-              <button
-                onClick={async () => {
-                  if (!promoCode.trim()) return;
-                  setPromoLoading(true);
-                  setPromoError('');
-                  try {
-                    const res = await fetch('/api/verify-promo', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ code: promoCode.trim() }),
-                    });
-                    const data = await res.json();
-                    if (data.valid) {
-                      window.location.href = `/questionnaire?promo=${encodeURIComponent(promoCode.trim())}`;
-                    } else {
-                      setPromoError('Invalid code');
-                    }
-                  } catch (err) {
-                    setPromoError('Something went wrong');
-                  }
-                  setPromoLoading(false);
-                }}
-                disabled={promoLoading}
-                className="px-4 py-2 border border-gray-300 text-sm text-gray-600 hover:border-black hover:text-black transition-colors disabled:text-gray-300"
-              >
-                {promoLoading ? '...' : 'Apply'}
-              </button>
+            {/* Step 2 */}
+            <div className="text-center">
+              <div className="w-12 h-12 mx-auto mb-6 rounded-full border border-gold/20 flex items-center justify-center">
+                <span className="text-gold/60 text-sm font-serif">2</span>
+              </div>
+              <h3 className="text-white/70 text-sm tracking-wider mb-3">The Mirror</h3>
+              <p className="text-white/30 text-sm leading-relaxed">
+                A live philosophical conversation. Ask anything. The framework responds in real time.
+                It sees connections you have not seen.
+              </p>
             </div>
-            {promoError && (
-              <p className="mt-2 text-xs text-red-500 text-center">{promoError}</p>
-            )}
+
+            {/* Step 3 */}
+            <div className="text-center">
+              <div className="w-12 h-12 mx-auto mb-6 rounded-full border border-gold/20 flex items-center justify-center">
+                <span className="text-gold/60 text-sm font-serif">3</span>
+              </div>
+              <h3 className="text-white/70 text-sm tracking-wider mb-3">The Guidebook</h3>
+              <p className="text-white/30 text-sm leading-relaxed">
+                Everything collapses into a personalized PDF — your theory of everything.
+                Written from scratch, for one mind. Yours.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="px-6 py-12">
-        <div className="gradient-divider w-full max-w-2xl mx-auto mb-12" />
-        <div className="max-w-2xl mx-auto flex justify-between items-center text-xs text-gray-500">
+      {/* ============================================
+          WHO WRITES THIS
+          ============================================ */}
+      <section className="py-24 px-6">
+        <div className="max-w-2xl mx-auto">
+          <p className="text-xs tracking-[0.3em] uppercase text-gold/40 mb-12">Who writes this</p>
+
+          <div className="space-y-6 text-base md:text-lg text-white/40 leading-relaxed">
+            <p>
+              My name is Daniel Edmondson. I am a writer, not a guru. I have an English degree,
+              a decade of experience with psychedelics, and hundreds of pages of writing that
+              nobody asked me to produce.
+            </p>
+
+            <p>
+              What I found in all of that is a pattern — not a feeling, not a vibe, but an
+              actual structure — that I think explains how people break through.
+            </p>
+
+            <p className="text-gold/70 font-serif text-xl md:text-2xl">
+              The Eden Project is the idea that heaven is already here, and the only thing
+              between you and it is a way of seeing you have not found yet.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================
+          PRICING PREVIEW
+          ============================================ */}
+      <section className="py-32 px-6 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-gold/[0.03] to-transparent pointer-events-none" />
+
+        <div className="max-w-4xl mx-auto relative z-10 text-center">
+          <p className="text-xs tracking-[0.3em] uppercase text-gold/40 mb-6">
+            The Philosophical Guidebook
+          </p>
+          <p className="text-white/30 text-base mb-16 max-w-xl mx-auto">
+            Three depths. One framework. Your life.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Essential */}
+            <div className="tier-card glass p-8 rounded-lg text-left">
+              <p className="text-xs tracking-[0.2em] uppercase text-white/30 mb-2">Essential</p>
+              <p className="text-3xl font-light text-white/80 mb-1">$20</p>
+              <p className="text-xs text-white/20 mb-6">4,000–5,000 words</p>
+              <ul className="space-y-2 text-sm text-white/30">
+                <li className="flex items-start gap-2">
+                  <span className="text-gold/40 mt-0.5">·</span>
+                  Personalized triadic analysis
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gold/40 mt-0.5">·</span>
+                  Faith-specific integration
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gold/40 mt-0.5">·</span>
+                  The control argument
+                </li>
+              </ul>
+              <a
+                href="/offering?tier=essential"
+                className="block mt-8 py-3 text-center text-sm border border-white/10 text-white/40 hover:border-gold/30 hover:text-gold/60 transition-all rounded"
+              >
+                Choose Essential
+              </a>
+            </div>
+
+            {/* Deep — featured */}
+            <div className="tier-card tier-card-featured glass p-8 rounded-lg text-left relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-gold/20 text-gold text-[10px] tracking-[0.2em] uppercase rounded-full">
+                Most Popular
+              </div>
+              <p className="text-xs tracking-[0.2em] uppercase text-gold/60 mb-2">Deep</p>
+              <p className="text-3xl font-light text-gold mb-1">$50</p>
+              <p className="text-xs text-gold/30 mb-6">7,000–9,000 words</p>
+              <ul className="space-y-2 text-sm text-white/40">
+                <li className="flex items-start gap-2">
+                  <span className="text-gold mt-0.5">·</span>
+                  Everything in Essential
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gold mt-0.5">·</span>
+                  Multiple life tensions explored
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gold mt-0.5">·</span>
+                  The psychedelic thesis
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gold mt-0.5">·</span>
+                  Novel cross-tradition connections
+                </li>
+              </ul>
+              <a
+                href="/offering?tier=deep"
+                className="block mt-8 py-3 text-center text-sm bg-gold/20 border border-gold/40 text-gold hover:bg-gold/30 transition-all rounded btn-glow"
+              >
+                Choose Deep
+              </a>
+            </div>
+
+            {/* Complete */}
+            <div className="tier-card glass p-8 rounded-lg text-left">
+              <p className="text-xs tracking-[0.2em] uppercase text-white/30 mb-2">Complete</p>
+              <p className="text-3xl font-light text-white/80 mb-1">$100</p>
+              <p className="text-xs text-white/20 mb-6">10,000–12,000 words</p>
+              <ul className="space-y-2 text-sm text-white/30">
+                <li className="flex items-start gap-2">
+                  <span className="text-gold/40 mt-0.5">·</span>
+                  Everything in Deep
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gold/40 mt-0.5">·</span>
+                  Full theory of everything
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gold/40 mt-0.5">·</span>
+                  All framework elements applied
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-gold/40 mt-0.5">·</span>
+                  The O: your symbol of completion
+                </li>
+              </ul>
+              <a
+                href="/offering?tier=complete"
+                className="block mt-8 py-3 text-center text-sm border border-white/10 text-white/40 hover:border-gold/30 hover:text-gold/60 transition-all rounded"
+              >
+                Choose Complete
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================
+          THE CALL — FINAL CTA
+          ============================================ */}
+      <section className="py-32 px-6 text-center relative">
+        <OBreathing size={200} className="mx-auto mb-12" />
+
+        <p className="font-serif text-2xl md:text-4xl font-light text-white/60 max-w-xl mx-auto leading-snug mb-8">
+          When you make a decision, the decision has already been made.
+        </p>
+
+        <a
+          href="/journey"
+          className="inline-block px-12 py-5 bg-gold/10 border border-gold/30 text-gold tracking-wider text-sm hover:bg-gold/20 transition-all btn-glow"
+        >
+          Enter
+        </a>
+      </section>
+
+      {/* ============================================
+          FOOTER
+          ============================================ */}
+      <footer className="py-12 px-6">
+        <div className="gradient-divider-gold w-full max-w-2xl mx-auto mb-12" />
+        <div className="max-w-2xl mx-auto flex justify-between items-center text-xs text-white/20">
           <span>The Eden Project &copy; {new Date().getFullYear()}</span>
-          <a href="mailto:danieledmondson45@gmail.com" className="hover:text-black transition-colors">
+          <a href="mailto:danieledmondson45@gmail.com" className="hover:text-gold/60 transition-colors">
             Contact
           </a>
         </div>

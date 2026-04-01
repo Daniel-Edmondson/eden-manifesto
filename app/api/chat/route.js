@@ -1,23 +1,20 @@
-import { SYSTEM_PROMPT, buildUserPrompt } from '../../../lib/framework';
-import { getTierById } from '../../../lib/tiers';
+import { CHATBOT_SYSTEM_PROMPT } from '../../../lib/chatbot-prompt';
 
 export const runtime = 'edge';
 
 export async function POST(req) {
   try {
-    const { answers, tier = 'deep' } = await req.json();
+    const { messages } = await req.json();
 
-    if (!answers || !answers.name) {
-      return new Response(JSON.stringify({ error: 'Missing answers' }), {
+    if (!messages || !Array.isArray(messages)) {
+      return new Response(JSON.stringify({ error: 'Missing messages' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    const tierConfig = getTierById(tier);
-
-    // Append tier-specific instructions to the system prompt
-    const fullSystemPrompt = SYSTEM_PROMPT + '\n\n' + tierConfig.promptAddendum;
+    // Limit conversation history to last 20 messages to manage token usage
+    const recentMessages = messages.slice(-20);
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -27,28 +24,24 @@ export async function POST(req) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-opus-4-20250514',
-        max_tokens: tierConfig.maxTokens,
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1024,
         stream: true,
-        system: fullSystemPrompt,
-        messages: [
-          {
-            role: 'user',
-            content: buildUserPrompt(answers),
-          },
-        ],
+        system: CHATBOT_SYSTEM_PROMPT,
+        messages: recentMessages,
       }),
     });
 
     if (!response.ok) {
       const errorBody = await response.text();
-      console.error('Anthropic API error:', response.status, errorBody);
+      console.error('Chat API error:', response.status, errorBody);
       return new Response(JSON.stringify({ error: `API error: ${response.status}` }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
+    // Stream the response
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
     let buffer = '';
@@ -97,8 +90,8 @@ export async function POST(req) {
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     });
   } catch (err) {
-    console.error('Generation error:', err);
-    return new Response(JSON.stringify({ error: 'Failed to generate philosophical guidebook.' }), {
+    console.error('Chat error:', err);
+    return new Response(JSON.stringify({ error: 'Chat failed.' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
