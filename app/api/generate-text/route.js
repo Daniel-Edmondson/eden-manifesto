@@ -1,11 +1,10 @@
 import { SYSTEM_PROMPT, buildUserPrompt } from '../../../lib/framework';
-import { getTierById } from '../../../lib/tiers';
 
 export const runtime = 'edge';
 
 export async function POST(req) {
   try {
-    const { answers, tier = 'deep' } = await req.json();
+    const { answers } = await req.json();
 
     if (!answers || !answers.name) {
       return new Response(JSON.stringify({ error: 'Missing answers' }), {
@@ -13,11 +12,6 @@ export async function POST(req) {
         headers: { 'Content-Type': 'application/json' },
       });
     }
-
-    const tierConfig = getTierById(tier);
-
-    // Append tier-specific instructions to the system prompt
-    const fullSystemPrompt = SYSTEM_PROMPT + '\n\n' + tierConfig.promptAddendum;
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -28,9 +22,9 @@ export async function POST(req) {
       },
       body: JSON.stringify({
         model: 'claude-opus-4-20250514',
-        max_tokens: tierConfig.maxTokens,
+        max_tokens: 16000,
         stream: true,
-        system: fullSystemPrompt,
+        system: SYSTEM_PROMPT,
         messages: [
           {
             role: 'user',
@@ -98,7 +92,7 @@ export async function POST(req) {
     });
   } catch (err) {
     console.error('Generation error:', err);
-    return new Response(JSON.stringify({ error: 'Failed to generate philosophical guidebook.' }), {
+    return new Response(JSON.stringify({ error: 'Failed to generate document.' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });

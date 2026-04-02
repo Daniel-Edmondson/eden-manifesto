@@ -2,67 +2,25 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { OBreathing, ParticleField, TriadDots } from '../components/OSymbol';
+import { OBreathing } from '../components/OSymbol';
 
 function OfferingContent() {
   const searchParams = useSearchParams();
-  const preselectedTier = searchParams.get('tier');
-  const fromJourney = searchParams.get('journey') === 'complete';
-  const visitorName = searchParams.get('name') || '';
+  const fromJourney = searchParams.get('from') === 'journey';
 
-  const [selectedTier, setSelectedTier] = useState(preselectedTier || 'deep');
+  const [amount, setAmount] = useState(25);
   const [loading, setLoading] = useState(false);
   const [promoCode, setPromoCode] = useState('');
   const [promoLoading, setPromoLoading] = useState(false);
   const [promoError, setPromoError] = useState('');
+  const [hasAnswers, setHasAnswers] = useState(false);
 
-  const tiers = [
-    {
-      id: 'essential',
-      name: 'Essential',
-      price: 20,
-      words: '4,000–5,000',
-      description: 'The core philosophical guidebook',
-      features: [
-        'Personalized triadic analysis of your central tension',
-        'Faith-specific philosophical integration',
-        'The control argument applied to your life',
-        'Beautiful PDF delivered instantly',
-      ],
-    },
-    {
-      id: 'deep',
-      name: 'Deep',
-      price: 50,
-      words: '7,000–9,000',
-      description: 'The expanded philosophical companion',
-      featured: true,
-      features: [
-        'Everything in Essential',
-        'Extended exploration of multiple life tensions',
-        'Novel philosophical connections across traditions',
-        'The psychedelic thesis applied to your consciousness',
-        'Diamond art and spiral analysis',
-      ],
-    },
-    {
-      id: 'complete',
-      name: 'Complete',
-      price: 100,
-      words: '10,000–12,000',
-      description: 'The full theory of everything',
-      features: [
-        'Everything in Deep',
-        'Comprehensive theory of everything for your life',
-        'Full exploration of all your responses',
-        'Extended cross-traditional connections',
-        'The tree, the spiral, the sacred mundane — all applied',
-        'The O: your personal symbol of completion',
-      ],
-    },
-  ];
-
-  const currentTier = tiers.find(t => t.id === selectedTier) || tiers[1];
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = sessionStorage.getItem('eden_answers');
+      if (saved) setHasAnswers(true);
+    }
+  }, []);
 
   const handleCheckout = async () => {
     setLoading(true);
@@ -70,10 +28,7 @@ function OfferingContent() {
       const res = await fetch('/api/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: currentTier.price * 100,
-          tier: currentTier.id,
-        }),
+        body: JSON.stringify({ amount: amount * 100 }),
       });
       const { url } = await res.json();
       if (url) window.location.href = url;
@@ -95,181 +50,149 @@ function OfferingContent() {
       });
       const data = await res.json();
       if (data.valid) {
-        window.location.href = `/questionnaire?promo=${encodeURIComponent(promoCode.trim())}&tier=${selectedTier}`;
+        window.location.href = `/questionnaire?promo=${encodeURIComponent(promoCode.trim())}`;
       } else {
-        setPromoError('Invalid code');
+        setPromoError('Invalid code.');
       }
     } catch (err) {
-      setPromoError('Something went wrong');
+      setPromoError('Something went wrong.');
     }
     setPromoLoading(false);
   };
 
   return (
-    <main className="min-h-screen bg-eden-dark relative">
-      <ParticleField count={15} />
+    <main className="min-h-screen bg-white">
+      <section className="py-24 md:py-32 px-6">
+        <div className="max-w-lg mx-auto text-center page-enter">
+          <OBreathing size={80} className="mx-auto mb-10" />
 
-      {/* Hero */}
-      <section className="relative py-24 md:py-32 px-6 text-center">
-        <div className="relative z-10">
-          {fromJourney && visitorName && (
-            <p className="text-sm text-gold/40 mb-4 animate-fade-in">
-              {visitorName}, your journey is ready to become a document.
-            </p>
-          )}
-
-          <OBreathing size={100} className="mx-auto mb-8 animate-fade-in" />
-
-          <h1 className="font-serif text-3xl md:text-5xl font-light text-white/70 mb-6 animate-fade-in-d1">
-            The Philosophical Guidebook
+          <h1 className="font-serif text-heading text-eden-900 mb-4">
+            Your document.
           </h1>
 
-          <p className="text-white/25 text-base max-w-xl mx-auto leading-relaxed animate-fade-in-d2">
-            A personal theory of everything, written for your life.
-            Not a template. Not generated content. A document built from a framework
-            it took a decade to find, applied to what you actually said.
-          </p>
-        </div>
-      </section>
-
-      {/* Tiers */}
-      <section className="py-12 px-4 md:px-6">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
-          {tiers.map((tier) => (
-            <button
-              key={tier.id}
-              onClick={() => setSelectedTier(tier.id)}
-              className={`tier-card text-left p-8 rounded-lg transition-all ${
-                selectedTier === tier.id
-                  ? tier.featured
-                    ? 'tier-card-featured glass'
-                    : 'glass border border-gold/30'
-                  : 'glass border border-transparent hover:border-white/10'
-              }`}
-            >
-              {tier.featured && (
-                <div className="text-[10px] tracking-[0.2em] uppercase text-gold/60 mb-3">
-                  Most Popular
-                </div>
-              )}
-              <p className={`text-xs tracking-[0.2em] uppercase mb-2 ${
-                selectedTier === tier.id ? 'text-gold/70' : 'text-white/30'
-              }`}>
-                {tier.name}
-              </p>
-              <p className={`text-4xl font-light mb-1 ${
-                selectedTier === tier.id ? 'text-gold' : 'text-white/60'
-              }`}>
-                ${tier.price}
-              </p>
-              <p className="text-xs text-white/20 mb-6">{tier.words} words</p>
-
-              <p className="text-sm text-white/30 mb-4">{tier.description}</p>
-
-              <ul className="space-y-2">
-                {tier.features.map((f, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm">
-                    <span className={`mt-0.5 ${selectedTier === tier.id ? 'text-gold/50' : 'text-white/15'}`}>
-                      ·
-                    </span>
-                    <span className="text-white/30">{f}</span>
-                  </li>
-                ))}
-              </ul>
-
-              {selectedTier === tier.id && (
-                <div className="mt-6 pt-4 border-t border-gold/10">
-                  <div className="w-2 h-2 rounded-full bg-gold mx-auto" />
-                </div>
-              )}
-            </button>
-          ))}
-        </div>
-      </section>
-
-      {/* Checkout */}
-      <section className="py-16 px-6">
-        <div className="max-w-md mx-auto text-center">
-          <p className="text-white/30 text-sm mb-6">
-            {currentTier.name} — ${currentTier.price} — {currentTier.words} words
+          <p className="text-base text-eden-500 leading-relaxed mb-12">
+            {fromJourney
+              ? 'Your answers are ready. Choose what feels right and your philosophical document will be generated from what you said.'
+              : 'A personalized philosophical document built from your answers and a framework designed to meet you where you are.'
+            }
           </p>
 
+          {!hasAnswers && !fromJourney && (
+            <div className="mb-12 p-6 bg-eden-50 rounded-xl text-center">
+              <p className="text-sm text-eden-500 mb-4">
+                You haven't answered the questions yet.
+              </p>
+              <a href="/journey" className="btn btn-secondary text-sm">
+                Start with the questions &rarr;
+              </a>
+            </div>
+          )}
+
+          {/* Sliding scale */}
+          <div className="mb-10">
+            <p className="text-sm text-eden-400 mb-6">Pay what feels right</p>
+
+            <div className="relative mb-4">
+              <input
+                type="range"
+                min="15"
+                max="100"
+                step="5"
+                value={amount}
+                onChange={(e) => setAmount(Number(e.target.value))}
+                className="w-full"
+              />
+              <div className="flex justify-between text-xs text-eden-400 mt-2">
+                <span>$15</span>
+                <span>$100</span>
+              </div>
+            </div>
+
+            <p className="text-4xl font-light text-eden-900 mb-1">
+              ${amount}
+            </p>
+            <p className="text-xs text-eden-400">
+              Every document is the same depth and quality regardless of amount.
+            </p>
+          </div>
+
+          {/* Checkout button */}
           <button
             onClick={handleCheckout}
             disabled={loading}
-            className="w-full py-5 bg-gold/15 border border-gold/30 text-gold tracking-wider text-sm hover:bg-gold/25 transition-all btn-glow disabled:opacity-30 disabled:cursor-not-allowed rounded"
+            className="btn btn-primary w-full mb-4 disabled:opacity-30 disabled:cursor-not-allowed"
           >
-            {loading ? 'Redirecting to checkout...' : `Get Your ${currentTier.name} Guidebook`}
+            {loading ? 'Redirecting...' : `Continue — $${amount}`}
           </button>
 
-          <p className="mt-4 text-xs text-white/15">
-            Secure payment via Stripe. A questionnaire follows checkout.
+          <p className="text-xs text-eden-400 mb-8">
+            Secure payment via Stripe. You'll complete the questionnaire after checkout.
           </p>
 
           {/* Promo code */}
-          <div className="mt-8 pt-6 border-t border-white/5">
+          <div className="pt-6 border-t border-eden-100">
+            <p className="text-xs text-eden-400 mb-4">Have a promo code?</p>
             <div className="flex items-center gap-2 justify-center">
               <input
                 type="text"
                 value={promoCode}
                 onChange={(e) => { setPromoCode(e.target.value); setPromoError(''); }}
-                placeholder="Promo code"
-                className="w-36 px-3 py-2 bg-white/[0.03] border border-white/5 text-sm text-white/50 text-center focus:border-gold/20 transition-colors rounded"
+                placeholder="Enter code"
+                className="w-40 px-4 py-2.5 bg-eden-50 border border-eden-200 text-sm text-eden-700 text-center focus:border-eden-500 transition-colors rounded-full"
               />
               <button
                 onClick={handlePromo}
                 disabled={promoLoading}
-                className="px-4 py-2 border border-white/5 text-xs text-white/30 hover:border-gold/20 hover:text-gold/50 transition-colors rounded disabled:opacity-30"
+                className="btn btn-secondary text-xs py-2.5 px-5 disabled:opacity-30"
               >
                 {promoLoading ? '...' : 'Apply'}
               </button>
             </div>
             {promoError && (
-              <p className="mt-2 text-xs text-red-400/60">{promoError}</p>
+              <p className="mt-2 text-xs text-red-500">{promoError}</p>
             )}
           </div>
         </div>
       </section>
 
-      {/* Trust section */}
-      <section className="py-16 px-6">
-        <div className="max-w-2xl mx-auto">
-          <TriadDots dark className="mb-16" />
+      {/* What you get */}
+      <section className="py-20 px-6 bg-eden-50">
+        <div className="max-w-lg mx-auto">
+          <p className="text-sm text-eden-400 tracking-wide uppercase mb-8 text-center">
+            What you receive
+          </p>
 
-          <div className="grid md:grid-cols-2 gap-12 text-sm text-white/25 leading-relaxed">
-            <div>
-              <p className="text-white/40 font-serif text-lg mb-3">What makes this different</p>
-              <p>
-                This is not AI-generated content pasted into a PDF. The framework behind this
-                took a decade to develop — a genuine philosophical system with its own logic,
-                its own structure, its own way of seeing. The AI is the delivery mechanism.
-                The philosophy is human.
-              </p>
-            </div>
-            <div>
-              <p className="text-white/40 font-serif text-lg mb-3">What you will receive</p>
-              <p>
-                A beautifully formatted PDF, delivered instantly after you complete the
-                questionnaire. Pure prose — no bullet points, no headers, no lists.
-                A document that reads like it was written by a philosopher who knows
-                your life. Because in a real sense, it was.
-              </p>
-            </div>
+          <div className="space-y-6 text-sm text-eden-600 leading-relaxed">
+            <p>
+              A philosophical document generated from your answers, a framework built
+              over a decade, and references drawn from across traditions, philosophy,
+              and science.
+            </p>
+
+            <p>
+              This isn't AI-generated filler. The framework is human. The AI is the
+              delivery mechanism — it synthesizes your answers with a specific
+              philosophical system to produce something that could only be written
+              for you.
+            </p>
+
+            <p>
+              The document is a conversation between what you said, what the framework
+              sees in it, and what thinkers across centuries have said about the same
+              things.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="py-20 px-6 text-center">
-        <p className="font-serif text-xl md:text-2xl text-white/30 max-w-md mx-auto mb-8">
-          Eden is already here. The only thing between you and it
-          is a way of seeing you have not found yet.
-        </p>
+      {/* Contact */}
+      <section className="py-16 px-6 text-center">
+        <p className="text-sm text-eden-400 mb-2">Questions?</p>
         <a
           href="mailto:danieledmondson45@gmail.com"
-          className="text-xs text-white/15 hover:text-gold/40 transition-colors tracking-wider"
+          className="text-sm text-eden-600 hover:text-eden-900 transition-colors"
         >
-          Questions? danieledmondson45@gmail.com
+          danieledmondson45@gmail.com
         </a>
       </section>
     </main>
@@ -279,8 +202,8 @@ function OfferingContent() {
 export default function OfferingPage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen flex items-center justify-center bg-eden-dark">
-        <p className="text-white/20 animate-pulse-slow">Loading...</p>
+      <main className="min-h-screen flex items-center justify-center bg-white">
+        <p className="text-eden-400 animate-pulse-soft">Loading...</p>
       </main>
     }>
       <OfferingContent />

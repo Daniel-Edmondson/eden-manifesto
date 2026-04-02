@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { OBreathing, ParticleField } from '../components/OSymbol';
+import { OBreathing } from '../components/OSymbol';
 
 export default function MirrorPage() {
   const [messages, setMessages] = useState([]);
@@ -28,7 +28,7 @@ export default function MirrorPage() {
     setStarted(true);
     setMessages([{
       role: 'assistant',
-      content: 'Something brought you here. Maybe curiosity, maybe restlessness, maybe a thought you can\'t quite finish. Whatever it is — say it. I\'m not going to summarize what you already know. I\'m interested in the thing underneath the thing.',
+      content: 'Something brought you here. Maybe curiosity, maybe restlessness, maybe a thought you can\'t quite finish. Whatever it is — say it.',
     }]);
   };
 
@@ -53,7 +53,7 @@ export default function MirrorPage() {
         }),
       });
 
-      if (!res.ok) throw new Error('Failed to get response');
+      if (!res.ok) throw new Error('Failed');
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -72,7 +72,7 @@ export default function MirrorPage() {
     } catch (err) {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: 'Something went quiet for a moment. Try again — say what you were saying.',
+        content: 'Something went quiet for a moment. Try again.',
       }]);
     }
 
@@ -86,43 +86,41 @@ export default function MirrorPage() {
     }
   };
 
-  // Pre-conversation screen
+  // Pre-start
   if (!started) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 bg-eden-dark relative">
-        <ParticleField count={20} />
-        <div className="max-w-lg text-center relative z-10">
-          <OBreathing size={120} className="mx-auto mb-12 animate-fade-in" />
+      <main className="min-h-screen flex items-center justify-center px-6 bg-white">
+        <div className="max-w-md text-center page-enter">
+          <OBreathing size={100} className="mx-auto mb-10" />
 
-          <h1 className="font-serif text-3xl md:text-5xl font-light text-white/60 mb-6 animate-fade-in-d1">
+          <h1 className="font-serif text-heading text-eden-900 mb-4">
             The Mirror
           </h1>
 
-          <p className="text-white/25 text-base mb-4 leading-relaxed animate-fade-in-d2">
-            A philosophical conversation with the framework itself.
-            Ask it anything. It sees connections you have not seen.
+          <p className="text-base text-eden-500 leading-relaxed mb-4">
+            A philosophical conversation. Ask it anything.
+            It sees connections you haven't seen.
           </p>
 
-          <p className="text-white/15 text-sm mb-12 animate-fade-in-d3">
+          <p className="text-sm text-eden-400 mb-10">
             This is not a search engine. This is not therapy.
-            This is a mirror that talks back.
           </p>
 
           <button
             onClick={startConversation}
-            className="px-10 py-4 bg-gold/10 border border-gold/30 text-gold text-sm tracking-wider hover:bg-gold/20 transition-all btn-glow animate-fade-in-d4"
+            className="btn btn-primary"
           >
             Begin
           </button>
 
-          <div className="mt-16 animate-fade-in-d5">
-            <p className="text-xs text-white/10">Conversation starters:</p>
-            <div className="flex flex-wrap justify-center gap-2 mt-3">
+          <div className="mt-14">
+            <p className="text-xs text-eden-300 mb-3">Try asking:</p>
+            <div className="flex flex-wrap justify-center gap-2">
               {[
                 'What is the loss of control?',
                 'I\'m torn between two things',
-                'What does enlightenment actually mean?',
                 'I don\'t believe in anything',
+                'What is enlightenment?',
               ].map((prompt, i) => (
                 <button
                   key={i}
@@ -130,13 +128,11 @@ export default function MirrorPage() {
                     setStarted(true);
                     setMessages([{
                       role: 'assistant',
-                      content: 'Something brought you here. Maybe curiosity, maybe restlessness, maybe a thought you can\'t quite finish. Whatever it is — say it.',
+                      content: 'Something brought you here. Whatever it is — say it.',
                     }]);
-                    setTimeout(() => {
-                      setInput(prompt);
-                    }, 500);
+                    setTimeout(() => setInput(prompt), 300);
                   }}
-                  className="text-xs px-3 py-1.5 border border-white/5 text-white/20 hover:text-white/40 hover:border-white/10 transition-colors rounded"
+                  className="text-xs px-3 py-1.5 border border-eden-200 text-eden-500 hover:text-eden-800 hover:border-eden-400 transition-colors rounded-full"
                 >
                   {prompt}
                 </button>
@@ -149,33 +145,29 @@ export default function MirrorPage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col bg-eden-dark relative">
-      <ParticleField count={15} />
-
-      {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-8 relative z-10">
+    <main className="min-h-screen flex flex-col bg-white">
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-8">
         <div className="max-w-2xl mx-auto space-y-6">
           {messages.map((msg, i) => (
             <div
               key={i}
-              className={`chat-message ${
-                msg.role === 'user' ? 'text-right' : 'text-left'
-              }`}
+              className={`chat-message ${msg.role === 'user' ? 'text-right' : 'text-left'}`}
             >
               {msg.role === 'assistant' && (
-                <p className="text-[10px] tracking-[0.2em] uppercase text-gold/30 mb-1.5">
+                <p className="text-[10px] tracking-wider uppercase text-eden-300 mb-1">
                   The Mirror
                 </p>
               )}
               <div
                 className={`inline-block max-w-[85%] text-left ${
                   msg.role === 'user'
-                    ? 'bg-gold/10 border border-gold/15 rounded-2xl rounded-br-sm px-5 py-3'
-                    : 'text-white/60'
+                    ? 'bg-eden-900 text-white rounded-2xl rounded-br-sm px-5 py-3'
+                    : ''
                 }`}
               >
                 <p className={`text-sm md:text-base leading-relaxed whitespace-pre-wrap ${
-                  msg.role === 'user' ? 'text-gold/80' : 'font-serif text-white/60'
+                  msg.role === 'user' ? 'text-white' : 'font-serif text-eden-700'
                 }`}>
                   {msg.content}
                 </p>
@@ -183,29 +175,29 @@ export default function MirrorPage() {
             </div>
           ))}
 
-          {/* Streaming text */}
+          {/* Streaming */}
           {streamingText && (
             <div className="chat-message text-left">
-              <p className="text-[10px] tracking-[0.2em] uppercase text-gold/30 mb-1.5">
+              <p className="text-[10px] tracking-wider uppercase text-eden-300 mb-1">
                 The Mirror
               </p>
-              <p className="font-serif text-sm md:text-base text-white/60 leading-relaxed whitespace-pre-wrap">
+              <p className="font-serif text-sm md:text-base text-eden-700 leading-relaxed whitespace-pre-wrap">
                 {streamingText}
-                <span className="inline-block w-1.5 h-4 bg-gold/40 ml-0.5 animate-pulse" />
+                <span className="inline-block w-1 h-4 bg-eden-400 ml-0.5 animate-pulse" />
               </p>
             </div>
           )}
 
-          {/* Loading indicator */}
+          {/* Loading */}
           {loading && !streamingText && (
             <div className="chat-message text-left">
-              <p className="text-[10px] tracking-[0.2em] uppercase text-gold/30 mb-1.5">
+              <p className="text-[10px] tracking-wider uppercase text-eden-300 mb-1">
                 The Mirror
               </p>
-              <div className="flex gap-1.5 py-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-gold/30 animate-pulse" style={{ animationDelay: '0s' }} />
-                <div className="w-1.5 h-1.5 rounded-full bg-gold/30 animate-pulse" style={{ animationDelay: '0.2s' }} />
-                <div className="w-1.5 h-1.5 rounded-full bg-gold/30 animate-pulse" style={{ animationDelay: '0.4s' }} />
+              <div className="flex gap-1 py-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-eden-300 animate-pulse" style={{ animationDelay: '0s' }} />
+                <div className="w-1.5 h-1.5 rounded-full bg-eden-300 animate-pulse" style={{ animationDelay: '0.15s' }} />
+                <div className="w-1.5 h-1.5 rounded-full bg-eden-300 animate-pulse" style={{ animationDelay: '0.3s' }} />
               </div>
             </div>
           )}
@@ -214,23 +206,20 @@ export default function MirrorPage() {
         </div>
       </div>
 
-      {/* CTA bar — after enough messages */}
+      {/* CTA after enough messages */}
       {messages.length >= 6 && (
-        <div className="px-4 py-3 bg-gold/[0.03] border-t border-gold/10 text-center animate-fade-in">
-          <p className="text-xs text-white/25 mb-2">
-            This conversation revealed something. Turn it into a permanent document.
-          </p>
+        <div className="px-4 py-3 bg-eden-50 border-t border-eden-100 text-center">
           <a
             href="/offering"
-            className="text-xs text-gold/50 hover:text-gold transition-colors tracking-wider"
+            className="text-xs text-eden-500 hover:text-eden-800 transition-colors"
           >
-            Get your philosophical guidebook →
+            Turn this into a permanent document &rarr;
           </a>
         </div>
       )}
 
-      {/* Input area */}
-      <div className="sticky bottom-16 bg-eden-dark/90 backdrop-blur-xl border-t border-white/5 px-4 md:px-6 py-4 relative z-10">
+      {/* Input */}
+      <div className="sticky bottom-0 bg-white border-t border-eden-100 px-4 md:px-6 py-4">
         <div className="max-w-2xl mx-auto flex gap-3">
           <textarea
             ref={inputRef}
@@ -239,7 +228,7 @@ export default function MirrorPage() {
             onKeyDown={handleKeyDown}
             placeholder="Say something..."
             rows={1}
-            className="flex-1 bg-white/[0.03] border border-white/5 rounded-lg px-4 py-3 text-sm text-white/70 placeholder:text-white/15 resize-none focus:border-gold/20 transition-colors"
+            className="flex-1 bg-eden-50 border border-eden-200 rounded-xl px-4 py-3 text-sm text-eden-800 placeholder:text-eden-300 resize-none focus:border-eden-500 transition-colors"
             style={{ minHeight: '44px', maxHeight: '120px' }}
             onInput={(e) => {
               e.target.style.height = '44px';
@@ -249,7 +238,7 @@ export default function MirrorPage() {
           <button
             onClick={sendMessage}
             disabled={!input.trim() || loading}
-            className="px-5 py-3 bg-gold/10 border border-gold/20 text-gold/60 text-sm rounded-lg hover:bg-gold/20 transition-all disabled:opacity-20 disabled:cursor-not-allowed flex-shrink-0"
+            className="px-4 py-3 bg-eden-900 text-white rounded-xl hover:bg-eden-700 transition-colors disabled:opacity-20 disabled:cursor-not-allowed flex-shrink-0"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>

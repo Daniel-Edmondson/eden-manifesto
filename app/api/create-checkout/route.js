@@ -5,26 +5,11 @@ function getStripe() {
   return new Stripe(process.env.STRIPE_SECRET_KEY);
 }
 
-const tierDescriptions = {
-  essential: {
-    name: 'The Eden Project — Essential Philosophical Guidebook',
-    description: 'A personalized 4,000–5,000 word philosophical guidebook with triadic analysis and faith integration.',
-  },
-  deep: {
-    name: 'The Eden Project — Deep Philosophical Guidebook',
-    description: 'An expanded 7,000–9,000 word philosophical guidebook with the psychedelic thesis and cross-tradition connections.',
-  },
-  complete: {
-    name: 'The Eden Project — Complete Theory of Everything',
-    description: 'The full 10,000–12,000 word philosophical guidebook — a comprehensive theory of everything for your life.',
-  },
-};
-
 export async function POST(req) {
   try {
-    const { amount, tier = 'deep' } = await req.json();
-    const unitAmount = Math.max(2000, amount);
-    const tierInfo = tierDescriptions[tier] || tierDescriptions.deep;
+    const { amount } = await req.json();
+    // Minimum $15 (1500 cents), maximum $100 (10000 cents)
+    const unitAmount = Math.max(1500, Math.min(10000, amount));
 
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
@@ -34,8 +19,8 @@ export async function POST(req) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: tierInfo.name,
-              description: tierInfo.description,
+              name: 'The Eden Project — Philosophical Document',
+              description: 'A personalized philosophical document built from your answers and a framework designed to meet you where you are.',
             },
             unit_amount: unitAmount,
           },
@@ -43,10 +28,9 @@ export async function POST(req) {
         },
       ],
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/questionnaire?session_id={CHECKOUT_SESSION_ID}&tier=${tier}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/offering?tier=${tier}`,
+      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/questionnaire?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/offering`,
       customer_creation: 'always',
-      metadata: { tier },
     });
 
     return NextResponse.json({ url: session.url });
