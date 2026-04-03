@@ -11,7 +11,7 @@ export default function SupportPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-white relative overflow-hidden">
+    <main className="min-h-screen bg-surface relative overflow-hidden">
       <SacredGeometry opacity={0.05} />
 
       <div className={`relative z-10 max-w-2xl mx-auto px-6 py-24 transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>

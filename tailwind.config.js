@@ -13,32 +13,32 @@ module.exports = {
       },
       colors: {
         surface: {
-          DEFAULT: '#ffffff',
-          secondary: '#f5f5f7',
-          tertiary: '#fafafa',
+          DEFAULT: '#c8b896',       // warm tan — main bg
+          secondary: '#b8a682',     // deeper tan — section bg
+          tertiary: '#d4c6a8',      // lighter tan
         },
         ink: {
-          DEFAULT: '#1d1d1f',
-          secondary: '#6e6e73',
-          tertiary: '#86868b',
-          faint: '#d2d2d7',
+          DEFAULT: '#ffffff',              // white — primary text
+          secondary: 'rgba(255,255,255,0.78)',
+          tertiary: 'rgba(255,255,255,0.55)',
+          faint: 'rgba(255,255,255,0.25)',
         },
         accent: {
-          DEFAULT: '#1d1d1f',
-          muted: '#6e6e73',
-          subtle: '#d2d2d7',
+          DEFAULT: '#4a6741',       // forest green — buttons, accents
+          muted: '#5c7a52',         // lighter green
+          subtle: '#3d5a35',        // darker green
         },
         eden: {
-          50: '#f5f5f7',
-          100: '#e8e8ed',
-          200: '#d2d2d7',
-          300: '#86868b',
-          400: '#6e6e73',
-          500: '#424245',
-          600: '#1d1d1f',
-          700: '#111111',
-          800: '#0a0a0a',
-          900: '#000000',
+          50: '#d4c6a8',
+          100: '#c8b896',
+          200: '#b8a682',
+          300: '#a89470',
+          400: '#98845e',
+          500: '#4a6741',
+          600: '#3d5a35',
+          700: '#2f4a28',
+          800: '#223a1c',
+          900: '#152b11',
         },
       },
       fontSize: {

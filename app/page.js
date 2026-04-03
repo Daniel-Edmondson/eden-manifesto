@@ -13,7 +13,7 @@ export default function Home() {
   if (!visible) return null;
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-surface">
 
       {/* ===== HERO ===== */}
       <section className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden">
@@ -44,8 +44,8 @@ export default function Home() {
 
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-float">
-          <div className="w-5 h-8 rounded-full border border-ink/30 flex items-start justify-center p-1.5">
-            <div className="w-1 h-2 rounded-full bg-ink/40 animate-pulse-soft" />
+          <div className="w-5 h-8 rounded-full border border-white/30 flex items-start justify-center p-1.5">
+            <div className="w-1 h-2 rounded-full bg-white/40 animate-pulse-soft" />
           </div>
         </div>
       </section>
@@ -67,7 +67,7 @@ export default function Home() {
       </section>
 
       {/* ===== HOW IT WORKS ===== */}
-      <section className="relative py-32 px-6 border-t border-black/[0.08]">
+      <section className="relative py-32 px-6 border-t border-white/[0.12]">
         <div className="relative max-w-4xl mx-auto">
           <p className="text-xs text-ink-secondary tracking-[0.3em] uppercase mb-16 text-center">
             How It Works
@@ -131,7 +131,7 @@ export default function Home() {
             {['Philosophy', 'Theology', 'Science', 'Literature', 'Mysticism', 'Psychology'].map((tag, i) => (
               <span
                 key={i}
-                className="text-xs tracking-[0.15em] uppercase text-ink-secondary border border-black/[0.12] rounded-full px-4 py-1.5"
+                className="text-xs tracking-[0.15em] uppercase text-ink-secondary border border-white/[0.2] rounded-full px-4 py-1.5"
               >
                 {tag}
               </span>
@@ -184,7 +184,7 @@ export default function Home() {
       </section>
 
       {/* ===== CONTACT ===== */}
-      <section className="relative py-24 px-6 border-t border-black/[0.08]">
+      <section className="relative py-24 px-6 border-t border-white/[0.12]">
         <div className="relative max-w-xl mx-auto text-center">
           <p className="text-base text-ink-secondary mb-6">
             Questions, doubts, pushback — all welcome.
@@ -209,7 +209,7 @@ export default function Home() {
       </section>
 
       {/* ===== FOOTER ===== */}
-      <footer className="py-8 px-6 border-t border-black/[0.08]">
+      <footer className="py-8 px-6 border-t border-white/[0.12]">
         <div className="max-w-5xl mx-auto flex justify-between items-center text-sm text-ink-secondary">
           <span>The Eden Project &copy; {new Date().getFullYear()}</span>
           <a href="mailto:danieledmondson45@gmail.com" className="hover:text-ink transition-colors">

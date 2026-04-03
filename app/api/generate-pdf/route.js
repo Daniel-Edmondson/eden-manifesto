@@ -39,61 +39,70 @@ export async function POST(req) {
   }
 }
 
-// ======== DESIGN SYSTEM — Clean White ========
+// ======== DESIGN SYSTEM — Tan & Green ========
 
-const WHITE = [255, 255, 255];
-const INK = [29, 29, 31];               // #1d1d1f
-const INK_SECONDARY = [110, 110, 115];  // #6e6e73
-const INK_TERTIARY = [134, 134, 139];   // #86868b
-const INK_FAINT = [210, 210, 215];      // #d2d2d7
-const SURFACE = [245, 245, 247];        // #f5f5f7
+const TAN = [200, 184, 150];              // #c8b896 — page background
+const TAN_DARK = [184, 166, 130];         // #b8a682 — deeper tan
+const TAN_LIGHT = [212, 198, 168];        // #d4c6a8 — lighter tan
+const WHITE = [255, 255, 255];            // #ffffff — primary text
+const WHITE_SECONDARY = [255, 255, 255];  // used at lower opacity via line width
+const GREEN = [74, 103, 65];              // #4a6741 — accent
+const GREEN_LIGHT = [92, 122, 82];        // #5c7a52 — lighter green
+const GREEN_DARK = [61, 90, 53];          // #3d5a35 — darker green
 
 // ======== DECORATIVE HELPERS ========
 
+function fillPageBg(doc) {
+  const pw = doc.internal.pageSize.getWidth();
+  const ph = doc.internal.pageSize.getHeight();
+  doc.setFillColor(TAN[0], TAN[1], TAN[2]);
+  doc.rect(0, 0, pw, ph, 'F');
+}
+
 function drawO(doc, cx, cy, r, opacity = 1) {
-  doc.setDrawColor(INK[0], INK[1], INK[2]);
+  doc.setDrawColor(WHITE[0], WHITE[1], WHITE[2]);
   doc.setLineWidth(0.6 * opacity);
   doc.circle(cx, cy, r, 'S');
 }
 
 function drawODouble(doc, cx, cy, r1, r2) {
-  doc.setDrawColor(INK[0], INK[1], INK[2]);
+  doc.setDrawColor(WHITE[0], WHITE[1], WHITE[2]);
   doc.setLineWidth(0.8);
   doc.circle(cx, cy, r1, 'S');
-  doc.setDrawColor(INK_TERTIARY[0], INK_TERTIARY[1], INK_TERTIARY[2]);
+  doc.setDrawColor(WHITE[0], WHITE[1], WHITE[2]);
   doc.setLineWidth(0.4);
   doc.circle(cx, cy, r2, 'S');
 }
 
 function drawOTriple(doc, cx, cy, r1, r2, r3) {
-  doc.setDrawColor(INK[0], INK[1], INK[2]);
+  doc.setDrawColor(WHITE[0], WHITE[1], WHITE[2]);
   doc.setLineWidth(1);
   doc.circle(cx, cy, r1, 'S');
-  doc.setDrawColor(INK_SECONDARY[0], INK_SECONDARY[1], INK_SECONDARY[2]);
+  doc.setDrawColor(WHITE[0], WHITE[1], WHITE[2]);
   doc.setLineWidth(0.5);
   doc.circle(cx, cy, r2, 'S');
-  doc.setDrawColor(INK_FAINT[0], INK_FAINT[1], INK_FAINT[2]);
+  doc.setDrawColor(WHITE[0], WHITE[1], WHITE[2]);
   doc.setLineWidth(0.3);
   doc.circle(cx, cy, r3, 'S');
 }
 
 function drawTriad(doc, cx, cy, size) {
   const h = size * Math.sqrt(3) / 2;
-  doc.setDrawColor(INK_FAINT[0], INK_FAINT[1], INK_FAINT[2]);
-  doc.setLineWidth(0.3);
+  doc.setDrawColor(GREEN[0], GREEN[1], GREEN[2]);
+  doc.setLineWidth(0.4);
   doc.line(cx, cy - h * 0.6, cx - size / 2, cy + h * 0.4);
   doc.line(cx - size / 2, cy + h * 0.4, cx + size / 2, cy + h * 0.4);
   doc.line(cx + size / 2, cy + h * 0.4, cx, cy - h * 0.6);
   // Dots
-  doc.setFillColor(INK[0], INK[1], INK[2]);
+  doc.setFillColor(WHITE[0], WHITE[1], WHITE[2]);
   doc.circle(cx, cy - h * 0.6, 2, 'F');
-  doc.setFillColor(INK_SECONDARY[0], INK_SECONDARY[1], INK_SECONDARY[2]);
+  doc.setFillColor(GREEN_LIGHT[0], GREEN_LIGHT[1], GREEN_LIGHT[2]);
   doc.circle(cx - size / 2, cy + h * 0.4, 1.5, 'F');
   doc.circle(cx + size / 2, cy + h * 0.4, 1.5, 'F');
 }
 
 function drawDotDivider(doc, cx, y) {
-  doc.setFillColor(INK_FAINT[0], INK_FAINT[1], INK_FAINT[2]);
+  doc.setFillColor(GREEN[0], GREEN[1], GREEN[2]);
   doc.circle(cx - 12, y, 0.8, 'F');
   doc.circle(cx, y, 0.8, 'F');
   doc.circle(cx + 12, y, 0.8, 'F');
@@ -101,7 +110,7 @@ function drawDotDivider(doc, cx, y) {
 
 function drawThinRule(doc, cx, width, y) {
   const halfW = width * 0.15;
-  doc.setDrawColor(INK_FAINT[0], INK_FAINT[1], INK_FAINT[2]);
+  doc.setDrawColor(GREEN[0], GREEN[1], GREEN[2]);
   doc.setLineWidth(0.3);
   doc.line(cx - halfW, y, cx + halfW, y);
 }
@@ -120,19 +129,19 @@ function generatePDF(text, name) {
   const cx = pageWidth / 2;
 
   // ======== TITLE PAGE ========
-  // Clean white background (default)
+  fillPageBg(doc);
 
   // Triple O symbol
   drawOTriple(doc, cx, 240, 55, 38, 22);
 
   // Center dot
-  doc.setFillColor(INK[0], INK[1], INK[2]);
+  doc.setFillColor(WHITE[0], WHITE[1], WHITE[2]);
   doc.circle(cx, 240, 2, 'F');
 
   // "THE EDEN PROJECT"
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
-  doc.setTextColor(INK_TERTIARY[0], INK_TERTIARY[1], INK_TERTIARY[2]);
+  doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
   doc.text('T H E   E D E N   P R O J E C T', cx, 160, { align: 'center' });
 
   // Thin rule under header
@@ -141,18 +150,18 @@ function generatePDF(text, name) {
   // Title
   doc.setFont('times', 'normal');
   doc.setFontSize(32);
-  doc.setTextColor(INK[0], INK[1], INK[2]);
+  doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
   doc.text('A Philosophical Document', cx, 340, { align: 'center' });
 
   doc.setFont('times', 'normal');
   doc.setFontSize(24);
-  doc.setTextColor(INK_SECONDARY[0], INK_SECONDARY[1], INK_SECONDARY[2]);
+  doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
   doc.text(`for ${name}`, cx, 378, { align: 'center' });
 
   // Subtitle
   doc.setFont('times', 'italic');
   doc.setFontSize(11);
-  doc.setTextColor(INK_TERTIARY[0], INK_TERTIARY[1], INK_TERTIARY[2]);
+  doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
   doc.text('Written for you. Not a template. Not a summary.', cx, 425, { align: 'center' });
   doc.text('A conversation between your words, a framework, and the landscape of human thought.', cx, 441, { align: 'center' });
 
@@ -162,7 +171,7 @@ function generatePDF(text, name) {
   // Triad labels
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7);
-  doc.setTextColor(INK_TERTIARY[0], INK_TERTIARY[1], INK_TERTIARY[2]);
+  doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
   const triadH = 50 * Math.sqrt(3) / 2;
   doc.text('BEING', cx, pageHeight - 130 - triadH * 0.6 - 8, { align: 'center' });
   doc.text('PARADOX', cx - 25 - 8, pageHeight - 130 + triadH * 0.4 + 12, { align: 'center' });
@@ -170,28 +179,30 @@ function generatePDF(text, name) {
 
   // ======== EPIGRAPH PAGE ========
   doc.addPage();
+  fillPageBg(doc);
 
   // Epigraph
   doc.setFont('times', 'italic');
   doc.setFontSize(16);
-  doc.setTextColor(INK_SECONDARY[0], INK_SECONDARY[1], INK_SECONDARY[2]);
+  doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
   doc.text('"The Kingdom of Heaven is within you."', cx, pageHeight / 2 - 20, { align: 'center' });
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
-  doc.setTextColor(INK_TERTIARY[0], INK_TERTIARY[1], INK_TERTIARY[2]);
+  doc.setTextColor(GREEN_LIGHT[0], GREEN_LIGHT[1], GREEN_LIGHT[2]);
   doc.text('Luke 17:21', cx, pageHeight / 2 + 10, { align: 'center' });
 
   drawO(doc, cx, pageHeight / 2 + 50, 8, 0.3);
 
   // ======== BODY PAGES ========
   doc.addPage();
+  fillPageBg(doc);
 
   let y = marginTop;
   let pageNum = 3;
   let paragraphCount = 0;
 
-  // Body text: 18pt for iPhone readability (was 16pt, originally 12.5pt)
+  // Body text: 18pt for iPhone readability
   const bodyFontSize = 18;
   const lineHeight = 27;
   const paragraphSpacing = 18;
@@ -206,19 +217,20 @@ function generatePDF(text, name) {
   function resetStyle() {
     doc.setFont('times', 'normal');
     doc.setFontSize(bodyFontSize);
-    doc.setTextColor(INK[0], INK[1], INK[2]);
+    doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
   }
 
   function addPageFooter(num) {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
-    doc.setTextColor(INK_FAINT[0], INK_FAINT[1], INK_FAINT[2]);
+    doc.setTextColor(GREEN_LIGHT[0], GREEN_LIGHT[1], GREEN_LIGHT[2]);
     doc.text(String(num), cx, pageHeight - 28, { align: 'center' });
     resetStyle();
   }
 
   function newPage() {
     doc.addPage();
+    fillPageBg(doc);
     pageNum++;
     y = marginTop;
     addPageFooter(pageNum);
@@ -266,7 +278,7 @@ function generatePDF(text, name) {
         y += 20;
 
         // Thin rule above
-        doc.setDrawColor(INK_FAINT[0], INK_FAINT[1], INK_FAINT[2]);
+        doc.setDrawColor(GREEN[0], GREEN[1], GREEN[2]);
         doc.setLineWidth(0.3);
         doc.line(marginLeft + 30, y, pageWidth - marginRight - 30, y);
 
@@ -274,7 +286,7 @@ function generatePDF(text, name) {
 
         doc.setFont('times', 'italic');
         doc.setFontSize(20);
-        doc.setTextColor(INK_SECONDARY[0], INK_SECONDARY[1], INK_SECONDARY[2]);
+        doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
         const pullLines = doc.splitTextToSize(trimmed, contentWidth - 60);
         for (const line of pullLines) {
           if (y > pageHeight - marginBottom) { newPage(); }
@@ -283,7 +295,7 @@ function generatePDF(text, name) {
         }
 
         y += 8;
-        doc.setDrawColor(INK_FAINT[0], INK_FAINT[1], INK_FAINT[2]);
+        doc.setDrawColor(GREEN[0], GREEN[1], GREEN[2]);
         doc.setLineWidth(0.3);
         doc.line(marginLeft + 30, y, pageWidth - marginRight - 30, y);
 
@@ -310,24 +322,25 @@ function generatePDF(text, name) {
 
   // ======== CLOSING PAGE ========
   doc.addPage();
+  fillPageBg(doc);
 
   // Triple O
   drawOTriple(doc, cx, pageHeight / 2 - 50, 35, 22, 12);
 
   // Center dot
-  doc.setFillColor(INK[0], INK[1], INK[2]);
+  doc.setFillColor(WHITE[0], WHITE[1], WHITE[2]);
   doc.circle(cx, pageHeight / 2 - 50, 1.5, 'F');
 
   // Header
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
-  doc.setTextColor(INK_TERTIARY[0], INK_TERTIARY[1], INK_TERTIARY[2]);
+  doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
   doc.text('T H E   E D E N   P R O J E C T', cx, pageHeight / 2 + 10, { align: 'center' });
 
   // Closing line
   doc.setFont('times', 'italic');
   doc.setFontSize(13);
-  doc.setTextColor(INK_SECONDARY[0], INK_SECONDARY[1], INK_SECONDARY[2]);
+  doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
   doc.text('You are already what you are looking for.', cx, pageHeight / 2 + 40, { align: 'center' });
 
   // Rule
@@ -336,12 +349,12 @@ function generatePDF(text, name) {
   // Contact
   doc.setFont('times', 'italic');
   doc.setFontSize(10);
-  doc.setTextColor(INK_TERTIARY[0], INK_TERTIARY[1], INK_TERTIARY[2]);
+  doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
   doc.text('If this changed something, share it.', cx, pageHeight / 2 + 85, { align: 'center' });
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
-  doc.setTextColor(INK_SECONDARY[0], INK_SECONDARY[1], INK_SECONDARY[2]);
+  doc.setTextColor(GREEN_LIGHT[0], GREEN_LIGHT[1], GREEN_LIGHT[2]);
   doc.text('danieledmondson45@gmail.com', cx, pageHeight / 2 + 105, { align: 'center' });
 
   // Bottom triad

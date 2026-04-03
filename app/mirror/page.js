@@ -89,7 +89,7 @@ export default function MirrorPage() {
   // Pre-start
   if (!started) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 bg-white relative overflow-hidden">
+      <main className="min-h-screen flex items-center justify-center px-6 bg-surface relative overflow-hidden">
         <SacredGeometry opacity={0.05} />
 
         <div className="relative max-w-md text-center page-enter z-10">
@@ -135,7 +135,7 @@ export default function MirrorPage() {
                     }]);
                     setTimeout(() => setInput(prompt), 300);
                   }}
-                  className="text-sm px-4 py-2 border border-black/[0.12] text-ink-secondary hover:text-ink hover:border-black/[0.25] transition-colors rounded-full"
+                  className="text-sm px-4 py-2 border border-white/[0.2] text-ink-secondary hover:text-ink hover:border-white/[0.4] transition-colors rounded-full"
                 >
                   {prompt}
                 </button>
@@ -148,7 +148,7 @@ export default function MirrorPage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col bg-white relative">
+    <main className="min-h-screen flex flex-col bg-surface relative">
       {/* Messages */}
       <div className="relative flex-1 overflow-y-auto px-4 md:px-6 py-8 z-10">
         <div className="max-w-2xl mx-auto space-y-6">
@@ -165,7 +165,7 @@ export default function MirrorPage() {
               <div
                 className={`inline-block max-w-[85%] text-left ${
                   msg.role === 'user'
-                    ? 'bg-ink text-white rounded-2xl rounded-br-sm px-5 py-3'
+                    ? 'bg-accent text-white rounded-2xl rounded-br-sm px-5 py-3'
                     : ''
                 }`}
               >
@@ -186,7 +186,7 @@ export default function MirrorPage() {
               </p>
               <p className="font-serif text-base md:text-lg text-ink-secondary leading-relaxed whitespace-pre-wrap">
                 {streamingText}
-                <span className="inline-block w-1 h-5 bg-ink/50 ml-0.5 animate-pulse" />
+                <span className="inline-block w-1 h-5 bg-white/50 ml-0.5 animate-pulse" />
               </p>
             </div>
           )}
@@ -198,9 +198,9 @@ export default function MirrorPage() {
                 The Mirror
               </p>
               <div className="flex gap-1.5 py-2">
-                <div className="w-2 h-2 rounded-full bg-ink/35 animate-pulse" style={{ animationDelay: '0s' }} />
-                <div className="w-2 h-2 rounded-full bg-ink/35 animate-pulse" style={{ animationDelay: '0.15s' }} />
-                <div className="w-2 h-2 rounded-full bg-ink/35 animate-pulse" style={{ animationDelay: '0.3s' }} />
+                <div className="w-2 h-2 rounded-full bg-white/35 animate-pulse" style={{ animationDelay: '0s' }} />
+                <div className="w-2 h-2 rounded-full bg-white/35 animate-pulse" style={{ animationDelay: '0.15s' }} />
+                <div className="w-2 h-2 rounded-full bg-white/35 animate-pulse" style={{ animationDelay: '0.3s' }} />
               </div>
             </div>
           )}
@@ -211,7 +211,7 @@ export default function MirrorPage() {
 
       {/* CTA after enough messages */}
       {messages.length >= 6 && (
-        <div className="relative px-4 py-3 bg-surface-secondary border-t border-black/[0.08] text-center z-10">
+        <div className="relative px-4 py-3 bg-surface-secondary border-t border-white/[0.12] text-center z-10">
           <a
             href="/offering"
             className="text-sm text-ink-secondary hover:text-ink transition-colors"
@@ -222,7 +222,7 @@ export default function MirrorPage() {
       )}
 
       {/* Input */}
-      <div className="relative sticky bottom-0 bg-white/95 backdrop-blur-xl border-t border-black/[0.1] px-4 md:px-6 py-4 z-10">
+      <div className="relative sticky bottom-0 bg-surface/95 backdrop-blur-xl border-t border-white/[0.15] px-4 md:px-6 py-4 z-10">
         <div className="max-w-2xl mx-auto flex gap-3">
           <textarea
             ref={inputRef}
@@ -231,7 +231,7 @@ export default function MirrorPage() {
             onKeyDown={handleKeyDown}
             placeholder="Say something..."
             rows={1}
-            className="flex-1 bg-surface-secondary border border-black/[0.1] rounded-xl px-4 py-3 text-base text-ink placeholder:text-ink-tertiary resize-none focus:border-black/[0.2] transition-colors"
+            className="flex-1 bg-surface-secondary border border-white/[0.15] rounded-xl px-4 py-3 text-base text-ink placeholder:text-ink-tertiary resize-none focus:border-white/[0.3] transition-colors"
             style={{ minHeight: '44px', maxHeight: '120px' }}
             onInput={(e) => {
               e.target.style.height = '44px';
@@ -241,7 +241,7 @@ export default function MirrorPage() {
           <button
             onClick={sendMessage}
             disabled={!input.trim() || loading}
-            className="px-4 py-3 bg-ink text-white rounded-xl hover:bg-ink-secondary transition-colors disabled:opacity-20 disabled:cursor-not-allowed flex-shrink-0"
+            className="px-4 py-3 bg-accent text-white rounded-xl hover:bg-accent-muted transition-colors disabled:opacity-20 disabled:cursor-not-allowed flex-shrink-0"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
               <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>

@@ -14,7 +14,7 @@ export function OBreathing({ size = 120, className = '' }) {
           cy={size / 2}
           r={size / 2 - 2}
           fill="none"
-          stroke="#1d1d1f"
+          stroke="#ffffff"
           strokeWidth="1.5"
           className="animate-breathe"
         />
@@ -23,7 +23,7 @@ export function OBreathing({ size = 120, className = '' }) {
           cy={size / 2}
           r={size / 3}
           fill="none"
-          stroke="#1d1d1f"
+          stroke="#ffffff"
           strokeWidth="0.75"
           opacity="0.45"
           className="animate-breathe"
@@ -34,7 +34,7 @@ export function OBreathing({ size = 120, className = '' }) {
           cy={size / 2}
           r={size / 5}
           fill="none"
-          stroke="#1d1d1f"
+          stroke="#ffffff"
           strokeWidth="0.5"
           opacity="0.25"
           className="animate-breathe"
@@ -58,7 +58,7 @@ export function OHero({ size = 280, className = '' }) {
           cy="140"
           r="135"
           fill="none"
-          stroke="#1d1d1f"
+          stroke="#ffffff"
           strokeWidth="1.5"
           className="o-draw"
         />
@@ -69,7 +69,7 @@ export function OHero({ size = 280, className = '' }) {
           cy="140"
           r="95"
           fill="none"
-          stroke="#1d1d1f"
+          stroke="#ffffff"
           strokeWidth="0.75"
           opacity="0.5"
           className="o-draw"
@@ -82,7 +82,7 @@ export function OHero({ size = 280, className = '' }) {
           cy="140"
           r="55"
           fill="none"
-          stroke="#1d1d1f"
+          stroke="#ffffff"
           strokeWidth="0.5"
           opacity="0.3"
           className="o-draw"
@@ -94,7 +94,7 @@ export function OHero({ size = 280, className = '' }) {
           cx="140"
           cy="140"
           r="3"
-          fill="#1d1d1f"
+          fill="#ffffff"
           opacity="0.7"
           className="animate-pulse-ink"
         />
@@ -103,7 +103,7 @@ export function OHero({ size = 280, className = '' }) {
         <polygon
           points="140,45 55,185 225,185"
           fill="none"
-          stroke="#1d1d1f"
+          stroke="#ffffff"
           strokeWidth="0.5"
           opacity="0.2"
           className="sacred-draw"
@@ -114,7 +114,7 @@ export function OHero({ size = 280, className = '' }) {
         <polygon
           points="140,235 55,95 225,95"
           fill="none"
-          stroke="#1d1d1f"
+          stroke="#ffffff"
           strokeWidth="0.5"
           opacity="0.12"
           className="sacred-draw"
@@ -126,7 +126,7 @@ export function OHero({ size = 280, className = '' }) {
 }
 
 // ============================================
-// Progress indicator — dark arc
+// Progress indicator — green arc on tan
 // ============================================
 export function OProgress({ progress = 0, size = 48, className = '' }) {
   const radius = (size / 2) - 3;
@@ -140,7 +140,7 @@ export function OProgress({ progress = 0, size = 48, className = '' }) {
         cy={size / 2}
         r={radius}
         fill="none"
-        stroke="rgba(0, 0, 0, 0.1)"
+        stroke="rgba(255, 255, 255, 0.2)"
         strokeWidth="2"
       />
       <circle
@@ -148,7 +148,7 @@ export function OProgress({ progress = 0, size = 48, className = '' }) {
         cy={size / 2}
         r={radius}
         fill="none"
-        stroke="#1d1d1f"
+        stroke="#4a6741"
         strokeWidth="2"
         strokeLinecap="round"
         strokeDasharray={circumference}
@@ -168,18 +168,18 @@ export function TriadGraphic({ className = '', size = 200, animated = true }) {
     <div className={`relative ${className}`}>
       <svg width={size} height={size} viewBox="0 0 200 200">
         {/* Connecting lines */}
-        <line x1="100" y1="30" x2="30" y2="170" stroke="#1d1d1f" strokeWidth="0.7" opacity="0.35" className={animated ? 'sacred-draw' : ''} />
-        <line x1="30" y1="170" x2="170" y2="170" stroke="#1d1d1f" strokeWidth="0.7" opacity="0.35" className={animated ? 'sacred-draw' : ''} style={animated ? { animationDelay: '0.5s' } : {}} />
-        <line x1="170" y1="170" x2="100" y2="30" stroke="#1d1d1f" strokeWidth="0.7" opacity="0.35" className={animated ? 'sacred-draw' : ''} style={animated ? { animationDelay: '1s' } : {}} />
+        <line x1="100" y1="30" x2="30" y2="170" stroke="#ffffff" strokeWidth="0.7" opacity="0.35" className={animated ? 'sacred-draw' : ''} />
+        <line x1="30" y1="170" x2="170" y2="170" stroke="#ffffff" strokeWidth="0.7" opacity="0.35" className={animated ? 'sacred-draw' : ''} style={animated ? { animationDelay: '0.5s' } : {}} />
+        <line x1="170" y1="170" x2="100" y2="30" stroke="#ffffff" strokeWidth="0.7" opacity="0.35" className={animated ? 'sacred-draw' : ''} style={animated ? { animationDelay: '1s' } : {}} />
 
         {/* Position 1 — Being (top) */}
-        <circle cx="100" cy="30" r="5" fill="#1d1d1f" className={animated ? 'animate-pulse-ink' : ''} />
+        <circle cx="100" cy="30" r="5" fill="#ffffff" className={animated ? 'animate-pulse-ink' : ''} />
 
         {/* Position 2 — Paradox (bottom-left) */}
-        <circle cx="30" cy="170" r="4" fill="#1d1d1f" opacity="0.6" className={animated ? 'animate-pulse-ink' : ''} style={animated ? { animationDelay: '1.5s' } : {}} />
+        <circle cx="30" cy="170" r="4" fill="#ffffff" opacity="0.6" className={animated ? 'animate-pulse-ink' : ''} style={animated ? { animationDelay: '1.5s' } : {}} />
 
         {/* Position 3 — Transcendence (bottom-right) */}
-        <circle cx="170" cy="170" r="4" fill="#1d1d1f" opacity="0.8" className={animated ? 'animate-pulse-ink' : ''} style={animated ? { animationDelay: '3s' } : {}} />
+        <circle cx="170" cy="170" r="4" fill="#ffffff" opacity="0.8" className={animated ? 'animate-pulse-ink' : ''} style={animated ? { animationDelay: '3s' } : {}} />
       </svg>
 
       {/* Labels */}
@@ -209,13 +209,13 @@ export function SacredGeometry({ className = '', opacity = 0.06 }) {
         preserveAspectRatio="xMidYMid slice"
         style={{ opacity }}
       >
-        <circle cx="400" cy="400" r="200" fill="none" stroke="#1d1d1f" strokeWidth="0.7" />
-        <circle cx="400" cy="200" r="200" fill="none" stroke="#1d1d1f" strokeWidth="0.5" />
-        <circle cx="400" cy="600" r="200" fill="none" stroke="#1d1d1f" strokeWidth="0.5" />
-        <circle cx="227" cy="300" r="200" fill="none" stroke="#1d1d1f" strokeWidth="0.5" />
-        <circle cx="573" cy="300" r="200" fill="none" stroke="#1d1d1f" strokeWidth="0.5" />
-        <circle cx="227" cy="500" r="200" fill="none" stroke="#1d1d1f" strokeWidth="0.5" />
-        <circle cx="573" cy="500" r="200" fill="none" stroke="#1d1d1f" strokeWidth="0.5" />
+        <circle cx="400" cy="400" r="200" fill="none" stroke="#ffffff" strokeWidth="0.7" />
+        <circle cx="400" cy="200" r="200" fill="none" stroke="#ffffff" strokeWidth="0.5" />
+        <circle cx="400" cy="600" r="200" fill="none" stroke="#ffffff" strokeWidth="0.5" />
+        <circle cx="227" cy="300" r="200" fill="none" stroke="#ffffff" strokeWidth="0.5" />
+        <circle cx="573" cy="300" r="200" fill="none" stroke="#ffffff" strokeWidth="0.5" />
+        <circle cx="227" cy="500" r="200" fill="none" stroke="#ffffff" strokeWidth="0.5" />
+        <circle cx="573" cy="500" r="200" fill="none" stroke="#ffffff" strokeWidth="0.5" />
       </svg>
     </div>
   );
@@ -233,13 +233,13 @@ export function AwakeningSequence({ phase = 0, className = '' }) {
       {/* Expanding rings */}
       <div className="absolute">
         <div
-          className="w-64 h-64 rounded-full border border-ink/20 awaken-ring-1"
+          className="w-64 h-64 rounded-full border border-white/20 awaken-ring-1"
           style={{ animationDuration: `${4 - phase * 0.5}s` }}
         />
       </div>
       <div className="absolute">
         <div
-          className="w-48 h-48 rounded-full border border-ink/25 awaken-ring-2"
+          className="w-48 h-48 rounded-full border border-white/25 awaken-ring-2"
           style={{ animationDuration: `${3.5 - phase * 0.3}s` }}
         />
       </div>
@@ -260,12 +260,12 @@ export function AwakeningSequence({ phase = 0, className = '' }) {
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="animate-fade-in">
             <svg width="200" height="200" viewBox="0 0 200 200">
-              <circle cx="100" cy="20" r="3" fill="#1d1d1f" className="animate-pulse-ink" />
-              <circle cx="30" cy="170" r="3" fill="#1d1d1f" opacity="0.6" className="animate-pulse-ink" style={{ animationDelay: '0.5s' }} />
-              <circle cx="170" cy="170" r="3" fill="#1d1d1f" opacity="0.8" className="animate-pulse-ink" style={{ animationDelay: '1s' }} />
-              <line x1="100" y1="20" x2="30" y2="170" stroke="#1d1d1f" strokeWidth="0.7" opacity="0.3" />
-              <line x1="30" y1="170" x2="170" y2="170" stroke="#1d1d1f" strokeWidth="0.7" opacity="0.3" />
-              <line x1="170" y1="170" x2="100" y2="20" stroke="#1d1d1f" strokeWidth="0.7" opacity="0.3" />
+              <circle cx="100" cy="20" r="3" fill="#ffffff" className="animate-pulse-ink" />
+              <circle cx="30" cy="170" r="3" fill="#ffffff" opacity="0.6" className="animate-pulse-ink" style={{ animationDelay: '0.5s' }} />
+              <circle cx="170" cy="170" r="3" fill="#ffffff" opacity="0.8" className="animate-pulse-ink" style={{ animationDelay: '1s' }} />
+              <line x1="100" y1="20" x2="30" y2="170" stroke="#ffffff" strokeWidth="0.7" opacity="0.3" />
+              <line x1="30" y1="170" x2="170" y2="170" stroke="#ffffff" strokeWidth="0.7" opacity="0.3" />
+              <line x1="170" y1="170" x2="100" y2="20" stroke="#ffffff" strokeWidth="0.7" opacity="0.3" />
             </svg>
           </div>
         </div>
@@ -281,15 +281,15 @@ export function TriadDots({ className = '' }) {
   return (
     <div className={`flex items-center justify-center gap-16 ${className}`}>
       <div className="flex flex-col items-center gap-2">
-        <div className="w-3 h-3 rounded-full bg-ink" />
+        <div className="w-3 h-3 rounded-full bg-white" />
         <span className="text-xs text-ink-secondary tracking-[0.2em] uppercase">Being</span>
       </div>
       <div className="flex flex-col items-center gap-2">
-        <div className="w-3 h-3 rounded-full bg-ink opacity-50" />
+        <div className="w-3 h-3 rounded-full bg-white opacity-50" />
         <span className="text-xs text-ink-secondary tracking-[0.2em] uppercase">Paradox</span>
       </div>
       <div className="flex flex-col items-center gap-2">
-        <div className="w-3 h-3 rounded-full bg-ink opacity-70" />
+        <div className="w-3 h-3 rounded-full bg-white opacity-70" />
         <span className="text-xs text-ink-secondary tracking-[0.2em] uppercase">Transcendence</span>
       </div>
     </div>

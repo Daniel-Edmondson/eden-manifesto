@@ -288,7 +288,7 @@ function QuestionnaireContent() {
   // Loading states
   if (verifying) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-white">
+      <main className="min-h-screen flex items-center justify-center bg-surface">
         <p className="text-ink-tertiary animate-pulse-soft">Verifying...</p>
       </main>
     );
@@ -296,7 +296,7 @@ function QuestionnaireContent() {
 
   if ((!sessionId && !promoCode) || !verified) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 bg-white">
+      <main className="min-h-screen flex items-center justify-center px-6 bg-surface">
         <div className="max-w-md text-center">
           <p className="text-ink-secondary mb-4">Payment required.</p>
           <a href="/offering" className="text-sm text-ink-tertiary hover:text-ink transition-colors">
@@ -321,7 +321,7 @@ function QuestionnaireContent() {
   // Download ready
   if (downloadUrl) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 bg-white relative overflow-hidden">
+      <main className="min-h-screen flex items-center justify-center px-6 bg-surface relative overflow-hidden">
         <SacredGeometry opacity={0.05} />
 
         <div className="relative max-w-md text-center page-enter z-10">
@@ -355,7 +355,7 @@ function QuestionnaireContent() {
   // Error
   if (error && !generating) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 bg-white">
+      <main className="min-h-screen flex items-center justify-center px-6 bg-surface">
         <div className="max-w-md text-center page-enter">
           <p className="text-xl text-ink mb-4">Something went wrong.</p>
           <p className="text-base text-ink-secondary mb-8">{error}</p>
@@ -374,7 +374,7 @@ function QuestionnaireContent() {
   // ===== AWAKENING SEQUENCE — during generation =====
   if (generating) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 bg-white relative overflow-hidden">
+      <main className="min-h-screen flex items-center justify-center px-6 bg-surface relative overflow-hidden">
         <SacredGeometry opacity={0.05} />
 
         <div className="relative text-center z-10">
@@ -404,7 +404,7 @@ function QuestionnaireContent() {
 
   // Questionnaire
   return (
-    <main className="min-h-screen flex flex-col bg-white relative">
+    <main className="min-h-screen flex flex-col bg-surface relative">
       {/* Progress */}
       <div className="fixed top-20 right-6 z-30">
         <OProgress progress={progress} size={40} />
@@ -437,7 +437,7 @@ function QuestionnaireContent() {
               onChange={(e) => setAnswers({ ...answers, [currentQuestion.id]: e.target.value })}
               onKeyDown={handleKeyDown}
               placeholder={currentQuestion.placeholder}
-              className="w-full bg-transparent border-b border-black/[0.15] py-3 text-xl text-ink placeholder:text-ink-tertiary focus:border-black/[0.3] transition-colors"
+              className="w-full bg-transparent border-b border-white/[0.25] py-3 text-xl text-ink placeholder:text-ink-tertiary focus:border-white/[0.5] transition-colors"
             />
           )}
 
@@ -448,7 +448,7 @@ function QuestionnaireContent() {
               onChange={(e) => setAnswers({ ...answers, [currentQuestion.id]: e.target.value })}
               placeholder={currentQuestion.placeholder}
               rows={4}
-              className="w-full bg-surface-secondary border border-black/[0.1] rounded-xl p-4 text-lg text-ink placeholder:text-ink-tertiary resize-none focus:border-black/[0.2] transition-colors"
+              className="w-full bg-surface-secondary border border-white/[0.15] rounded-xl p-4 text-lg text-ink placeholder:text-ink-tertiary resize-none focus:border-white/[0.3] transition-colors"
             />
           )}
 
@@ -460,8 +460,8 @@ function QuestionnaireContent() {
                   onClick={() => setAnswers({ ...answers, [currentQuestion.id]: opt.value })}
                   className={`w-full text-left p-4 rounded-xl border transition-all text-base leading-relaxed ${
                     answers[currentQuestion.id] === opt.value
-                      ? 'border-ink bg-ink text-white'
-                      : 'border-black/[0.1] bg-surface-secondary text-ink-secondary hover:border-black/[0.18]'
+                      ? 'border-accent bg-accent text-white'
+                      : 'border-white/[0.15] bg-surface-secondary text-ink-secondary hover:border-white/[0.3]'
                   }`}
                 >
                   {opt.label}
@@ -494,7 +494,7 @@ function QuestionnaireContent() {
 export default function QuestionnairePage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen flex items-center justify-center bg-white">
+      <main className="min-h-screen flex items-center justify-center bg-surface">
         <p className="text-ink-tertiary animate-pulse-soft">Loading...</p>
       </main>
     }>

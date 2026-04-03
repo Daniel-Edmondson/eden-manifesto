@@ -61,7 +61,7 @@ function OfferingContent() {
   };
 
   return (
-    <main className="min-h-screen bg-white relative overflow-hidden">
+    <main className="min-h-screen bg-surface relative overflow-hidden">
       <SacredGeometry opacity={0.04} />
 
       <section className="relative py-24 md:py-32 px-6 z-10">
@@ -134,7 +134,7 @@ function OfferingContent() {
           </p>
 
           {/* Promo code */}
-          <div className="pt-6 border-t border-black/[0.1]">
+          <div className="pt-6 border-t border-white/[0.15]">
             <p className="text-sm text-ink-secondary mb-4">Have a promo code?</p>
             <div className="flex items-center gap-2 justify-center">
               <input
@@ -142,7 +142,7 @@ function OfferingContent() {
                 value={promoCode}
                 onChange={(e) => { setPromoCode(e.target.value); setPromoError(''); }}
                 placeholder="Enter code"
-                className="w-40 px-4 py-2.5 bg-surface-secondary border border-black/[0.12] text-base text-ink text-center focus:border-black/[0.25] transition-colors rounded-full placeholder:text-ink-tertiary"
+                className="w-40 px-4 py-2.5 bg-surface-secondary border border-white/[0.2] text-base text-ink text-center focus:border-white/[0.4] transition-colors rounded-full placeholder:text-ink-tertiary"
               />
               <button
                 onClick={handlePromo}
@@ -153,7 +153,7 @@ function OfferingContent() {
               </button>
             </div>
             {promoError && (
-              <p className="mt-2 text-sm text-red-500">{promoError}</p>
+              <p className="mt-2 text-sm text-red-300">{promoError}</p>
             )}
           </div>
         </div>
@@ -206,7 +206,7 @@ function OfferingContent() {
 export default function OfferingPage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen flex items-center justify-center bg-white">
+      <main className="min-h-screen flex items-center justify-center bg-surface">
         <p className="text-ink-secondary animate-pulse-soft">Loading...</p>
       </main>
     }>

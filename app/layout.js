@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className="bg-surface text-ink font-sans antialiased">
         {/* Navigation */}
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-black/[0.04]">
+        <nav className="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-xl border-b border-white/[0.1]">
           <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
             <a href="/" className="text-sm font-semibold text-ink hover:text-ink-secondary transition-colors tracking-[0.04em]">
               The Eden Project

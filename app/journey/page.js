@@ -63,7 +63,7 @@ export default function JourneyPage() {
   // Pre-start screen
   if (!started) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 bg-white relative overflow-hidden">
+      <main className="min-h-screen flex items-center justify-center px-6 bg-surface relative overflow-hidden">
         <SacredGeometry opacity={0.05} />
 
         <div className="relative max-w-md text-center page-enter z-10">
@@ -105,7 +105,7 @@ export default function JourneyPage() {
   const label = resolveLabel(current, answers);
 
   return (
-    <main className="min-h-screen flex flex-col bg-white relative">
+    <main className="min-h-screen flex flex-col bg-surface relative">
       {/* Progress ring */}
       <div className="fixed top-20 right-6 z-30 flex flex-col items-center">
         <OProgress progress={progress} size={40} />
@@ -146,7 +146,7 @@ export default function JourneyPage() {
               onChange={(e) => setAnswers({ ...answers, [current.id]: e.target.value })}
               onKeyDown={handleKeyDown}
               placeholder={current.placeholder}
-              className="w-full bg-transparent border-b border-black/[0.15] py-3 text-xl text-ink placeholder:text-ink-tertiary focus:border-black/[0.3] transition-colors"
+              className="w-full bg-transparent border-b border-white/[0.25] py-3 text-xl text-ink placeholder:text-ink-tertiary focus:border-white/[0.5] transition-colors"
             />
           )}
 
@@ -158,7 +158,7 @@ export default function JourneyPage() {
               onChange={(e) => setAnswers({ ...answers, [current.id]: e.target.value })}
               placeholder={current.placeholder}
               rows={4}
-              className="w-full bg-surface-secondary border border-black/[0.1] rounded-xl p-4 text-lg text-ink placeholder:text-ink-tertiary resize-none focus:border-black/[0.2] transition-colors"
+              className="w-full bg-surface-secondary border border-white/[0.15] rounded-xl p-4 text-lg text-ink placeholder:text-ink-tertiary resize-none focus:border-white/[0.3] transition-colors"
             />
           )}
 
@@ -173,8 +173,8 @@ export default function JourneyPage() {
                   }}
                   className={`w-full text-left p-4 rounded-xl border transition-all text-base leading-relaxed ${
                     answers[current.id] === opt.value
-                      ? 'border-ink bg-ink text-white'
-                      : 'border-black/[0.1] bg-surface-secondary text-ink-secondary hover:border-black/[0.18]'
+                      ? 'border-accent bg-accent text-white'
+                      : 'border-white/[0.15] bg-surface-secondary text-ink-secondary hover:border-white/[0.3]'
                   }`}
                 >
                   {opt.label}
