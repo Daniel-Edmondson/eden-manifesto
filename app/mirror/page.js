@@ -90,7 +90,7 @@ export default function MirrorPage() {
   if (!started) {
     return (
       <main className="min-h-screen flex items-center justify-center px-6 bg-white relative overflow-hidden">
-        <SacredGeometry opacity={0.02} />
+        <SacredGeometry opacity={0.05} />
 
         <div className="relative max-w-md text-center page-enter z-10">
           <OBreathing size={100} className="mx-auto mb-10" />
@@ -99,12 +99,12 @@ export default function MirrorPage() {
             The Mirror
           </h1>
 
-          <p className="text-base text-ink-secondary leading-relaxed mb-4">
+          <p className="text-lg text-ink-secondary leading-relaxed mb-4">
             A philosophical conversation. Ask it anything.
             It sees connections you haven't seen.
           </p>
 
-          <p className="text-sm text-ink-tertiary mb-10">
+          <p className="text-base text-ink-secondary mb-10">
             This is not a search engine. This is not therapy.
             It's a framework, speaking.
           </p>
@@ -117,7 +117,7 @@ export default function MirrorPage() {
           </button>
 
           <div className="mt-14">
-            <p className="text-[10px] text-ink-faint mb-3 tracking-[0.15em] uppercase">Try asking</p>
+            <p className="text-xs text-ink-secondary mb-3 tracking-[0.15em] uppercase">Try asking</p>
             <div className="flex flex-wrap justify-center gap-2">
               {[
                 'What is the loss of control?',
@@ -135,7 +135,7 @@ export default function MirrorPage() {
                     }]);
                     setTimeout(() => setInput(prompt), 300);
                   }}
-                  className="text-xs px-3 py-1.5 border border-black/[0.08] text-ink-tertiary hover:text-ink hover:border-black/[0.2] transition-colors rounded-full"
+                  className="text-sm px-4 py-2 border border-black/[0.12] text-ink-secondary hover:text-ink hover:border-black/[0.25] transition-colors rounded-full"
                 >
                   {prompt}
                 </button>
@@ -158,7 +158,7 @@ export default function MirrorPage() {
               className={`chat-message ${msg.role === 'user' ? 'text-right' : 'text-left'}`}
             >
               {msg.role === 'assistant' && (
-                <p className="text-[10px] tracking-[0.2em] uppercase text-ink-faint mb-1">
+                <p className="text-xs tracking-[0.2em] uppercase text-ink-tertiary mb-1">
                   The Mirror
                 </p>
               )}
@@ -169,7 +169,7 @@ export default function MirrorPage() {
                     : ''
                 }`}
               >
-                <p className={`text-sm md:text-base leading-relaxed whitespace-pre-wrap ${
+                <p className={`text-base md:text-lg leading-relaxed whitespace-pre-wrap ${
                   msg.role === 'user' ? 'text-white' : 'font-serif text-ink-secondary'
                 }`}>
                   {msg.content}
@@ -181,12 +181,12 @@ export default function MirrorPage() {
           {/* Streaming */}
           {streamingText && (
             <div className="chat-message text-left">
-              <p className="text-[10px] tracking-[0.2em] uppercase text-ink-faint mb-1">
+              <p className="text-xs tracking-[0.2em] uppercase text-ink-tertiary mb-1">
                 The Mirror
               </p>
-              <p className="font-serif text-sm md:text-base text-ink-secondary leading-relaxed whitespace-pre-wrap">
+              <p className="font-serif text-base md:text-lg text-ink-secondary leading-relaxed whitespace-pre-wrap">
                 {streamingText}
-                <span className="inline-block w-1 h-4 bg-ink/40 ml-0.5 animate-pulse" />
+                <span className="inline-block w-1 h-5 bg-ink/50 ml-0.5 animate-pulse" />
               </p>
             </div>
           )}
@@ -194,13 +194,13 @@ export default function MirrorPage() {
           {/* Loading */}
           {loading && !streamingText && (
             <div className="chat-message text-left">
-              <p className="text-[10px] tracking-[0.2em] uppercase text-ink-faint mb-1">
+              <p className="text-xs tracking-[0.2em] uppercase text-ink-tertiary mb-1">
                 The Mirror
               </p>
               <div className="flex gap-1.5 py-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-ink/25 animate-pulse" style={{ animationDelay: '0s' }} />
-                <div className="w-1.5 h-1.5 rounded-full bg-ink/25 animate-pulse" style={{ animationDelay: '0.15s' }} />
-                <div className="w-1.5 h-1.5 rounded-full bg-ink/25 animate-pulse" style={{ animationDelay: '0.3s' }} />
+                <div className="w-2 h-2 rounded-full bg-ink/35 animate-pulse" style={{ animationDelay: '0s' }} />
+                <div className="w-2 h-2 rounded-full bg-ink/35 animate-pulse" style={{ animationDelay: '0.15s' }} />
+                <div className="w-2 h-2 rounded-full bg-ink/35 animate-pulse" style={{ animationDelay: '0.3s' }} />
               </div>
             </div>
           )}
@@ -211,10 +211,10 @@ export default function MirrorPage() {
 
       {/* CTA after enough messages */}
       {messages.length >= 6 && (
-        <div className="relative px-4 py-3 bg-surface-secondary border-t border-black/[0.04] text-center z-10">
+        <div className="relative px-4 py-3 bg-surface-secondary border-t border-black/[0.08] text-center z-10">
           <a
             href="/offering"
-            className="text-xs text-ink-secondary hover:text-ink transition-colors"
+            className="text-sm text-ink-secondary hover:text-ink transition-colors"
           >
             Turn this into a permanent document &rarr;
           </a>
@@ -222,7 +222,7 @@ export default function MirrorPage() {
       )}
 
       {/* Input */}
-      <div className="relative sticky bottom-0 bg-white/95 backdrop-blur-xl border-t border-black/[0.06] px-4 md:px-6 py-4 z-10">
+      <div className="relative sticky bottom-0 bg-white/95 backdrop-blur-xl border-t border-black/[0.1] px-4 md:px-6 py-4 z-10">
         <div className="max-w-2xl mx-auto flex gap-3">
           <textarea
             ref={inputRef}
@@ -231,7 +231,7 @@ export default function MirrorPage() {
             onKeyDown={handleKeyDown}
             placeholder="Say something..."
             rows={1}
-            className="flex-1 bg-surface-secondary border border-black/[0.06] rounded-xl px-4 py-3 text-sm text-ink placeholder:text-ink-faint resize-none focus:border-black/[0.15] transition-colors"
+            className="flex-1 bg-surface-secondary border border-black/[0.1] rounded-xl px-4 py-3 text-base text-ink placeholder:text-ink-tertiary resize-none focus:border-black/[0.2] transition-colors"
             style={{ minHeight: '44px', maxHeight: '120px' }}
             onInput={(e) => {
               e.target.style.height = '44px';
@@ -243,7 +243,7 @@ export default function MirrorPage() {
             disabled={!input.trim() || loading}
             className="px-4 py-3 bg-ink text-white rounded-xl hover:bg-ink-secondary transition-colors disabled:opacity-20 disabled:cursor-not-allowed flex-shrink-0"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
               <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
             </svg>
           </button>

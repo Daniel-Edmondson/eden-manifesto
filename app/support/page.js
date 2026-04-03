@@ -12,7 +12,7 @@ export default function SupportPage() {
 
   return (
     <main className="min-h-screen bg-white relative overflow-hidden">
-      <SacredGeometry opacity={0.02} />
+      <SacredGeometry opacity={0.05} />
 
       <div className={`relative z-10 max-w-2xl mx-auto px-6 py-24 transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
 
@@ -72,7 +72,7 @@ export default function SupportPage() {
             If this reached you — help it reach others.
           </h2>
 
-          <p className="text-sm md:text-base text-ink-secondary max-w-lg mx-auto leading-relaxed">
+          <p className="text-base md:text-lg text-ink-secondary max-w-lg mx-auto leading-relaxed">
             The Eden Project is independent. No institution, no investors, no algorithm
             deciding who gets to encounter this. Every contribution keeps the framework
             alive and accessible — and funds the work still being written.
@@ -89,7 +89,7 @@ export default function SupportPage() {
             </a>
           </div>
 
-          <p className="text-xs text-ink-faint pt-2">
+          <p className="text-sm text-ink-tertiary pt-2">
             One-time or recurring. Every amount matters.
           </p>
         </div>
@@ -98,15 +98,15 @@ export default function SupportPage() {
 
         {/* Closing */}
         <div className="text-center space-y-4">
-          <p className="font-serif text-ink-tertiary text-sm italic">
+          <p className="font-serif text-ink-secondary text-base italic">
             What would happen if you lost all control?
           </p>
 
           <div className="flex justify-center gap-8 pt-4">
-            <a href="/" className="text-sm text-ink-tertiary hover:text-ink transition-colors">
+            <a href="/" className="text-base text-ink-secondary hover:text-ink transition-colors">
               Return home
             </a>
-            <a href="/mirror" className="text-sm text-ink-tertiary hover:text-ink transition-colors">
+            <a href="/mirror" className="text-base text-ink-secondary hover:text-ink transition-colors">
               Enter the Mirror
             </a>
           </div>

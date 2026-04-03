@@ -64,14 +64,14 @@ export default function JourneyPage() {
   if (!started) {
     return (
       <main className="min-h-screen flex items-center justify-center px-6 bg-white relative overflow-hidden">
-        <SacredGeometry opacity={0.02} />
+        <SacredGeometry opacity={0.05} />
 
         <div className="relative max-w-md text-center page-enter z-10">
           <div className="mb-10">
             <OBreathing size={80} className="mx-auto" />
           </div>
 
-          <p className="text-[11px] text-ink-tertiary tracking-[0.3em] uppercase mb-8">
+          <p className="text-xs text-ink-secondary tracking-[0.3em] uppercase mb-8">
             The Eden Project
           </p>
 
@@ -79,12 +79,12 @@ export default function JourneyPage() {
             Fifteen questions.
           </h1>
 
-          <p className="text-base text-ink-secondary leading-relaxed mb-4">
+          <p className="text-lg text-ink-secondary leading-relaxed mb-4">
             Open-ended. They adapt to what you say. There are no right answers.
             The only thing that matters is honesty.
           </p>
 
-          <p className="text-sm text-ink-tertiary mb-12">
+          <p className="text-base text-ink-secondary mb-12">
             Your responses shape a personalized document written
             specifically for you.
           </p>
@@ -109,7 +109,7 @@ export default function JourneyPage() {
       {/* Progress ring */}
       <div className="fixed top-20 right-6 z-30 flex flex-col items-center">
         <OProgress progress={progress} size={40} />
-        <p className="text-[10px] text-ink-tertiary mt-1">
+        <p className="text-xs text-ink-secondary mt-1">
           {currentIdx + 1}/{totalQuestions}
         </p>
       </div>
@@ -129,11 +129,11 @@ export default function JourneyPage() {
           }`}
           key={current.id}
         >
-          <p className="text-[11px] text-ink-tertiary mb-6 tracking-[0.2em]">
+          <p className="text-xs text-ink-secondary mb-6 tracking-[0.2em]">
             {currentIdx + 1} of {totalQuestions}
           </p>
 
-          <label className="block font-serif text-xl md:text-2xl text-ink leading-relaxed mb-8">
+          <label className="block font-serif text-2xl md:text-3xl text-ink leading-relaxed mb-8">
             {label}
           </label>
 
@@ -146,7 +146,7 @@ export default function JourneyPage() {
               onChange={(e) => setAnswers({ ...answers, [current.id]: e.target.value })}
               onKeyDown={handleKeyDown}
               placeholder={current.placeholder}
-              className="w-full bg-transparent border-b border-black/[0.1] py-3 text-lg text-ink placeholder:text-ink-faint focus:border-black/[0.3] transition-colors"
+              className="w-full bg-transparent border-b border-black/[0.15] py-3 text-xl text-ink placeholder:text-ink-tertiary focus:border-black/[0.3] transition-colors"
             />
           )}
 
@@ -158,7 +158,7 @@ export default function JourneyPage() {
               onChange={(e) => setAnswers({ ...answers, [current.id]: e.target.value })}
               placeholder={current.placeholder}
               rows={4}
-              className="w-full bg-surface-secondary border border-black/[0.06] rounded-xl p-4 text-base text-ink placeholder:text-ink-faint resize-none focus:border-black/[0.15] transition-colors"
+              className="w-full bg-surface-secondary border border-black/[0.1] rounded-xl p-4 text-lg text-ink placeholder:text-ink-tertiary resize-none focus:border-black/[0.2] transition-colors"
             />
           )}
 
@@ -171,10 +171,10 @@ export default function JourneyPage() {
                   onClick={() => {
                     setAnswers({ ...answers, [current.id]: opt.value });
                   }}
-                  className={`w-full text-left p-4 rounded-xl border transition-all text-sm leading-relaxed ${
+                  className={`w-full text-left p-4 rounded-xl border transition-all text-base leading-relaxed ${
                     answers[current.id] === opt.value
                       ? 'border-ink bg-ink text-white'
-                      : 'border-black/[0.06] bg-surface-secondary text-ink-secondary hover:border-black/[0.12]'
+                      : 'border-black/[0.1] bg-surface-secondary text-ink-secondary hover:border-black/[0.18]'
                   }`}
                 >
                   {opt.label}
@@ -187,7 +187,7 @@ export default function JourneyPage() {
           <div className="flex justify-between items-center mt-10">
             <button
               onClick={goBack}
-              className={`text-sm text-ink-tertiary hover:text-ink transition-colors ${
+              className={`text-base text-ink-secondary hover:text-ink transition-colors ${
                 currentIdx === 0 ? 'invisible' : ''
               }`}
             >

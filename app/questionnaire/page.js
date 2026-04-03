@@ -322,7 +322,7 @@ function QuestionnaireContent() {
   if (downloadUrl) {
     return (
       <main className="min-h-screen flex items-center justify-center px-6 bg-white relative overflow-hidden">
-        <SacredGeometry opacity={0.02} />
+        <SacredGeometry opacity={0.05} />
 
         <div className="relative max-w-md text-center page-enter z-10">
           <OBreathing size={80} className="mx-auto mb-10" />
@@ -331,7 +331,7 @@ function QuestionnaireContent() {
             Your document is ready.
           </h1>
 
-          <p className="text-base text-ink-secondary mb-10">
+          <p className="text-lg text-ink-secondary mb-10">
             This was written for you, {answers.name || 'friend'}.
           </p>
 
@@ -344,7 +344,7 @@ function QuestionnaireContent() {
             Download PDF
           </a>
 
-          <p className="mt-10 text-xs text-ink-faint">
+          <p className="mt-10 text-sm text-ink-tertiary">
             Questions? <a href="mailto:danieledmondson45@gmail.com" className="hover:text-ink transition-colors">danieledmondson45@gmail.com</a>
           </p>
         </div>
@@ -357,13 +357,13 @@ function QuestionnaireContent() {
     return (
       <main className="min-h-screen flex items-center justify-center px-6 bg-white">
         <div className="max-w-md text-center page-enter">
-          <p className="text-lg text-ink mb-4">Something went wrong.</p>
-          <p className="text-sm text-ink-tertiary mb-8">{error}</p>
+          <p className="text-xl text-ink mb-4">Something went wrong.</p>
+          <p className="text-base text-ink-secondary mb-8">{error}</p>
           <button onClick={() => { setError(null); handleSubmit(); }}
             className="btn btn-primary mr-3">
             Try again
           </button>
-          <a href="mailto:danieledmondson45@gmail.com" className="text-sm text-ink-tertiary hover:text-ink">
+          <a href="mailto:danieledmondson45@gmail.com" className="text-base text-ink-secondary hover:text-ink">
             Contact Daniel
           </a>
         </div>
@@ -375,22 +375,22 @@ function QuestionnaireContent() {
   if (generating) {
     return (
       <main className="min-h-screen flex items-center justify-center px-6 bg-white relative overflow-hidden">
-        <SacredGeometry opacity={0.03} />
+        <SacredGeometry opacity={0.05} />
 
         <div className="relative text-center z-10">
           <div className="mb-12">
             <AwakeningSequence phase={awakeningPhase} />
           </div>
 
-          <p className="text-base text-ink font-serif mb-2 transition-opacity duration-1000">
+          <p className="text-lg text-ink font-serif mb-2 transition-opacity duration-1000">
             {AWAKENING_MESSAGES[awakeningMsg]}
           </p>
 
-          <p className="text-sm text-ink-tertiary mb-2">
+          <p className="text-base text-ink-secondary mb-2">
             {generationStatus}
           </p>
 
-          <p className="text-xs text-ink-faint">
+          <p className="text-sm text-ink-tertiary">
             This takes about 60-90 seconds. Something real is being written.
           </p>
         </div>
@@ -408,7 +408,7 @@ function QuestionnaireContent() {
       {/* Progress */}
       <div className="fixed top-20 right-6 z-30">
         <OProgress progress={progress} size={40} />
-        <p className="text-[10px] text-ink-tertiary text-center mt-1">
+        <p className="text-xs text-ink-secondary text-center mt-1">
           {currentQ + 1}/{visibleQuestions.length}
         </p>
       </div>
@@ -421,11 +421,11 @@ function QuestionnaireContent() {
 
       <div className="relative flex-1 flex items-center justify-center px-6 py-24 z-10">
         <div className="max-w-xl w-full question-enter" key={currentQ}>
-          <p className="text-[11px] text-ink-tertiary mb-6 tracking-[0.2em]">
+          <p className="text-xs text-ink-secondary mb-6 tracking-[0.2em]">
             {currentQ + 1} of {visibleQuestions.length}
           </p>
 
-          <label className="block font-serif text-xl md:text-2xl text-ink mb-8 leading-relaxed">
+          <label className="block font-serif text-2xl md:text-3xl text-ink mb-8 leading-relaxed">
             {label}
           </label>
 
@@ -437,7 +437,7 @@ function QuestionnaireContent() {
               onChange={(e) => setAnswers({ ...answers, [currentQuestion.id]: e.target.value })}
               onKeyDown={handleKeyDown}
               placeholder={currentQuestion.placeholder}
-              className="w-full bg-transparent border-b border-black/[0.1] py-3 text-lg text-ink placeholder:text-ink-faint focus:border-black/[0.3] transition-colors"
+              className="w-full bg-transparent border-b border-black/[0.15] py-3 text-xl text-ink placeholder:text-ink-tertiary focus:border-black/[0.3] transition-colors"
             />
           )}
 
@@ -448,7 +448,7 @@ function QuestionnaireContent() {
               onChange={(e) => setAnswers({ ...answers, [currentQuestion.id]: e.target.value })}
               placeholder={currentQuestion.placeholder}
               rows={4}
-              className="w-full bg-surface-secondary border border-black/[0.06] rounded-xl p-4 text-base text-ink placeholder:text-ink-faint resize-none focus:border-black/[0.15] transition-colors"
+              className="w-full bg-surface-secondary border border-black/[0.1] rounded-xl p-4 text-lg text-ink placeholder:text-ink-tertiary resize-none focus:border-black/[0.2] transition-colors"
             />
           )}
 
@@ -458,10 +458,10 @@ function QuestionnaireContent() {
                 <button
                   key={opt.value}
                   onClick={() => setAnswers({ ...answers, [currentQuestion.id]: opt.value })}
-                  className={`w-full text-left p-4 rounded-xl border transition-all text-sm leading-relaxed ${
+                  className={`w-full text-left p-4 rounded-xl border transition-all text-base leading-relaxed ${
                     answers[currentQuestion.id] === opt.value
                       ? 'border-ink bg-ink text-white'
-                      : 'border-black/[0.06] bg-surface-secondary text-ink-secondary hover:border-black/[0.12]'
+                      : 'border-black/[0.1] bg-surface-secondary text-ink-secondary hover:border-black/[0.18]'
                   }`}
                 >
                   {opt.label}
@@ -473,7 +473,7 @@ function QuestionnaireContent() {
           <div className="flex justify-between items-center mt-10">
             <button
               onClick={() => setCurrentQ(Math.max(0, currentQ - 1))}
-              className={`text-sm text-ink-tertiary hover:text-ink transition-colors ${currentQ === 0 ? 'invisible' : ''}`}
+              className={`text-base text-ink-secondary hover:text-ink transition-colors ${currentQ === 0 ? 'invisible' : ''}`}
             >
               &larr; Back
             </button>

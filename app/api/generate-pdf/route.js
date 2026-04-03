@@ -191,10 +191,10 @@ function generatePDF(text, name) {
   let pageNum = 3;
   let paragraphCount = 0;
 
-  // Body text: 16pt for iPhone readability (was 12.5pt)
-  const bodyFontSize = 16;
-  const lineHeight = 24;
-  const paragraphSpacing = 16;
+  // Body text: 18pt for iPhone readability (was 16pt, originally 12.5pt)
+  const bodyFontSize = 18;
+  const lineHeight = 27;
+  const paragraphSpacing = 18;
 
   const breakOptions = [
     (d, c, yy) => drawDotDivider(d, c, yy),
@@ -273,13 +273,13 @@ function generatePDF(text, name) {
         y += 22;
 
         doc.setFont('times', 'italic');
-        doc.setFontSize(18);
+        doc.setFontSize(20);
         doc.setTextColor(INK_SECONDARY[0], INK_SECONDARY[1], INK_SECONDARY[2]);
         const pullLines = doc.splitTextToSize(trimmed, contentWidth - 60);
         for (const line of pullLines) {
           if (y > pageHeight - marginBottom) { newPage(); }
           doc.text(line, cx, y, { align: 'center' });
-          y += 26;
+          y += 29;
         }
 
         y += 8;
