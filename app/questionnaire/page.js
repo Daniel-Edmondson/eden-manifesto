@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState, useEffect, useRef, useCallback, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { OProgress, OBreathing, AwakeningSequence, SacredGeometry } from '../components/OSymbol';
 import { questions, resolveLabel, getVisibleQuestions } from '../../lib/questions';
 
@@ -17,8 +17,37 @@ const AWAKENING_MESSAGES = [
   'Almost there...',
 ];
 
+// Session storage keys for generation persistence
+const STORAGE_KEYS = {
+  GENERATED_TEXT: 'eden_generated_text',
+  PDF_BASE64: 'eden_pdf_base64',
+  GEN_NAME: 'eden_gen_name',
+  GEN_IN_PROGRESS: 'eden_gen_in_progress',
+};
+
+// Helper: convert blob to base64
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+// Helper: convert base64 back to blob
+function base64ToBlob(base64) {
+  const [header, data] = base64.split(',');
+  const mime = header.match(/:(.*?);/)[1];
+  const bytes = atob(data);
+  const arr = new Uint8Array(bytes.length);
+  for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+  return new Blob([arr], { type: mime });
+}
+
 function QuestionnaireContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const sessionId = searchParams.get('session_id');
   const promoCode = searchParams.get('promo');
 
@@ -32,7 +61,79 @@ function QuestionnaireContent() {
   const [generationStatus, setGenerationStatus] = useState('');
   const [awakeningPhase, setAwakeningPhase] = useState(0);
   const [awakeningMsg, setAwakeningMsg] = useState(0);
+  const [recovering, setRecovering] = useState(false);
   const inputRef = useRef(null);
+  const abortRef = useRef(null);
+
+  // Warn user before navigating away during generation
+  useEffect(() => {
+    if (!generating) return;
+    const handleBeforeUnload = (e) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [generating]);
+
+  // On mount: check for recoverable state
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const savedPdf = sessionStorage.getItem(STORAGE_KEYS.PDF_BASE64);
+    const savedText = sessionStorage.getItem(STORAGE_KEYS.GENERATED_TEXT);
+    const savedName = sessionStorage.getItem(STORAGE_KEYS.GEN_NAME);
+
+    if (savedPdf && savedName) {
+      const blob = base64ToBlob(savedPdf);
+      setDownloadUrl(URL.createObjectURL(blob));
+      setAnswers(prev => ({ ...prev, name: savedName }));
+      setVerified(true);
+      setVerifying(false);
+      return;
+    }
+
+    if (savedText && savedText.length > 100 && savedName) {
+      setRecovering(true);
+      setVerified(true);
+      setVerifying(false);
+      setAnswers(prev => ({ ...prev, name: savedName }));
+      resumeFromText(savedText, savedName);
+      return;
+    }
+  }, []);
+
+  const resumeFromText = async (text, name) => {
+    setGenerating(true);
+    setError(null);
+    setGenerationStatus('Resuming — formatting your PDF...');
+    setAwakeningPhase(3);
+
+    try {
+      const pdfRes = await fetch('/api/generate-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, name }),
+      });
+
+      if (!pdfRes.ok) throw new Error('PDF formatting failed.');
+
+      const blob = await pdfRes.blob();
+      const base64 = await blobToBase64(blob);
+      sessionStorage.setItem(STORAGE_KEYS.PDF_BASE64, base64);
+
+      setDownloadUrl(URL.createObjectURL(blob));
+      setGenerationStatus('');
+      setGenerating(false);
+      setRecovering(false);
+      sessionStorage.removeItem(STORAGE_KEYS.GEN_IN_PROGRESS);
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+      setGenerating(false);
+      setRecovering(false);
+    }
+  };
 
   // Load saved journey answers
   useEffect(() => {
@@ -42,11 +143,9 @@ function QuestionnaireContent() {
         try {
           const parsed = JSON.parse(saved);
           setAnswers(parsed);
-          // Skip to first unanswered — or if all answered, jump to last (triggers submit)
           const visible = getVisibleQuestions(parsed);
           const firstEmpty = visible.findIndex(q => !parsed[q.id] || (typeof parsed[q.id] === 'string' && parsed[q.id].trim() === ''));
           if (firstEmpty === -1) {
-            // All questions answered — jump to last so "Generate" is visible
             setCurrentQ(visible.length - 1);
           } else if (firstEmpty > 0) {
             setCurrentQ(firstEmpty);
@@ -74,7 +173,7 @@ function QuestionnaireContent() {
     setTimeout(() => inputRef.current?.focus(), 200);
   }, [currentQ]);
 
-  // Awakening sequence progression during generation
+  // Awakening sequence progression
   useEffect(() => {
     if (!generating) return;
 
@@ -120,6 +219,11 @@ function QuestionnaireContent() {
     setAwakeningPhase(0);
     setAwakeningMsg(0);
 
+    sessionStorage.setItem(STORAGE_KEYS.GEN_IN_PROGRESS, 'true');
+    sessionStorage.setItem(STORAGE_KEYS.GEN_NAME, answers.name || 'friend');
+    sessionStorage.removeItem(STORAGE_KEYS.GENERATED_TEXT);
+    sessionStorage.removeItem(STORAGE_KEYS.PDF_BASE64);
+
     try {
       const textRes = await fetch('/api/generate-text', {
         method: 'POST',
@@ -142,7 +246,13 @@ function QuestionnaireContent() {
         text += decoder.decode(value, { stream: true });
         const words = text.split(/\s+/).length;
         setGenerationStatus(`${words.toLocaleString()} words and counting...`);
+
+        if (words % 200 === 0 || done) {
+          sessionStorage.setItem(STORAGE_KEYS.GENERATED_TEXT, text);
+        }
       }
+
+      sessionStorage.setItem(STORAGE_KEYS.GENERATED_TEXT, text);
 
       if (!text || text.length < 100) {
         throw new Error('Generation returned empty. Contact danieledmondson45@gmail.com');
@@ -160,8 +270,13 @@ function QuestionnaireContent() {
       if (!pdfRes.ok) throw new Error('PDF formatting failed.');
 
       const blob = await pdfRes.blob();
+
+      const base64 = await blobToBase64(blob);
+      sessionStorage.setItem(STORAGE_KEYS.PDF_BASE64, base64);
+
       setDownloadUrl(URL.createObjectURL(blob));
       setGenerationStatus('');
+      sessionStorage.removeItem(STORAGE_KEYS.GEN_IN_PROGRESS);
       if (typeof window !== 'undefined') sessionStorage.removeItem('eden_answers');
     } catch (err) {
       console.error(err);
@@ -173,18 +288,18 @@ function QuestionnaireContent() {
   // Loading states
   if (verifying) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-midnight">
-        <p className="text-cream/30 animate-pulse-soft">Verifying...</p>
+      <main className="min-h-screen flex items-center justify-center bg-white">
+        <p className="text-ink-tertiary animate-pulse-soft">Verifying...</p>
       </main>
     );
   }
 
   if ((!sessionId && !promoCode) || !verified) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 bg-midnight">
+      <main className="min-h-screen flex items-center justify-center px-6 bg-white">
         <div className="max-w-md text-center">
-          <p className="text-cream/50 mb-4">Payment required.</p>
-          <a href="/offering" className="text-sm text-gold/60 hover:text-gold transition-colors">
+          <p className="text-ink-secondary mb-4">Payment required.</p>
+          <a href="/offering" className="text-sm text-ink-tertiary hover:text-ink transition-colors">
             &larr; Return to offering
           </a>
         </div>
@@ -192,35 +307,45 @@ function QuestionnaireContent() {
     );
   }
 
+  // Handle download click: trigger download then redirect to support page
+  const handleDownload = useCallback(() => {
+    setTimeout(() => {
+      sessionStorage.removeItem(STORAGE_KEYS.GENERATED_TEXT);
+      sessionStorage.removeItem(STORAGE_KEYS.PDF_BASE64);
+      sessionStorage.removeItem(STORAGE_KEYS.GEN_NAME);
+      sessionStorage.removeItem(STORAGE_KEYS.GEN_IN_PROGRESS);
+      router.push('/support');
+    }, 1500);
+  }, [router]);
+
   // Download ready
   if (downloadUrl) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 bg-midnight relative overflow-hidden">
-        <div className="absolute inset-0 bg-void" />
-        <div className="absolute inset-0 bg-gold-glow opacity-20" />
-        <SacredGeometry opacity={0.03} />
+      <main className="min-h-screen flex items-center justify-center px-6 bg-white relative overflow-hidden">
+        <SacredGeometry opacity={0.02} />
 
         <div className="relative max-w-md text-center page-enter z-10">
           <OBreathing size={80} className="mx-auto mb-10" />
 
-          <h1 className="font-serif text-heading text-cream mb-4">
+          <h1 className="font-serif text-heading text-ink mb-4">
             Your document is ready.
           </h1>
 
-          <p className="text-base text-cream/50 mb-10">
+          <p className="text-base text-ink-secondary mb-10">
             This was written for you, {answers.name || 'friend'}.
           </p>
 
           <a
             href={downloadUrl}
             download={`Eden-${(answers.name || 'yours').replace(/\s/g, '-')}.pdf`}
+            onClick={handleDownload}
             className="btn btn-primary"
           >
             Download PDF
           </a>
 
-          <p className="mt-10 text-xs text-cream/25">
-            Questions? <a href="mailto:danieledmondson45@gmail.com" className="hover:text-gold transition-colors">danieledmondson45@gmail.com</a>
+          <p className="mt-10 text-xs text-ink-faint">
+            Questions? <a href="mailto:danieledmondson45@gmail.com" className="hover:text-ink transition-colors">danieledmondson45@gmail.com</a>
           </p>
         </div>
       </main>
@@ -230,15 +355,15 @@ function QuestionnaireContent() {
   // Error
   if (error && !generating) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 bg-midnight">
+      <main className="min-h-screen flex items-center justify-center px-6 bg-white">
         <div className="max-w-md text-center page-enter">
-          <p className="text-lg text-cream/80 mb-4">Something went wrong.</p>
-          <p className="text-sm text-cream/40 mb-8">{error}</p>
+          <p className="text-lg text-ink mb-4">Something went wrong.</p>
+          <p className="text-sm text-ink-tertiary mb-8">{error}</p>
           <button onClick={() => { setError(null); handleSubmit(); }}
             className="btn btn-primary mr-3">
             Try again
           </button>
-          <a href="mailto:danieledmondson45@gmail.com" className="text-sm text-cream/40 hover:text-gold">
+          <a href="mailto:danieledmondson45@gmail.com" className="text-sm text-ink-tertiary hover:text-ink">
             Contact Daniel
           </a>
         </div>
@@ -249,27 +374,23 @@ function QuestionnaireContent() {
   // ===== AWAKENING SEQUENCE — during generation =====
   if (generating) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 bg-midnight relative overflow-hidden">
-        <div className="absolute inset-0 bg-void" />
-        <div className="absolute inset-0 bg-gold-glow opacity-30" />
-        <div className="absolute inset-0 bg-stars" />
+      <main className="min-h-screen flex items-center justify-center px-6 bg-white relative overflow-hidden">
+        <SacredGeometry opacity={0.03} />
 
         <div className="relative text-center z-10">
-          {/* The awakening visualization */}
           <div className="mb-12">
             <AwakeningSequence phase={awakeningPhase} />
           </div>
 
-          {/* Rotating messages */}
-          <p className="text-base text-gold font-serif mb-2 transition-opacity duration-1000">
+          <p className="text-base text-ink font-serif mb-2 transition-opacity duration-1000">
             {AWAKENING_MESSAGES[awakeningMsg]}
           </p>
 
-          <p className="text-sm text-cream/30 mb-2">
+          <p className="text-sm text-ink-tertiary mb-2">
             {generationStatus}
           </p>
 
-          <p className="text-xs text-cream/20">
+          <p className="text-xs text-ink-faint">
             This takes about 60-90 seconds. Something real is being written.
           </p>
         </div>
@@ -283,13 +404,11 @@ function QuestionnaireContent() {
 
   // Questionnaire
   return (
-    <main className="min-h-screen flex flex-col bg-midnight relative">
-      <div className="fixed inset-0 bg-void pointer-events-none" />
-
+    <main className="min-h-screen flex flex-col bg-white relative">
       {/* Progress */}
       <div className="fixed top-20 right-6 z-30">
         <OProgress progress={progress} size={40} />
-        <p className="text-[10px] text-gold/40 text-center mt-1">
+        <p className="text-[10px] text-ink-tertiary text-center mt-1">
           {currentQ + 1}/{visibleQuestions.length}
         </p>
       </div>
@@ -302,11 +421,11 @@ function QuestionnaireContent() {
 
       <div className="relative flex-1 flex items-center justify-center px-6 py-24 z-10">
         <div className="max-w-xl w-full question-enter" key={currentQ}>
-          <p className="text-[11px] text-gold/40 mb-6 tracking-[0.2em]">
+          <p className="text-[11px] text-ink-tertiary mb-6 tracking-[0.2em]">
             {currentQ + 1} of {visibleQuestions.length}
           </p>
 
-          <label className="block font-serif text-xl md:text-2xl text-cream mb-8 leading-relaxed">
+          <label className="block font-serif text-xl md:text-2xl text-ink mb-8 leading-relaxed">
             {label}
           </label>
 
@@ -318,7 +437,7 @@ function QuestionnaireContent() {
               onChange={(e) => setAnswers({ ...answers, [currentQuestion.id]: e.target.value })}
               onKeyDown={handleKeyDown}
               placeholder={currentQuestion.placeholder}
-              className="w-full bg-transparent border-b border-gold/20 py-3 text-lg text-cream placeholder:text-cream/20 focus:border-gold/60 transition-colors"
+              className="w-full bg-transparent border-b border-black/[0.1] py-3 text-lg text-ink placeholder:text-ink-faint focus:border-black/[0.3] transition-colors"
             />
           )}
 
@@ -329,7 +448,7 @@ function QuestionnaireContent() {
               onChange={(e) => setAnswers({ ...answers, [currentQuestion.id]: e.target.value })}
               placeholder={currentQuestion.placeholder}
               rows={4}
-              className="w-full bg-midnight-light border border-gold/10 rounded-lg p-4 text-base text-cream placeholder:text-cream/20 resize-none focus:border-gold/30 transition-colors"
+              className="w-full bg-surface-secondary border border-black/[0.06] rounded-xl p-4 text-base text-ink placeholder:text-ink-faint resize-none focus:border-black/[0.15] transition-colors"
             />
           )}
 
@@ -339,10 +458,10 @@ function QuestionnaireContent() {
                 <button
                   key={opt.value}
                   onClick={() => setAnswers({ ...answers, [currentQuestion.id]: opt.value })}
-                  className={`w-full text-left p-4 rounded-lg border transition-all text-sm leading-relaxed ${
+                  className={`w-full text-left p-4 rounded-xl border transition-all text-sm leading-relaxed ${
                     answers[currentQuestion.id] === opt.value
-                      ? 'border-gold bg-gold/10 text-cream'
-                      : 'border-gold/10 bg-midnight-light text-cream/60 hover:border-gold/30'
+                      ? 'border-ink bg-ink text-white'
+                      : 'border-black/[0.06] bg-surface-secondary text-ink-secondary hover:border-black/[0.12]'
                   }`}
                 >
                   {opt.label}
@@ -354,7 +473,7 @@ function QuestionnaireContent() {
           <div className="flex justify-between items-center mt-10">
             <button
               onClick={() => setCurrentQ(Math.max(0, currentQ - 1))}
-              className={`text-sm text-cream/30 hover:text-gold transition-colors ${currentQ === 0 ? 'invisible' : ''}`}
+              className={`text-sm text-ink-tertiary hover:text-ink transition-colors ${currentQ === 0 ? 'invisible' : ''}`}
             >
               &larr; Back
             </button>
@@ -375,8 +494,8 @@ function QuestionnaireContent() {
 export default function QuestionnairePage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen flex items-center justify-center bg-midnight">
-        <p className="text-cream/30 animate-pulse-soft">Loading...</p>
+      <main className="min-h-screen flex items-center justify-center bg-white">
+        <p className="text-ink-tertiary animate-pulse-soft">Loading...</p>
       </main>
     }>
       <QuestionnaireContent />

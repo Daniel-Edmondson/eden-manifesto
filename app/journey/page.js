@@ -63,9 +63,7 @@ export default function JourneyPage() {
   // Pre-start screen
   if (!started) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 bg-midnight relative overflow-hidden">
-        <div className="absolute inset-0 bg-void" />
-        <div className="absolute inset-0 bg-stars" />
+      <main className="min-h-screen flex items-center justify-center px-6 bg-white relative overflow-hidden">
         <SacredGeometry opacity={0.02} />
 
         <div className="relative max-w-md text-center page-enter z-10">
@@ -73,20 +71,20 @@ export default function JourneyPage() {
             <OBreathing size={80} className="mx-auto" />
           </div>
 
-          <p className="text-[11px] text-gold/60 tracking-[0.3em] uppercase mb-8">
+          <p className="text-[11px] text-ink-tertiary tracking-[0.3em] uppercase mb-8">
             The Eden Project
           </p>
 
-          <h1 className="font-serif text-heading text-cream mb-6">
+          <h1 className="font-serif text-heading text-ink mb-6">
             Fifteen questions.
           </h1>
 
-          <p className="text-base text-cream/50 leading-relaxed mb-4">
+          <p className="text-base text-ink-secondary leading-relaxed mb-4">
             Open-ended. They adapt to what you say. There are no right answers.
             The only thing that matters is honesty.
           </p>
 
-          <p className="text-sm text-cream/30 mb-12">
+          <p className="text-sm text-ink-tertiary mb-12">
             Your responses shape a personalized document written
             specifically for you.
           </p>
@@ -107,14 +105,11 @@ export default function JourneyPage() {
   const label = resolveLabel(current, answers);
 
   return (
-    <main className="min-h-screen flex flex-col bg-midnight relative">
-      {/* Background */}
-      <div className="fixed inset-0 bg-void pointer-events-none" />
-
+    <main className="min-h-screen flex flex-col bg-white relative">
       {/* Progress ring */}
       <div className="fixed top-20 right-6 z-30 flex flex-col items-center">
         <OProgress progress={progress} size={40} />
-        <p className="text-[10px] text-gold/40 mt-1">
+        <p className="text-[10px] text-ink-tertiary mt-1">
           {currentIdx + 1}/{totalQuestions}
         </p>
       </div>
@@ -134,11 +129,11 @@ export default function JourneyPage() {
           }`}
           key={current.id}
         >
-          <p className="text-[11px] text-gold/40 mb-6 tracking-[0.2em]">
+          <p className="text-[11px] text-ink-tertiary mb-6 tracking-[0.2em]">
             {currentIdx + 1} of {totalQuestions}
           </p>
 
-          <label className="block font-serif text-xl md:text-2xl text-cream leading-relaxed mb-8">
+          <label className="block font-serif text-xl md:text-2xl text-ink leading-relaxed mb-8">
             {label}
           </label>
 
@@ -151,7 +146,7 @@ export default function JourneyPage() {
               onChange={(e) => setAnswers({ ...answers, [current.id]: e.target.value })}
               onKeyDown={handleKeyDown}
               placeholder={current.placeholder}
-              className="w-full bg-transparent border-b border-gold/20 py-3 text-lg text-cream placeholder:text-cream/20 focus:border-gold/60 transition-colors"
+              className="w-full bg-transparent border-b border-black/[0.1] py-3 text-lg text-ink placeholder:text-ink-faint focus:border-black/[0.3] transition-colors"
             />
           )}
 
@@ -163,7 +158,7 @@ export default function JourneyPage() {
               onChange={(e) => setAnswers({ ...answers, [current.id]: e.target.value })}
               placeholder={current.placeholder}
               rows={4}
-              className="w-full bg-midnight-light border border-gold/10 rounded-lg p-4 text-base text-cream placeholder:text-cream/20 resize-none focus:border-gold/30 transition-colors"
+              className="w-full bg-surface-secondary border border-black/[0.06] rounded-xl p-4 text-base text-ink placeholder:text-ink-faint resize-none focus:border-black/[0.15] transition-colors"
             />
           )}
 
@@ -176,10 +171,10 @@ export default function JourneyPage() {
                   onClick={() => {
                     setAnswers({ ...answers, [current.id]: opt.value });
                   }}
-                  className={`w-full text-left p-4 rounded-lg border transition-all text-sm leading-relaxed ${
+                  className={`w-full text-left p-4 rounded-xl border transition-all text-sm leading-relaxed ${
                     answers[current.id] === opt.value
-                      ? 'border-gold bg-gold/10 text-cream'
-                      : 'border-gold/10 bg-midnight-light text-cream/60 hover:border-gold/30'
+                      ? 'border-ink bg-ink text-white'
+                      : 'border-black/[0.06] bg-surface-secondary text-ink-secondary hover:border-black/[0.12]'
                   }`}
                 >
                   {opt.label}
@@ -192,7 +187,7 @@ export default function JourneyPage() {
           <div className="flex justify-between items-center mt-10">
             <button
               onClick={goBack}
-              className={`text-sm text-cream/30 hover:text-gold transition-colors ${
+              className={`text-sm text-ink-tertiary hover:text-ink transition-colors ${
                 currentIdx === 0 ? 'invisible' : ''
               }`}
             >
