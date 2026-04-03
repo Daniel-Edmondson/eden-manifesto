@@ -49,7 +49,8 @@ export function OBreathing({ size = 120, className = '' }) {
 // HERO O — Large, clean, with drawing animation
 // ============================================
 export function OHero({ size = 280, className = '' }) {
-  const circumference = Math.round(2 * Math.PI * 130); // ~817
+  const r = 130;
+  const c = Math.ceil(2 * Math.PI * r); // 817
 
   return (
     <div className={`relative ${className}`}>
@@ -57,16 +58,24 @@ export function OHero({ size = 280, className = '' }) {
         <circle
           cx="140"
           cy="140"
-          r="130"
+          r={r}
           fill="none"
           stroke="#ffffff"
           strokeWidth="3.5"
-          style={{
-            strokeDasharray: circumference,
-            strokeDashoffset: circumference,
-            animation: 'draw 3s ease-out 0.3s forwards',
-          }}
-        />
+          strokeDasharray={c}
+          strokeDashoffset={c}
+        >
+          <animate
+            attributeName="stroke-dashoffset"
+            from={c}
+            to="0"
+            dur="3s"
+            begin="0.3s"
+            fill="freeze"
+            calcMode="spline"
+            keySplines="0.25 0.46 0.45 0.94"
+          />
+        </circle>
       </svg>
     </div>
   );
