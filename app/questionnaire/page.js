@@ -73,6 +73,19 @@ function QuestionnaireContent() {
   const inputRef = useRef(null);
   const abortRef = useRef(null);
 
+  // Global error safety net — catch unhandled promise rejections
+  useEffect(() => {
+    const handler = (event) => {
+      console.error('Unhandled rejection caught:', event.reason);
+      if (generating) {
+        setError(event.reason?.message || 'Something went wrong during generation. Please try again.');
+        setGenerating(false);
+      }
+    };
+    window.addEventListener('unhandledrejection', handler);
+    return () => window.removeEventListener('unhandledrejection', handler);
+  }, [generating]);
+
   // Warn user before navigating away during generation
   useEffect(() => {
     if (!generating) return;
@@ -152,8 +165,8 @@ function QuestionnaireContent() {
       setRecovering(false);
       sessionStorage.removeItem(STORAGE_KEYS.GEN_IN_PROGRESS);
     } catch (err) {
-      console.error(err);
-      setError(err.message);
+      console.error('Resume error:', err);
+      setError(err?.message || 'PDF generation failed. Contact danieledmondson45@gmail.com');
       setGenerating(false);
       setRecovering(false);
     }
@@ -220,7 +233,7 @@ function QuestionnaireContent() {
   const isLast = currentQ === visibleQuestions.length - 1;
   const canProceed = currentQuestion && (
     (currentQuestion.type === 'select' && answers[currentQuestion.id]) ||
-    (currentQuestion.type !== 'select' && answers[currentQuestion.id]?.trim().length > 0)
+    (currentQuestion.type !== 'select' && typeof answers[currentQuestion.id] === 'string' && answers[currentQuestion.id].trim().length > 0)
   );
   const progress = visibleQuestions.length > 0 ? (currentQ + 1) / visibleQuestions.length : 0;
 
@@ -243,68 +256,109 @@ function QuestionnaireContent() {
     setAwakeningPhase(0);
     setAwakeningMsg(0);
 
-    sessionStorage.setItem(STORAGE_KEYS.GEN_IN_PROGRESS, 'true');
-    sessionStorage.setItem(STORAGE_KEYS.GEN_NAME, answers.name || 'friend');
-    sessionStorage.removeItem(STORAGE_KEYS.GENERATED_TEXT);
-    sessionStorage.removeItem(STORAGE_KEYS.PDF_BASE64);
+    try {
+      sessionStorage.setItem(STORAGE_KEYS.GEN_IN_PROGRESS, 'true');
+      sessionStorage.setItem(STORAGE_KEYS.GEN_NAME, answers.name || 'friend');
+      sessionStorage.removeItem(STORAGE_KEYS.GENERATED_TEXT);
+      sessionStorage.removeItem(STORAGE_KEYS.PDF_BASE64);
+    } catch (_) {}
 
     try {
-      const textRes = await fetch('/api/generate-text', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers }),
-      });
+      // Step 1: Generate text via streaming
+      let textRes;
+      try {
+        textRes = await fetch('/api/generate-text', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ answers }),
+        });
+      } catch (fetchErr) {
+        throw new Error('Could not reach the server. Check your internet connection and try again.');
+      }
 
       if (!textRes.ok) {
-        const errData = await textRes.json().catch(() => ({}));
-        throw new Error(errData.error || 'Generation failed. Contact danieledmondson45@gmail.com');
+        let errMsg = 'Generation failed.';
+        try {
+          const errData = await textRes.json();
+          errMsg = errData.error || errMsg;
+        } catch (_) {}
+        throw new Error(errMsg + ' Contact danieledmondson45@gmail.com');
       }
 
-      const reader = textRes.body.getReader();
-      const decoder = new TextDecoder();
+      // Step 2: Read the streaming response
       let text = '';
+      if (textRes.body && typeof textRes.body.getReader === 'function') {
+        const reader = textRes.body.getReader();
+        const decoder = new TextDecoder();
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        text += decoder.decode(value, { stream: true });
-        const words = text.split(/\s+/).length;
-        setGenerationStatus(`${words.toLocaleString()} words and counting...`);
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            text += decoder.decode(value, { stream: true });
+            const words = text.split(/\s+/).length;
+            setGenerationStatus(`${words.toLocaleString()} words and counting...`);
 
-        if (words % 200 === 0 || done) {
-          sessionStorage.setItem(STORAGE_KEYS.GENERATED_TEXT, text);
+            if (words % 200 === 0) {
+              try { sessionStorage.setItem(STORAGE_KEYS.GENERATED_TEXT, text); } catch (_) {}
+            }
+          }
+        } finally {
+          try { reader.releaseLock(); } catch (_) {}
         }
+      } else {
+        // Fallback: non-streaming response
+        text = await textRes.text();
       }
 
-      sessionStorage.setItem(STORAGE_KEYS.GENERATED_TEXT, text);
+      try { sessionStorage.setItem(STORAGE_KEYS.GENERATED_TEXT, text); } catch (_) {}
 
       if (!text || text.length < 100) {
         throw new Error('Generation returned empty. Contact danieledmondson45@gmail.com');
       }
 
+      // Step 3: Generate PDF
       setGenerationStatus('Formatting your PDF...');
       setAwakeningPhase(3);
 
-      const pdfRes = await fetch('/api/generate-pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, name: answers.name }),
-      });
+      let pdfRes;
+      try {
+        pdfRes = await fetch('/api/generate-pdf', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text, name: answers.name || 'friend' }),
+        });
+      } catch (fetchErr) {
+        throw new Error('Could not reach the PDF service. Try again.');
+      }
 
-      if (!pdfRes.ok) throw new Error('PDF formatting failed.');
+      if (!pdfRes.ok) {
+        let errMsg = 'PDF formatting failed.';
+        try {
+          const errData = await pdfRes.json();
+          errMsg = errData.error || errMsg;
+        } catch (_) {}
+        throw new Error(errMsg);
+      }
 
       const blob = await pdfRes.blob();
 
-      const base64 = await blobToBase64(blob);
-      sessionStorage.setItem(STORAGE_KEYS.PDF_BASE64, base64);
+      try {
+        const base64 = await blobToBase64(blob);
+        sessionStorage.setItem(STORAGE_KEYS.PDF_BASE64, base64);
+      } catch (_) {
+        // sessionStorage might be full — that's okay, the blob URL still works
+      }
 
       setDownloadUrl(URL.createObjectURL(blob));
       setGenerationStatus('');
-      sessionStorage.removeItem(STORAGE_KEYS.GEN_IN_PROGRESS);
-      if (typeof window !== 'undefined') sessionStorage.removeItem('eden_answers');
+      try {
+        sessionStorage.removeItem(STORAGE_KEYS.GEN_IN_PROGRESS);
+        sessionStorage.removeItem('eden_answers');
+      } catch (_) {}
     } catch (err) {
-      console.error(err);
-      setError(err.message);
+      console.error('Generation error:', err);
+      setError(err?.message || 'An unexpected error occurred. Contact danieledmondson45@gmail.com');
       setGenerating(false);
     }
   };
