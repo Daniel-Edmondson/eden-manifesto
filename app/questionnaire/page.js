@@ -35,14 +35,22 @@ function blobToBase64(blob) {
   });
 }
 
-// Helper: convert base64 back to blob
+// Helper: convert base64 back to blob (returns null on invalid input)
 function base64ToBlob(base64) {
-  const [header, data] = base64.split(',');
-  const mime = header.match(/:(.*?);/)[1];
-  const bytes = atob(data);
-  const arr = new Uint8Array(bytes.length);
-  for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
-  return new Blob([arr], { type: mime });
+  try {
+    const [header, data] = base64.split(',');
+    if (!header || !data) return null;
+    const match = header.match(/:(.*?);/);
+    if (!match) return null;
+    const mime = match[1];
+    const bytes = atob(data);
+    const arr = new Uint8Array(bytes.length);
+    for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+    return new Blob([arr], { type: mime });
+  } catch (e) {
+    console.error('base64ToBlob failed:', e);
+    return null;
+  }
 }
 
 function QuestionnaireContent() {
@@ -80,26 +88,42 @@ function QuestionnaireContent() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const savedPdf = sessionStorage.getItem(STORAGE_KEYS.PDF_BASE64);
-    const savedText = sessionStorage.getItem(STORAGE_KEYS.GENERATED_TEXT);
-    const savedName = sessionStorage.getItem(STORAGE_KEYS.GEN_NAME);
+    try {
+      const savedPdf = sessionStorage.getItem(STORAGE_KEYS.PDF_BASE64);
+      const savedText = sessionStorage.getItem(STORAGE_KEYS.GENERATED_TEXT);
+      const savedName = sessionStorage.getItem(STORAGE_KEYS.GEN_NAME);
 
-    if (savedPdf && savedName) {
-      const blob = base64ToBlob(savedPdf);
-      setDownloadUrl(URL.createObjectURL(blob));
-      setAnswers(prev => ({ ...prev, name: savedName }));
-      setVerified(true);
-      setVerifying(false);
-      return;
-    }
+      if (savedPdf && savedName) {
+        const blob = base64ToBlob(savedPdf);
+        if (!blob) {
+          // Corrupt PDF data — clear it and fall through to text recovery
+          sessionStorage.removeItem(STORAGE_KEYS.PDF_BASE64);
+        } else {
+          setDownloadUrl(URL.createObjectURL(blob));
+          setAnswers(prev => ({ ...prev, name: savedName }));
+          setVerified(true);
+          setVerifying(false);
+          return;
+        }
+      }
 
-    if (savedText && savedText.length > 100 && savedName) {
-      setRecovering(true);
-      setVerified(true);
-      setVerifying(false);
-      setAnswers(prev => ({ ...prev, name: savedName }));
-      resumeFromText(savedText, savedName);
-      return;
+      if (savedText && savedText.length > 100 && savedName) {
+        setRecovering(true);
+        setVerified(true);
+        setVerifying(false);
+        setAnswers(prev => ({ ...prev, name: savedName }));
+        resumeFromText(savedText, savedName);
+        return;
+      }
+    } catch (e) {
+      console.error('Recovery failed:', e);
+      // Clear potentially corrupt state
+      try {
+        sessionStorage.removeItem(STORAGE_KEYS.PDF_BASE64);
+        sessionStorage.removeItem(STORAGE_KEYS.GENERATED_TEXT);
+        sessionStorage.removeItem(STORAGE_KEYS.GEN_NAME);
+        sessionStorage.removeItem(STORAGE_KEYS.GEN_IN_PROGRESS);
+      } catch (_) {}
     }
   }, []);
 
