@@ -42,12 +42,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-float">
-          <div className="w-5 h-8 rounded-full border border-white/30 flex items-start justify-center p-1.5">
-            <div className="w-1 h-2 rounded-full bg-white/40 animate-pulse-soft" />
-          </div>
-        </div>
       </section>
 
       {/* ===== THE QUESTION ===== */}
