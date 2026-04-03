@@ -162,7 +162,7 @@ function generatePDF(text, name) {
   doc.setFont('times', 'italic');
   doc.setFontSize(11);
   doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
-  doc.text('Written for you. Not a template. Not a summary.', cx, 425, { align: 'center' });
+  doc.text('Written for you. Entirely for you.', cx, 425, { align: 'center' });
   doc.text('A conversation between your words, a framework, and the landscape of human thought.', cx, 441, { align: 'center' });
 
   // Triad at bottom of title page

@@ -19,9 +19,9 @@ module.exports = {
         },
         ink: {
           DEFAULT: '#ffffff',              // white — primary text
-          secondary: 'rgba(255,255,255,0.78)',
-          tertiary: 'rgba(255,255,255,0.55)',
-          faint: 'rgba(255,255,255,0.25)',
+          secondary: 'rgba(255,255,255,0.9)',
+          tertiary: 'rgba(255,255,255,0.7)',
+          faint: 'rgba(255,255,255,0.35)',
         },
         accent: {
           DEFAULT: '#4a6741',       // forest green — buttons, accents

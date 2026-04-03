@@ -49,6 +49,11 @@ export function OBreathing({ size = 120, className = '' }) {
 // HERO O — Large, clean, with drawing animation
 // ============================================
 export function OHero({ size = 280, className = '' }) {
+  // Circumferences for each ring so the draw animation completes a full circle
+  const outerC = Math.round(2 * Math.PI * 135); // ~848
+  const midC   = Math.round(2 * Math.PI * 95);  // ~597
+  const innerC = Math.round(2 * Math.PI * 55);  // ~346
+
   return (
     <div className={`relative ${className}`}>
       <svg width={size} height={size} viewBox="0 0 280 280" className="relative">
@@ -59,8 +64,12 @@ export function OHero({ size = 280, className = '' }) {
           r="135"
           fill="none"
           stroke="#ffffff"
-          strokeWidth="1.5"
-          className="o-draw"
+          strokeWidth="3"
+          style={{
+            strokeDasharray: outerC,
+            strokeDashoffset: outerC,
+            animation: 'draw 3s ease-out 0.3s forwards',
+          }}
         />
 
         {/* Middle ring */}
@@ -70,10 +79,13 @@ export function OHero({ size = 280, className = '' }) {
           r="95"
           fill="none"
           stroke="#ffffff"
-          strokeWidth="0.75"
-          opacity="0.5"
-          className="o-draw"
-          style={{ animationDelay: '0.8s' }}
+          strokeWidth="2"
+          opacity="0.6"
+          style={{
+            strokeDasharray: midC,
+            strokeDashoffset: midC,
+            animation: 'draw 3s ease-out 0.8s forwards',
+          }}
         />
 
         {/* Inner ring */}
@@ -83,19 +95,22 @@ export function OHero({ size = 280, className = '' }) {
           r="55"
           fill="none"
           stroke="#ffffff"
-          strokeWidth="0.5"
-          opacity="0.3"
-          className="o-draw"
-          style={{ animationDelay: '1.6s' }}
+          strokeWidth="1.5"
+          opacity="0.4"
+          style={{
+            strokeDasharray: innerC,
+            strokeDashoffset: innerC,
+            animation: 'draw 3s ease-out 1.6s forwards',
+          }}
         />
 
         {/* Center dot */}
         <circle
           cx="140"
           cy="140"
-          r="3"
+          r="4"
           fill="#ffffff"
-          opacity="0.7"
+          opacity="0.8"
           className="animate-pulse-ink"
         />
 
@@ -104,8 +119,8 @@ export function OHero({ size = 280, className = '' }) {
           points="140,45 55,185 225,185"
           fill="none"
           stroke="#ffffff"
-          strokeWidth="0.5"
-          opacity="0.2"
+          strokeWidth="1"
+          opacity="0.25"
           className="sacred-draw"
           style={{ animationDelay: '2s' }}
         />
@@ -115,8 +130,8 @@ export function OHero({ size = 280, className = '' }) {
           points="140,235 55,95 225,95"
           fill="none"
           stroke="#ffffff"
-          strokeWidth="0.5"
-          opacity="0.12"
+          strokeWidth="1"
+          opacity="0.15"
           className="sacred-draw"
           style={{ animationDelay: '2.5s' }}
         />

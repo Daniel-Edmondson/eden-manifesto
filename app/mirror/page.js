@@ -105,8 +105,7 @@ export default function MirrorPage() {
           </p>
 
           <p className="text-base text-ink-secondary mb-10">
-            This is not a search engine. This is not therapy.
-            It's a framework, speaking.
+            A framework, speaking.
           </p>
 
           <button

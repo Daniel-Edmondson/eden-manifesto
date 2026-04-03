@@ -59,7 +59,6 @@ export default function Home() {
           </p>
 
           <p className="text-lg text-ink-secondary leading-relaxed">
-            Not as a feeling. Not as a metaphor.
             As a structure — one that every tradition has found
             and most people walk past every day.
           </p>
@@ -103,8 +102,8 @@ export default function Home() {
               </div>
               <h3 className="font-serif text-xl text-ink mb-3">A document written for you</h3>
               <p className="text-base text-ink-secondary leading-relaxed">
-                A 5,000+ word PDF. Not a template. Not generic.
-                A philosophical conversation with your life at the center.
+                A 5,000+ word PDF — a philosophical conversation
+                with your life at the center.
               </p>
             </div>
           </div>
@@ -168,7 +167,7 @@ export default function Home() {
           <OBreathing size={60} className="mx-auto mb-10" />
 
           <p className="font-serif text-subheading text-ink mb-6">
-            Not ready? Talk to it first.
+            Curious? Talk to it first.
           </p>
 
           <p className="text-base text-ink-secondary mb-10 leading-relaxed">

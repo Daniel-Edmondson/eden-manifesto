@@ -45,7 +45,7 @@ export default function SupportPage() {
           </p>
 
           <p>
-            This is not a self-help project. It is an attempt to replicate the unrepeatable:
+            It is an attempt to replicate the unrepeatable:
             the moment the mind sees through its own paradox and discovers that
             transcendence was never elsewhere. That the Kingdom was always within.
             That the opposite of paradox is not a solution — it is you.

@@ -174,10 +174,9 @@ function OfferingContent() {
             </p>
 
             <p>
-              This isn't AI-generated filler. The framework is human. The AI is the
-              delivery mechanism — it synthesizes your answers with a specific
-              philosophical system to produce something that could only be written
-              for you.
+              The framework is human. The AI is the delivery mechanism — it
+              synthesizes your answers with a specific philosophical system to
+              produce something that could only be written for you.
             </p>
 
             <p>
