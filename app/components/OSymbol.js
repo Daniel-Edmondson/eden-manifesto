@@ -79,8 +79,8 @@ export function OHero({ size = 280, className = '' }) {
           r="95"
           fill="none"
           stroke="#ffffff"
-          strokeWidth="2"
-          opacity="0.6"
+          strokeWidth="2.5"
+          opacity="0.9"
           style={{
             strokeDasharray: midC,
             strokeDashoffset: midC,
@@ -95,8 +95,8 @@ export function OHero({ size = 280, className = '' }) {
           r="55"
           fill="none"
           stroke="#ffffff"
-          strokeWidth="1.5"
-          opacity="0.4"
+          strokeWidth="2"
+          opacity="0.75"
           style={{
             strokeDasharray: innerC,
             strokeDashoffset: innerC,
@@ -108,9 +108,8 @@ export function OHero({ size = 280, className = '' }) {
         <circle
           cx="140"
           cy="140"
-          r="4"
+          r="5"
           fill="#ffffff"
-          opacity="0.8"
           className="animate-pulse-ink"
         />
 
@@ -119,8 +118,8 @@ export function OHero({ size = 280, className = '' }) {
           points="140,45 55,185 225,185"
           fill="none"
           stroke="#ffffff"
-          strokeWidth="1"
-          opacity="0.25"
+          strokeWidth="1.5"
+          opacity="0.5"
           className="sacred-draw"
           style={{ animationDelay: '2s' }}
         />
@@ -130,8 +129,8 @@ export function OHero({ size = 280, className = '' }) {
           points="140,235 55,95 225,95"
           fill="none"
           stroke="#ffffff"
-          strokeWidth="1"
-          opacity="0.15"
+          strokeWidth="1.5"
+          opacity="0.35"
           className="sacred-draw"
           style={{ animationDelay: '2.5s' }}
         />
