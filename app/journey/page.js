@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { OProgress } from '../components/OSymbol';
+import { OProgress, OBreathing, SacredGeometry } from '../components/OSymbol';
 import { questions, resolveLabel, getVisibleQuestions } from '../../lib/questions';
 
 export default function JourneyPage() {
@@ -19,7 +19,7 @@ export default function JourneyPage() {
 
   useEffect(() => {
     if (started && (current?.type === 'text' || current?.type === 'textarea')) {
-      setTimeout(() => inputRef.current?.focus(), 300);
+      setTimeout(() => inputRef.current?.focus(), 350);
     }
   }, [currentIdx, started]);
 
@@ -31,7 +31,6 @@ export default function JourneyPage() {
   const goNext = () => {
     if (!canProceed) return;
     if (isLast) {
-      // Store answers and go to offering
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('eden_answers', JSON.stringify(answers));
       }
@@ -42,7 +41,7 @@ export default function JourneyPage() {
     setTimeout(() => {
       setCurrentIdx(currentIdx + 1);
       setTransitioning(false);
-    }, 250);
+    }, 300);
   };
 
   const goBack = () => {
@@ -51,7 +50,7 @@ export default function JourneyPage() {
     setTimeout(() => {
       setCurrentIdx(currentIdx - 1);
       setTransitioning(false);
-    }, 250);
+    }, 300);
   };
 
   const handleKeyDown = (e) => {
@@ -64,22 +63,30 @@ export default function JourneyPage() {
   // Pre-start screen
   if (!started) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 bg-white">
-        <div className="max-w-md text-center page-enter">
-          <p className="text-sm text-eden-400 tracking-wide uppercase mb-8">
+      <main className="min-h-screen flex items-center justify-center px-6 bg-midnight relative overflow-hidden">
+        <div className="absolute inset-0 bg-void" />
+        <div className="absolute inset-0 bg-stars" />
+        <SacredGeometry opacity={0.02} />
+
+        <div className="relative max-w-md text-center page-enter z-10">
+          <div className="mb-10">
+            <OBreathing size={80} className="mx-auto" />
+          </div>
+
+          <p className="text-[11px] text-gold/60 tracking-[0.3em] uppercase mb-8">
             The Eden Project
           </p>
 
-          <h1 className="font-serif text-heading text-eden-900 mb-6">
+          <h1 className="font-serif text-heading text-cream mb-6">
             Fifteen questions.
           </h1>
 
-          <p className="text-base text-eden-500 leading-relaxed mb-4">
-            They adapt to what you say. There are no right answers.
+          <p className="text-base text-cream/50 leading-relaxed mb-4">
+            Open-ended. They adapt to what you say. There are no right answers.
             The only thing that matters is honesty.
           </p>
 
-          <p className="text-sm text-eden-400 mb-12">
+          <p className="text-sm text-cream/30 mb-12">
             Your responses shape a personalized document written
             specifically for you.
           </p>
@@ -100,16 +107,19 @@ export default function JourneyPage() {
   const label = resolveLabel(current, answers);
 
   return (
-    <main className="min-h-screen flex flex-col bg-white">
-      {/* Progress */}
+    <main className="min-h-screen flex flex-col bg-midnight relative">
+      {/* Background */}
+      <div className="fixed inset-0 bg-void pointer-events-none" />
+
+      {/* Progress ring */}
       <div className="fixed top-20 right-6 z-30 flex flex-col items-center">
         <OProgress progress={progress} size={40} />
-        <p className="text-[10px] text-eden-400 mt-1">
+        <p className="text-[10px] text-gold/40 mt-1">
           {currentIdx + 1}/{totalQuestions}
         </p>
       </div>
 
-      {/* Thin progress bar at top */}
+      {/* Thin progress bar */}
       <div className="fixed top-14 left-0 right-0 z-40">
         <div className="progress-track">
           <div className="progress-fill" style={{ width: `${progress * 100}%` }} />
@@ -117,18 +127,18 @@ export default function JourneyPage() {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex items-center justify-center px-6 py-24">
+      <div className="relative flex-1 flex items-center justify-center px-6 py-24 z-10">
         <div
-          className={`max-w-xl w-full transition-all duration-300 ${
-            transitioning ? 'opacity-0 translate-y-3' : 'opacity-100 translate-y-0'
+          className={`max-w-xl w-full transition-all duration-350 ${
+            transitioning ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
           }`}
           key={current.id}
         >
-          <p className="text-xs text-eden-400 mb-6 tracking-wide">
+          <p className="text-[11px] text-gold/40 mb-6 tracking-[0.2em]">
             {currentIdx + 1} of {totalQuestions}
           </p>
 
-          <label className="block font-serif text-xl md:text-2xl text-eden-800 mb-8 leading-relaxed">
+          <label className="block font-serif text-xl md:text-2xl text-cream leading-relaxed mb-8">
             {label}
           </label>
 
@@ -141,7 +151,7 @@ export default function JourneyPage() {
               onChange={(e) => setAnswers({ ...answers, [current.id]: e.target.value })}
               onKeyDown={handleKeyDown}
               placeholder={current.placeholder}
-              className="w-full bg-transparent border-b border-eden-200 py-3 text-lg text-eden-800 placeholder:text-eden-300 focus:border-eden-900 transition-colors"
+              className="w-full bg-transparent border-b border-gold/20 py-3 text-lg text-cream placeholder:text-cream/20 focus:border-gold/60 transition-colors"
             />
           )}
 
@@ -153,7 +163,7 @@ export default function JourneyPage() {
               onChange={(e) => setAnswers({ ...answers, [current.id]: e.target.value })}
               placeholder={current.placeholder}
               rows={4}
-              className="w-full bg-eden-50 border border-eden-200 rounded-lg p-4 text-base text-eden-800 placeholder:text-eden-300 resize-none focus:border-eden-500 transition-colors"
+              className="w-full bg-midnight-light border border-gold/10 rounded-lg p-4 text-base text-cream placeholder:text-cream/20 resize-none focus:border-gold/30 transition-colors"
             />
           )}
 
@@ -168,8 +178,8 @@ export default function JourneyPage() {
                   }}
                   className={`w-full text-left p-4 rounded-lg border transition-all text-sm leading-relaxed ${
                     answers[current.id] === opt.value
-                      ? 'border-eden-900 bg-eden-900 text-white'
-                      : 'border-eden-200 bg-white text-eden-600 hover:border-eden-400'
+                      ? 'border-gold bg-gold/10 text-cream'
+                      : 'border-gold/10 bg-midnight-light text-cream/60 hover:border-gold/30'
                   }`}
                 >
                   {opt.label}
@@ -182,7 +192,7 @@ export default function JourneyPage() {
           <div className="flex justify-between items-center mt-10">
             <button
               onClick={goBack}
-              className={`text-sm text-eden-400 hover:text-eden-700 transition-colors ${
+              className={`text-sm text-cream/30 hover:text-gold transition-colors ${
                 currentIdx === 0 ? 'invisible' : ''
               }`}
             >

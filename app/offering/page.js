@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { OBreathing } from '../components/OSymbol';
+import { OBreathing, SacredGeometry } from '../components/OSymbol';
 
 function OfferingContent() {
   const searchParams = useSearchParams();
@@ -61,25 +61,30 @@ function OfferingContent() {
   };
 
   return (
-    <main className="min-h-screen bg-white">
-      <section className="py-24 md:py-32 px-6">
-        <div className="max-w-lg mx-auto text-center page-enter">
-          <OBreathing size={80} className="mx-auto mb-10" />
+    <main className="min-h-screen bg-midnight relative overflow-hidden">
+      <div className="absolute inset-0 bg-void" />
+      <SacredGeometry opacity={0.015} />
 
-          <h1 className="font-serif text-heading text-eden-900 mb-4">
+      <section className="relative py-24 md:py-32 px-6 z-10">
+        <div className="max-w-lg mx-auto text-center page-enter">
+          <div className="mb-10">
+            <OBreathing size={80} className="mx-auto" />
+          </div>
+
+          <h1 className="font-serif text-heading text-cream mb-4">
             Your document.
           </h1>
 
-          <p className="text-base text-eden-500 leading-relaxed mb-12">
+          <p className="text-base text-cream/50 leading-relaxed mb-12">
             {fromJourney
-              ? 'Your answers are ready. Choose what feels right and your philosophical document will be generated from what you said.'
-              : 'A personalized philosophical document built from your answers and a framework designed to meet you where you are.'
+              ? 'Your answers are ready. Choose what feels right and your philosophical document will be generated from everything you said.'
+              : 'A personalized philosophical document built from your answers and a framework designed to show you what was always there.'
             }
           </p>
 
           {!hasAnswers && !fromJourney && (
-            <div className="mb-12 p-6 bg-eden-50 rounded-xl text-center">
-              <p className="text-sm text-eden-500 mb-4">
+            <div className="mb-12 p-6 bg-midnight-light rounded-xl text-center border border-gold/10">
+              <p className="text-sm text-cream/40 mb-4">
                 You haven't answered the questions yet.
               </p>
               <a href="/journey" className="btn btn-secondary text-sm">
@@ -90,7 +95,7 @@ function OfferingContent() {
 
           {/* Sliding scale */}
           <div className="mb-10">
-            <p className="text-sm text-eden-400 mb-6">Pay what feels right</p>
+            <p className="text-[11px] text-gold/50 tracking-[0.2em] uppercase mb-6">Pay what feels right</p>
 
             <div className="relative mb-4">
               <input
@@ -102,16 +107,16 @@ function OfferingContent() {
                 onChange={(e) => setAmount(Number(e.target.value))}
                 className="w-full"
               />
-              <div className="flex justify-between text-xs text-eden-400 mt-2">
+              <div className="flex justify-between text-xs text-cream/25 mt-2">
                 <span>$15</span>
                 <span>$100</span>
               </div>
             </div>
 
-            <p className="text-4xl font-light text-eden-900 mb-1">
+            <p className="text-4xl font-light text-gold mb-1">
               ${amount}
             </p>
-            <p className="text-xs text-eden-400">
+            <p className="text-xs text-cream/30">
               Every document is the same depth and quality regardless of amount.
             </p>
           </div>
@@ -125,20 +130,20 @@ function OfferingContent() {
             {loading ? 'Redirecting...' : `Continue — $${amount}`}
           </button>
 
-          <p className="text-xs text-eden-400 mb-8">
+          <p className="text-xs text-cream/25 mb-8">
             Secure payment via Stripe. You'll complete the questionnaire after checkout.
           </p>
 
           {/* Promo code */}
-          <div className="pt-6 border-t border-eden-100">
-            <p className="text-xs text-eden-400 mb-4">Have a promo code?</p>
+          <div className="pt-6 border-t border-gold/10">
+            <p className="text-xs text-cream/30 mb-4">Have a promo code?</p>
             <div className="flex items-center gap-2 justify-center">
               <input
                 type="text"
                 value={promoCode}
                 onChange={(e) => { setPromoCode(e.target.value); setPromoError(''); }}
                 placeholder="Enter code"
-                className="w-40 px-4 py-2.5 bg-eden-50 border border-eden-200 text-sm text-eden-700 text-center focus:border-eden-500 transition-colors rounded-full"
+                className="w-40 px-4 py-2.5 bg-midnight-light border border-gold/15 text-sm text-cream text-center focus:border-gold/40 transition-colors rounded-full placeholder:text-cream/20"
               />
               <button
                 onClick={handlePromo}
@@ -149,24 +154,25 @@ function OfferingContent() {
               </button>
             </div>
             {promoError && (
-              <p className="mt-2 text-xs text-red-500">{promoError}</p>
+              <p className="mt-2 text-xs text-red-400">{promoError}</p>
             )}
           </div>
         </div>
       </section>
 
       {/* What you get */}
-      <section className="py-20 px-6 bg-eden-50">
-        <div className="max-w-lg mx-auto">
-          <p className="text-sm text-eden-400 tracking-wide uppercase mb-8 text-center">
-            What you receive
+      <section className="relative py-20 px-6 border-t border-gold/10 z-10">
+        <div className="absolute inset-0 bg-gold-glow opacity-10" />
+        <div className="relative max-w-lg mx-auto">
+          <p className="text-[11px] text-gold/50 tracking-[0.3em] uppercase mb-8 text-center">
+            What You Receive
           </p>
 
-          <div className="space-y-6 text-sm text-eden-600 leading-relaxed">
+          <div className="space-y-6 text-sm text-cream/45 leading-relaxed">
             <p>
               A philosophical document generated from your answers, a framework built
-              over a decade, and references drawn from across traditions, philosophy,
-              and science.
+              over a decade, and references drawn from across every tradition — philosophy,
+              theology, science, literature.
             </p>
 
             <p>
@@ -179,18 +185,18 @@ function OfferingContent() {
             <p>
               The document is a conversation between what you said, what the framework
               sees in it, and what thinkers across centuries have said about the same
-              things.
+              things. 5,000+ words of genuine philosophical engagement with your life.
             </p>
           </div>
         </div>
       </section>
 
       {/* Contact */}
-      <section className="py-16 px-6 text-center">
-        <p className="text-sm text-eden-400 mb-2">Questions?</p>
+      <section className="relative py-16 px-6 text-center z-10">
+        <p className="text-sm text-cream/25 mb-2">Questions?</p>
         <a
           href="mailto:danieledmondson45@gmail.com"
-          className="text-sm text-eden-600 hover:text-eden-900 transition-colors"
+          className="text-sm text-gold/60 hover:text-gold transition-colors"
         >
           danieledmondson45@gmail.com
         </a>
@@ -202,8 +208,8 @@ function OfferingContent() {
 export default function OfferingPage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen flex items-center justify-center bg-white">
-        <p className="text-eden-400 animate-pulse-soft">Loading...</p>
+      <main className="min-h-screen flex items-center justify-center bg-midnight">
+        <p className="text-cream/30 animate-pulse-soft">Loading...</p>
       </main>
     }>
       <OfferingContent />

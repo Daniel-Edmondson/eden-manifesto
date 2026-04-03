@@ -2,8 +2,20 @@
 
 import { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { OProgress, OBreathing } from '../components/OSymbol';
+import { OProgress, OBreathing, AwakeningSequence, SacredGeometry } from '../components/OSymbol';
 import { questions, resolveLabel, getVisibleQuestions } from '../../lib/questions';
+
+// Awakening messages shown during generation
+const AWAKENING_MESSAGES = [
+  'Reading your answers...',
+  'Finding the threads...',
+  'Building your triad...',
+  'Drawing from the traditions...',
+  'Weaving the connections...',
+  'The framework meets your words...',
+  'Something is taking shape...',
+  'Almost there...',
+];
 
 function QuestionnaireContent() {
   const searchParams = useSearchParams();
@@ -18,6 +30,8 @@ function QuestionnaireContent() {
   const [downloadUrl, setDownloadUrl] = useState(null);
   const [error, setError] = useState(null);
   const [generationStatus, setGenerationStatus] = useState('');
+  const [awakeningPhase, setAwakeningPhase] = useState(0);
+  const [awakeningMsg, setAwakeningMsg] = useState(0);
   const inputRef = useRef(null);
 
   // Load saved journey answers
@@ -28,10 +42,15 @@ function QuestionnaireContent() {
         try {
           const parsed = JSON.parse(saved);
           setAnswers(parsed);
-          // Skip to first unanswered
+          // Skip to first unanswered — or if all answered, jump to last (triggers submit)
           const visible = getVisibleQuestions(parsed);
           const firstEmpty = visible.findIndex(q => !parsed[q.id] || (typeof parsed[q.id] === 'string' && parsed[q.id].trim() === ''));
-          if (firstEmpty > 0) setCurrentQ(firstEmpty);
+          if (firstEmpty === -1) {
+            // All questions answered — jump to last so "Generate" is visible
+            setCurrentQ(visible.length - 1);
+          } else if (firstEmpty > 0) {
+            setCurrentQ(firstEmpty);
+          }
         } catch (e) {}
       }
     }
@@ -54,6 +73,24 @@ function QuestionnaireContent() {
   useEffect(() => {
     setTimeout(() => inputRef.current?.focus(), 200);
   }, [currentQ]);
+
+  // Awakening sequence progression during generation
+  useEffect(() => {
+    if (!generating) return;
+
+    const phaseTimer = setInterval(() => {
+      setAwakeningPhase(prev => Math.min(prev + 1, 3));
+    }, 15000);
+
+    const msgTimer = setInterval(() => {
+      setAwakeningMsg(prev => (prev + 1) % AWAKENING_MESSAGES.length);
+    }, 8000);
+
+    return () => {
+      clearInterval(phaseTimer);
+      clearInterval(msgTimer);
+    };
+  }, [generating]);
 
   const visibleQuestions = getVisibleQuestions(answers);
   const currentQuestion = visibleQuestions[currentQ];
@@ -80,6 +117,8 @@ function QuestionnaireContent() {
     setGenerating(true);
     setError(null);
     setGenerationStatus('Writing your document...');
+    setAwakeningPhase(0);
+    setAwakeningMsg(0);
 
     try {
       const textRes = await fetch('/api/generate-text', {
@@ -102,14 +141,15 @@ function QuestionnaireContent() {
         if (done) break;
         text += decoder.decode(value, { stream: true });
         const words = text.split(/\s+/).length;
-        setGenerationStatus(`Writing your document... (${words.toLocaleString()} words)`);
+        setGenerationStatus(`${words.toLocaleString()} words and counting...`);
       }
 
       if (!text || text.length < 100) {
         throw new Error('Generation returned empty. Contact danieledmondson45@gmail.com');
       }
 
-      setGenerationStatus('Formatting PDF...');
+      setGenerationStatus('Formatting your PDF...');
+      setAwakeningPhase(3);
 
       const pdfRes = await fetch('/api/generate-pdf', {
         method: 'POST',
@@ -133,18 +173,18 @@ function QuestionnaireContent() {
   // Loading states
   if (verifying) {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-white">
-        <p className="text-eden-400 animate-pulse-soft">Verifying...</p>
+      <main className="min-h-screen flex items-center justify-center bg-midnight">
+        <p className="text-cream/30 animate-pulse-soft">Verifying...</p>
       </main>
     );
   }
 
   if ((!sessionId && !promoCode) || !verified) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 bg-white">
+      <main className="min-h-screen flex items-center justify-center px-6 bg-midnight">
         <div className="max-w-md text-center">
-          <p className="text-eden-500 mb-4">Payment required.</p>
-          <a href="/offering" className="text-sm text-eden-600 hover:text-eden-900 transition-colors">
+          <p className="text-cream/50 mb-4">Payment required.</p>
+          <a href="/offering" className="text-sm text-gold/60 hover:text-gold transition-colors">
             &larr; Return to offering
           </a>
         </div>
@@ -155,15 +195,19 @@ function QuestionnaireContent() {
   // Download ready
   if (downloadUrl) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 bg-white">
-        <div className="max-w-md text-center page-enter">
+      <main className="min-h-screen flex items-center justify-center px-6 bg-midnight relative overflow-hidden">
+        <div className="absolute inset-0 bg-void" />
+        <div className="absolute inset-0 bg-gold-glow opacity-20" />
+        <SacredGeometry opacity={0.03} />
+
+        <div className="relative max-w-md text-center page-enter z-10">
           <OBreathing size={80} className="mx-auto mb-10" />
 
-          <h1 className="font-serif text-heading text-eden-900 mb-4">
+          <h1 className="font-serif text-heading text-cream mb-4">
             Your document is ready.
           </h1>
 
-          <p className="text-base text-eden-500 mb-10">
+          <p className="text-base text-cream/50 mb-10">
             This was written for you, {answers.name || 'friend'}.
           </p>
 
@@ -175,8 +219,8 @@ function QuestionnaireContent() {
             Download PDF
           </a>
 
-          <p className="mt-10 text-xs text-eden-400">
-            Questions? <a href="mailto:danieledmondson45@gmail.com" className="hover:text-eden-700 transition-colors">danieledmondson45@gmail.com</a>
+          <p className="mt-10 text-xs text-cream/25">
+            Questions? <a href="mailto:danieledmondson45@gmail.com" className="hover:text-gold transition-colors">danieledmondson45@gmail.com</a>
           </p>
         </div>
       </main>
@@ -186,15 +230,15 @@ function QuestionnaireContent() {
   // Error
   if (error && !generating) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 bg-white">
+      <main className="min-h-screen flex items-center justify-center px-6 bg-midnight">
         <div className="max-w-md text-center page-enter">
-          <p className="text-lg text-eden-700 mb-4">Something went wrong.</p>
-          <p className="text-sm text-eden-500 mb-8">{error}</p>
+          <p className="text-lg text-cream/80 mb-4">Something went wrong.</p>
+          <p className="text-sm text-cream/40 mb-8">{error}</p>
           <button onClick={() => { setError(null); handleSubmit(); }}
             className="btn btn-primary mr-3">
             Try again
           </button>
-          <a href="mailto:danieledmondson45@gmail.com" className="text-sm text-eden-500 hover:text-eden-800">
+          <a href="mailto:danieledmondson45@gmail.com" className="text-sm text-cream/40 hover:text-gold">
             Contact Daniel
           </a>
         </div>
@@ -202,15 +246,31 @@ function QuestionnaireContent() {
     );
   }
 
-  // Generating
+  // ===== AWAKENING SEQUENCE — during generation =====
   if (generating) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6 bg-white">
-        <div className="text-center page-enter">
-          <OBreathing size={60} className="mx-auto mb-8" />
-          <p className="text-base text-eden-600 mb-2">{generationStatus}</p>
-          <p className="text-sm text-eden-400">
-            This takes about 60–90 seconds.
+      <main className="min-h-screen flex items-center justify-center px-6 bg-midnight relative overflow-hidden">
+        <div className="absolute inset-0 bg-void" />
+        <div className="absolute inset-0 bg-gold-glow opacity-30" />
+        <div className="absolute inset-0 bg-stars" />
+
+        <div className="relative text-center z-10">
+          {/* The awakening visualization */}
+          <div className="mb-12">
+            <AwakeningSequence phase={awakeningPhase} />
+          </div>
+
+          {/* Rotating messages */}
+          <p className="text-base text-gold font-serif mb-2 transition-opacity duration-1000">
+            {AWAKENING_MESSAGES[awakeningMsg]}
+          </p>
+
+          <p className="text-sm text-cream/30 mb-2">
+            {generationStatus}
+          </p>
+
+          <p className="text-xs text-cream/20">
+            This takes about 60-90 seconds. Something real is being written.
           </p>
         </div>
       </main>
@@ -223,11 +283,13 @@ function QuestionnaireContent() {
 
   // Questionnaire
   return (
-    <main className="min-h-screen flex flex-col bg-white">
+    <main className="min-h-screen flex flex-col bg-midnight relative">
+      <div className="fixed inset-0 bg-void pointer-events-none" />
+
       {/* Progress */}
       <div className="fixed top-20 right-6 z-30">
         <OProgress progress={progress} size={40} />
-        <p className="text-[10px] text-eden-400 text-center mt-1">
+        <p className="text-[10px] text-gold/40 text-center mt-1">
           {currentQ + 1}/{visibleQuestions.length}
         </p>
       </div>
@@ -238,13 +300,13 @@ function QuestionnaireContent() {
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center px-6 py-24">
+      <div className="relative flex-1 flex items-center justify-center px-6 py-24 z-10">
         <div className="max-w-xl w-full question-enter" key={currentQ}>
-          <p className="text-xs text-eden-400 mb-6 tracking-wide">
+          <p className="text-[11px] text-gold/40 mb-6 tracking-[0.2em]">
             {currentQ + 1} of {visibleQuestions.length}
           </p>
 
-          <label className="block font-serif text-xl md:text-2xl text-eden-800 mb-8 leading-relaxed">
+          <label className="block font-serif text-xl md:text-2xl text-cream mb-8 leading-relaxed">
             {label}
           </label>
 
@@ -256,7 +318,7 @@ function QuestionnaireContent() {
               onChange={(e) => setAnswers({ ...answers, [currentQuestion.id]: e.target.value })}
               onKeyDown={handleKeyDown}
               placeholder={currentQuestion.placeholder}
-              className="w-full bg-transparent border-b border-eden-200 py-3 text-lg text-eden-800 placeholder:text-eden-300 focus:border-eden-900 transition-colors"
+              className="w-full bg-transparent border-b border-gold/20 py-3 text-lg text-cream placeholder:text-cream/20 focus:border-gold/60 transition-colors"
             />
           )}
 
@@ -267,7 +329,7 @@ function QuestionnaireContent() {
               onChange={(e) => setAnswers({ ...answers, [currentQuestion.id]: e.target.value })}
               placeholder={currentQuestion.placeholder}
               rows={4}
-              className="w-full bg-eden-50 border border-eden-200 rounded-lg p-4 text-base text-eden-800 placeholder:text-eden-300 resize-none focus:border-eden-500 transition-colors"
+              className="w-full bg-midnight-light border border-gold/10 rounded-lg p-4 text-base text-cream placeholder:text-cream/20 resize-none focus:border-gold/30 transition-colors"
             />
           )}
 
@@ -279,8 +341,8 @@ function QuestionnaireContent() {
                   onClick={() => setAnswers({ ...answers, [currentQuestion.id]: opt.value })}
                   className={`w-full text-left p-4 rounded-lg border transition-all text-sm leading-relaxed ${
                     answers[currentQuestion.id] === opt.value
-                      ? 'border-eden-900 bg-eden-900 text-white'
-                      : 'border-eden-200 bg-white text-eden-600 hover:border-eden-400'
+                      ? 'border-gold bg-gold/10 text-cream'
+                      : 'border-gold/10 bg-midnight-light text-cream/60 hover:border-gold/30'
                   }`}
                 >
                   {opt.label}
@@ -292,7 +354,7 @@ function QuestionnaireContent() {
           <div className="flex justify-between items-center mt-10">
             <button
               onClick={() => setCurrentQ(Math.max(0, currentQ - 1))}
-              className={`text-sm text-eden-400 hover:text-eden-700 transition-colors ${currentQ === 0 ? 'invisible' : ''}`}
+              className={`text-sm text-cream/30 hover:text-gold transition-colors ${currentQ === 0 ? 'invisible' : ''}`}
             >
               &larr; Back
             </button>
@@ -313,8 +375,8 @@ function QuestionnaireContent() {
 export default function QuestionnairePage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen flex items-center justify-center bg-white">
-        <p className="text-eden-400 animate-pulse-soft">Loading...</p>
+      <main className="min-h-screen flex items-center justify-center bg-midnight">
+        <p className="text-cream/30 animate-pulse-soft">Loading...</p>
       </main>
     }>
       <QuestionnaireContent />
