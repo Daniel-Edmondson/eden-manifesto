@@ -49,90 +49,23 @@ export function OBreathing({ size = 120, className = '' }) {
 // HERO O — Large, clean, with drawing animation
 // ============================================
 export function OHero({ size = 280, className = '' }) {
-  // Circumferences for each ring so the draw animation completes a full circle
-  const outerC = Math.round(2 * Math.PI * 135); // ~848
-  const midC   = Math.round(2 * Math.PI * 95);  // ~597
-  const innerC = Math.round(2 * Math.PI * 55);  // ~346
+  const circumference = Math.round(2 * Math.PI * 130); // ~817
 
   return (
     <div className={`relative ${className}`}>
       <svg width={size} height={size} viewBox="0 0 280 280" className="relative">
-        {/* Outermost ring — draws in */}
         <circle
           cx="140"
           cy="140"
-          r="135"
+          r="130"
           fill="none"
           stroke="#ffffff"
-          strokeWidth="3"
+          strokeWidth="3.5"
           style={{
-            strokeDasharray: outerC,
-            strokeDashoffset: outerC,
+            strokeDasharray: circumference,
+            strokeDashoffset: circumference,
             animation: 'draw 3s ease-out 0.3s forwards',
           }}
-        />
-
-        {/* Middle ring */}
-        <circle
-          cx="140"
-          cy="140"
-          r="95"
-          fill="none"
-          stroke="#ffffff"
-          strokeWidth="2.5"
-          opacity="0.9"
-          style={{
-            strokeDasharray: midC,
-            strokeDashoffset: midC,
-            animation: 'draw 3s ease-out 0.8s forwards',
-          }}
-        />
-
-        {/* Inner ring */}
-        <circle
-          cx="140"
-          cy="140"
-          r="55"
-          fill="none"
-          stroke="#ffffff"
-          strokeWidth="2"
-          opacity="0.75"
-          style={{
-            strokeDasharray: innerC,
-            strokeDashoffset: innerC,
-            animation: 'draw 3s ease-out 1.6s forwards',
-          }}
-        />
-
-        {/* Center dot */}
-        <circle
-          cx="140"
-          cy="140"
-          r="5"
-          fill="#ffffff"
-          className="animate-pulse-ink"
-        />
-
-        {/* Triangle (the triad) */}
-        <polygon
-          points="140,45 55,185 225,185"
-          fill="none"
-          stroke="#ffffff"
-          strokeWidth="1.5"
-          opacity="0.5"
-          className="sacred-draw"
-          style={{ animationDelay: '2s' }}
-        />
-
-        {/* Inverted triangle */}
-        <polygon
-          points="140,235 55,95 225,95"
-          fill="none"
-          stroke="#ffffff"
-          strokeWidth="1.5"
-          opacity="0.35"
-          className="sacred-draw"
-          style={{ animationDelay: '2.5s' }}
         />
       </svg>
     </div>
