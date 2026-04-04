@@ -363,6 +363,20 @@ function QuestionnaireContent() {
     }
   };
 
+  // Handle download click: trigger download then redirect to support page
+  // IMPORTANT: useCallback must be above all early returns to satisfy React's rules of hooks
+  const handleDownload = useCallback(() => {
+    setTimeout(() => {
+      try {
+        sessionStorage.removeItem(STORAGE_KEYS.GENERATED_TEXT);
+        sessionStorage.removeItem(STORAGE_KEYS.PDF_BASE64);
+        sessionStorage.removeItem(STORAGE_KEYS.GEN_NAME);
+        sessionStorage.removeItem(STORAGE_KEYS.GEN_IN_PROGRESS);
+      } catch (_) {}
+      router.push('/support');
+    }, 1500);
+  }, [router]);
+
   // Loading states
   if (verifying) {
     return (
@@ -384,17 +398,6 @@ function QuestionnaireContent() {
       </main>
     );
   }
-
-  // Handle download click: trigger download then redirect to support page
-  const handleDownload = useCallback(() => {
-    setTimeout(() => {
-      sessionStorage.removeItem(STORAGE_KEYS.GENERATED_TEXT);
-      sessionStorage.removeItem(STORAGE_KEYS.PDF_BASE64);
-      sessionStorage.removeItem(STORAGE_KEYS.GEN_NAME);
-      sessionStorage.removeItem(STORAGE_KEYS.GEN_IN_PROGRESS);
-      router.push('/support');
-    }, 1500);
-  }, [router]);
 
   // Download ready
   if (downloadUrl) {
