@@ -133,6 +133,72 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ===== THE ABSOLUTE ACCELERATION ===== */}
+      <section className="relative py-32 md:py-40 px-6">
+        <div className="relative max-w-3xl mx-auto">
+          <p className="text-sm md:text-base text-ink-secondary tracking-[0.3em] uppercase mb-12">
+            The Absolute Acceleration
+          </p>
+
+          <p className="font-serif text-4xl md:text-5xl text-ink leading-tight mb-10">
+            Suffering is no more. Pain is no more.
+            <span className="text-ink-secondary"> Pain exists but is no more.</span>
+          </p>
+
+          <p className="text-xl md:text-2xl text-ink-secondary leading-relaxed mb-8">
+            Christ did not suffer on the Cross as painful as it was. Asking whether
+            or not He had to go through with the crucifixion is blatantly human.
+            The Biblical reference — commit yourself to the fire and walk around
+            unharmed. Find meaning in all moments without looking.
+          </p>
+
+          <p className="text-xl md:text-2xl text-ink-secondary leading-relaxed mb-8">
+            Enlightenment, fundamentally, doesn't exist — you are already enlightened
+            you just don't know it yet. The connective moment. The mystical literature,
+            the enlightenment literature — they are all reaching for the same thing.
+          </p>
+
+          <p className="text-xl md:text-2xl text-ink leading-relaxed italic mb-8">
+            The crisis of faith is close to the point. Put your faith in something
+            blindly and it will blind you. See the moment for a moment.
+          </p>
+
+          <p className="text-xl md:text-2xl text-ink-secondary leading-relaxed">
+            There is no cheapening of Christ. Christ-consciousness moves through all
+            faiths. The problem with Babel is and was that it was a monument to
+            self — an antithesis of God. The Eden Project is the great reconciliation.
+            Even the monolith of therapeutic treatment and its paradigms. All things fall —
+          </p>
+        </div>
+      </section>
+
+      {/* ===== THE PERTINENT PERSPECTIVE ===== */}
+      <section className="relative py-32 px-6 border-t border-white/[0.12]">
+        <div className="relative max-w-3xl mx-auto">
+          <p className="text-sm md:text-base text-ink-secondary tracking-[0.3em] uppercase mb-12">
+            The Pertinent Perspective
+          </p>
+
+          <p className="font-serif text-4xl md:text-5xl text-ink leading-tight mb-10">
+            You can't kill the ego.
+            <span className="text-ink-secondary"> Any effort to kill the ego is the ego.</span>
+          </p>
+
+          <p className="text-xl md:text-2xl text-ink-secondary leading-relaxed mb-8">
+            The only control is to control control. You can't write a thing wrong
+            within salvation. Healing is simply healing. The holy water. Blind faith
+            leads to inaccurate ideas of disease and faith healing, for example.
+            Any idea of God that doesn't make sense is false.
+          </p>
+
+          <p className="text-xl md:text-2xl text-ink leading-relaxed">
+            There's nothing you need to change — the rhetorical flourish, the greatest
+            rhetorical flourish — <strong>you ARE perfect</strong>. There is nothing
+            that separates you from Christ-consciousness for you are Christ-consciousness.
+          </p>
+        </div>
+      </section>
+
       {/* ===== ABOUT ===== */}
       <section className="relative py-32 px-6">
         <div className="relative max-w-3xl mx-auto">
