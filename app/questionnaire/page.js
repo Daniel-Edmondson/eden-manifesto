@@ -172,7 +172,8 @@ function QuestionnaireContent() {
     }
   };
 
-  // Load saved journey answers
+  // Load saved journey answers — if all questions are answered, auto-generate
+  const autoGenerateTriggered = useRef(false);
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = sessionStorage.getItem('eden_answers');
@@ -183,7 +184,9 @@ function QuestionnaireContent() {
           const visible = getVisibleQuestions(parsed);
           const firstEmpty = visible.findIndex(q => !parsed[q.id] || (typeof parsed[q.id] === 'string' && parsed[q.id].trim() === ''));
           if (firstEmpty === -1) {
+            // All questions answered — mark for auto-generation
             setCurrentQ(visible.length - 1);
+            autoGenerateTriggered.current = true;
           } else if (firstEmpty > 0) {
             setCurrentQ(firstEmpty);
           }
@@ -205,6 +208,14 @@ function QuestionnaireContent() {
       setVerifying(false);
     }
   }, [sessionId, promoCode]);
+
+  // Auto-generate if user already completed journey and has valid promo/payment
+  useEffect(() => {
+    if (verified && !verifying && autoGenerateTriggered.current && !generating && !downloadUrl && !error && !recovering) {
+      autoGenerateTriggered.current = false;
+      handleSubmit();
+    }
+  }, [verified, verifying]);
 
   useEffect(() => {
     setTimeout(() => inputRef.current?.focus(), 200);
