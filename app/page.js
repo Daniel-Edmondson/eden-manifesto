@@ -24,17 +24,20 @@ export default function Home() {
             <OHero size={260} className="mx-auto" />
           </div>
 
-          <p className="font-serif text-4xl md:text-6xl lg:text-7xl text-ink leading-tight mb-10 animate-fade-in-up delay-2" style={{ letterSpacing: '-0.02em', fontWeight: 400 }}>
-            What would happen if you<br />
-            <span className="text-ink-secondary">lost all control?</span>
+          <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl text-ink mb-8 animate-fade-in-up delay-2" style={{ letterSpacing: '-0.03em', fontWeight: 600, lineHeight: 1 }}>
+            The Eden Project
+          </h1>
+
+          <p className="font-serif text-3xl md:text-5xl text-ink-secondary leading-tight mb-6 animate-fade-in-up delay-3" style={{ fontWeight: 400 }}>
+            What would happen if you lost all control?
           </p>
 
-          <p className="text-xl md:text-2xl text-ink-secondary leading-relaxed max-w-xl mx-auto mb-14 animate-fade-in-up delay-3">
+          <p className="text-xl md:text-2xl text-ink-secondary leading-relaxed max-w-xl mx-auto mb-14 animate-fade-in-up delay-4">
             Even the thought of losing control is an act of control.
             That realization is the beginning of everything.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-5 animate-fade-in-up delay-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-5 animate-fade-in-up delay-5">
             <a href="/mirror" className="btn btn-primary text-lg px-10 py-4">
               Enter the Mirror
             </a>
