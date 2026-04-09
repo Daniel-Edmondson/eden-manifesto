@@ -4,7 +4,7 @@ export const runtime = 'nodejs';
 
 export async function POST(req) {
   try {
-    const { text, name } = await req.json();
+    const { text, name, faithSystem } = await req.json();
 
     if (!text || !name) {
       return new Response(JSON.stringify({ error: 'Missing text or name' }), {
@@ -20,7 +20,7 @@ export async function POST(req) {
       .replace(/^[-*]\s+/gm, '')
       .replace(/^>\s+/gm, '');
 
-    const pdfBytes = generatePDF(cleanText, name);
+    const pdfBytes = generatePDF(cleanText, name, faithSystem);
     const safeName = name.replace(/[^a-zA-Z0-9]/g, '-');
 
     return new Response(pdfBytes, {
@@ -117,7 +117,40 @@ function drawThinRule(doc, cx, width, y) {
 
 // ======== MAIN PDF GENERATOR ========
 
-function generatePDF(text, name) {
+// ======== FAITH-ADAPTIVE EPIGRAPHS ========
+
+function getEpigraph(faithSystem) {
+  const faith = (faithSystem || '').toLowerCase();
+
+  if (faith.includes('christian')) {
+    return { quote: '"The Kingdom of Heaven is within you."', source: 'Luke 17:21' };
+  }
+  if (faith.includes('muslim') || faith.includes('islam')) {
+    return { quote: '"The wound is the place where the Light enters you."', source: 'Rumi' };
+  }
+  if (faith.includes('jewish') || faith.includes('judai')) {
+    return { quote: '"God is not found in the fire, nor in the earthquake, but in the still small voice."', source: '1 Kings 19:12' };
+  }
+  if (faith.includes('hindu')) {
+    return { quote: '"Tat tvam asi."  You are That.', source: 'Chandogya Upanishad' };
+  }
+  if (faith.includes('buddhist') || faith.includes('buddhism')) {
+    return { quote: '"Form is emptiness, emptiness is form."', source: 'The Heart Sutra' };
+  }
+  if (faith.includes('atheist')) {
+    return { quote: '"Whereof one cannot speak, thereof one must be silent."', source: 'Wittgenstein, Tractatus Logico-Philosophicus' };
+  }
+  if (faith.includes('agnostic')) {
+    return { quote: '"The only true wisdom is in knowing you know nothing."', source: 'Socrates, via Plato' };
+  }
+  if (faith.includes('spiritual')) {
+    return { quote: '"The Tao that can be told is not the eternal Tao."', source: 'Lao Tzu, Tao Te Ching' };
+  }
+  // Default — universal
+  return { quote: '"What makes sense, makes sense. This is not wordplay. It is the fullest possible statement."', source: 'The Eden Project' };
+}
+
+function generatePDF(text, name, faithSystem) {
   const doc = new jsPDF({ unit: 'pt', format: 'letter' });
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -177,22 +210,28 @@ function generatePDF(text, name) {
   doc.text('PARADOX', cx - 25 - 8, pageHeight - 130 + triadH * 0.4 + 12, { align: 'center' });
   doc.text('TRANSCENDENCE', cx + 25 + 8, pageHeight - 130 + triadH * 0.4 + 12, { align: 'center' });
 
-  // ======== EPIGRAPH PAGE ========
+  // ======== EPIGRAPH PAGE — FAITH-ADAPTIVE ========
   doc.addPage();
   fillPageBg(doc);
 
-  // Epigraph
+  const epigraph = getEpigraph(faithSystem);
+
   doc.setFont('times', 'italic');
   doc.setFontSize(16);
   doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
-  doc.text('"The Kingdom of Heaven is within you."', cx, pageHeight / 2 - 20, { align: 'center' });
+  const epigraphLines = doc.splitTextToSize(epigraph.quote, contentWidth - 80);
+  let epigraphY = pageHeight / 2 - (epigraphLines.length * 22) / 2;
+  for (const line of epigraphLines) {
+    doc.text(line, cx, epigraphY, { align: 'center' });
+    epigraphY += 22;
+  }
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   doc.setTextColor(GREEN_LIGHT[0], GREEN_LIGHT[1], GREEN_LIGHT[2]);
-  doc.text('Luke 17:21', cx, pageHeight / 2 + 10, { align: 'center' });
+  doc.text(epigraph.source, cx, epigraphY + 16, { align: 'center' });
 
-  drawO(doc, cx, pageHeight / 2 + 50, 8, 0.3);
+  drawO(doc, cx, epigraphY + 56, 8, 0.3);
 
   // ======== BODY PAGES ========
   doc.addPage();
@@ -320,42 +359,56 @@ function generatePDF(text, name) {
     y += paragraphSpacing;
   }
 
-  // ======== CLOSING PAGE ========
+  // ======== CLOSING PAGE — WITH RE-ENTRY MECHANISM ========
   doc.addPage();
   fillPageBg(doc);
 
   // Triple O
-  drawOTriple(doc, cx, pageHeight / 2 - 50, 35, 22, 12);
+  drawOTriple(doc, cx, pageHeight / 2 - 80, 35, 22, 12);
 
   // Center dot
   doc.setFillColor(WHITE[0], WHITE[1], WHITE[2]);
-  doc.circle(cx, pageHeight / 2 - 50, 1.5, 'F');
+  doc.circle(cx, pageHeight / 2 - 80, 1.5, 'F');
 
   // Header
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
-  doc.text('T H E   E D E N   P R O J E C T', cx, pageHeight / 2 + 10, { align: 'center' });
+  doc.text('T H E   E D E N   P R O J E C T', cx, pageHeight / 2 - 20, { align: 'center' });
 
   // Closing line
   doc.setFont('times', 'italic');
   doc.setFontSize(13);
   doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
-  doc.text('You are already what you are looking for.', cx, pageHeight / 2 + 40, { align: 'center' });
+  doc.text('You are already what you are looking for.', cx, pageHeight / 2 + 10, { align: 'center' });
 
   // Rule
-  drawThinRule(doc, cx, contentWidth, pageHeight / 2 + 60);
+  drawThinRule(doc, cx, contentWidth, pageHeight / 2 + 30);
 
-  // Contact
+  // Re-entry mechanism
+  doc.setFont('times', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
+  doc.text('Read this again in thirty days. What you see will be different', cx, pageHeight / 2 + 55, { align: 'center' });
+  doc.text('because you will be different.', cx, pageHeight / 2 + 70, { align: 'center' });
+
   doc.setFont('times', 'italic');
   doc.setFontSize(10);
   doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
-  doc.text('If this changed something, share it.', cx, pageHeight / 2 + 85, { align: 'center' });
+  doc.text('Come back to the Mirror. Say what shifted.', cx, pageHeight / 2 + 95, { align: 'center' });
+
+  // Sharing prompt
+  drawThinRule(doc, cx, contentWidth, pageHeight / 2 + 115);
+
+  doc.setFont('times', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(WHITE[0], WHITE[1], WHITE[2]);
+  doc.text('If this changed something, share it.', cx, pageHeight / 2 + 135, { align: 'center' });
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   doc.setTextColor(GREEN_LIGHT[0], GREEN_LIGHT[1], GREEN_LIGHT[2]);
-  doc.text('danieledmondson45@gmail.com', cx, pageHeight / 2 + 105, { align: 'center' });
+  doc.text('danieledmondson45@gmail.com', cx, pageHeight / 2 + 155, { align: 'center' });
 
   // Bottom triad
   drawTriad(doc, cx, pageHeight - 100, 25);

@@ -92,7 +92,7 @@ function OfferingContent() {
             </div>
           )}
 
-          {/* Sliding scale */}
+          {/* Sliding scale with value anchoring */}
           <div className="mb-10">
             <p className="text-xs text-ink-secondary tracking-[0.2em] uppercase mb-6">Pay what feels right</p>
 
@@ -115,8 +115,12 @@ function OfferingContent() {
             <p className="text-4xl font-light text-ink mb-1">
               ${amount}
             </p>
-            <p className="text-sm text-ink-secondary">
+            <p className="text-sm text-ink-secondary mb-3">
               Every document is the same depth and quality regardless of amount.
+            </p>
+            <p className="text-xs text-ink-tertiary leading-relaxed">
+              Behind this: a decade of philosophical writing, a formal logical framework,
+              and 16,000 tokens of Claude Opus generating 5,000+ words tailored to your life.
             </p>
           </div>
 
@@ -183,6 +187,8 @@ function OfferingContent() {
               The document is a conversation between what you said, what the framework
               sees in it, and what thinkers across centuries have said about the same
               things. 5,000+ words of genuine philosophical engagement with your life.
+              It accelerates — grounding you first, then applying the framework to your
+              specific tensions, then arriving somewhere you did not expect to be.
             </p>
           </div>
         </div>

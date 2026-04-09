@@ -4,7 +4,7 @@ export const runtime = 'edge';
 
 export async function POST(req) {
   try {
-    const { messages } = await req.json();
+    const { messages, returningContext } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {
       return new Response(JSON.stringify({ error: 'Missing messages' }), {
@@ -15,6 +15,11 @@ export async function POST(req) {
 
     // Limit conversation history to last 20 messages to manage token usage
     const recentMessages = messages.slice(-20);
+
+    // Append returning user context to system prompt if available
+    const systemPrompt = returningContext
+      ? CHATBOT_SYSTEM_PROMPT + returningContext
+      : CHATBOT_SYSTEM_PROMPT;
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -27,7 +32,7 @@ export async function POST(req) {
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1024,
         stream: true,
-        system: CHATBOT_SYSTEM_PROMPT,
+        system: systemPrompt,
         messages: recentMessages,
       }),
     });

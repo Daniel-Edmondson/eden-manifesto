@@ -3,14 +3,70 @@
 import { useState, useRef, useEffect } from 'react';
 import { OBreathing, SacredGeometry } from '../components/OSymbol';
 
+// ===== CONVERSATION MEMORY =====
+const MIRROR_MEMORY_KEY = 'eden_mirror_memory';
+const MIRROR_MESSAGES_KEY = 'eden_mirror_messages';
+
+function saveMirrorMemory(messages) {
+  if (typeof window === 'undefined') return;
+  try {
+    // Save last 10 messages for context
+    const recent = messages.slice(-10);
+    localStorage.setItem(MIRROR_MESSAGES_KEY, JSON.stringify(recent));
+
+    // Build a lightweight summary of themes discussed
+    const userMessages = messages
+      .filter(m => m.role === 'user')
+      .map(m => m.content)
+      .join(' ');
+
+    // Save the raw user text for theme extraction by the API
+    if (userMessages.length > 20) {
+      localStorage.setItem(MIRROR_MEMORY_KEY, JSON.stringify({
+        lastVisit: new Date().toISOString(),
+        messageCount: messages.length,
+        userText: userMessages.slice(0, 1500), // Keep it manageable
+      }));
+    }
+  } catch (e) {}
+}
+
+function loadMirrorMemory() {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(MIRROR_MEMORY_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    // Only use memory from last 30 days
+    const lastVisit = new Date(data.lastVisit);
+    const daysSince = (Date.now() - lastVisit.getTime()) / (1000 * 60 * 60 * 24);
+    if (daysSince > 30) {
+      localStorage.removeItem(MIRROR_MEMORY_KEY);
+      localStorage.removeItem(MIRROR_MESSAGES_KEY);
+      return null;
+    }
+    return data;
+  } catch (e) { return null; }
+}
+
+function buildReturningContext(memory) {
+  if (!memory) return '';
+  const daysSince = Math.floor((Date.now() - new Date(memory.lastVisit).getTime()) / (1000 * 60 * 60 * 24));
+  const timeAgo = daysSince === 0 ? 'earlier today' : daysSince === 1 ? 'yesterday' : `${daysSince} days ago`;
+  return `\n\nRETURNING USER SUMMARY: This person was here ${timeAgo} and exchanged ${memory.messageCount} messages. Here is what they said last time (their words only): "${memory.userText}"\n\nGreet them with recognition. Reference what you discussed. Ask what shifted since last time. Do not start from scratch.`;
+}
+
 export default function MirrorPage() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [started, setStarted] = useState(false);
   const [streamingText, setStreamingText] = useState('');
+  const [isReturning, setIsReturning] = useState(false);
+  const [deepEngagement, setDeepEngagement] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const memoryRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -24,12 +80,45 @@ export default function MirrorPage() {
     if (started) inputRef.current?.focus();
   }, [started]);
 
+  // Check for returning user
+  useEffect(() => {
+    const memory = loadMirrorMemory();
+    if (memory) {
+      memoryRef.current = memory;
+      setIsReturning(true);
+    }
+  }, []);
+
+  // Track deep engagement for contextual bridge
+  useEffect(() => {
+    const userMsgCount = messages.filter(m => m.role === 'user').length;
+    if (userMsgCount >= 4 && !deepEngagement) {
+      setDeepEngagement(true);
+    }
+  }, [messages]);
+
+  // Save conversation memory periodically
+  useEffect(() => {
+    if (messages.length >= 4) {
+      saveMirrorMemory(messages);
+    }
+  }, [messages]);
+
   const startConversation = () => {
     setStarted(true);
-    setMessages([{
-      role: 'assistant',
-      content: 'Something brought you here. Maybe curiosity, maybe restlessness, maybe a thought you can\'t quite finish. Whatever it is — say it.',
-    }]);
+
+    if (isReturning && memoryRef.current) {
+      // Returning user — the opening message signals recognition
+      setMessages([{
+        role: 'assistant',
+        content: 'You came back. Something is still working on you — or you\'re still working on it. Either way, I remember. What\'s shifted since we last talked?',
+      }]);
+    } else {
+      setMessages([{
+        role: 'assistant',
+        content: 'Something brought you here. Maybe curiosity, maybe restlessness, maybe a thought you can\'t quite finish. Whatever it is — say it.',
+      }]);
+    }
   };
 
   const sendMessage = async () => {
@@ -42,14 +131,19 @@ export default function MirrorPage() {
     setStreamingText('');
 
     try {
+      // Build context with returning user memory if available
+      const returningContext = isReturning ? buildReturningContext(memoryRef.current) : '';
+      const allMessages = [...messages, { role: 'user', content: userMessage }];
+
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [...messages, { role: 'user', content: userMessage }].map(m => ({
+          messages: allMessages.map(m => ({
             role: m.role,
             content: m.content,
           })),
+          returningContext,
         }),
       });
 
@@ -99,48 +193,61 @@ export default function MirrorPage() {
             The Mirror
           </h1>
 
-          <p className="text-lg text-ink-secondary leading-relaxed mb-4">
-            A philosophical conversation. Ask it anything.
-            It sees connections you haven't seen.
-          </p>
-
-          <p className="text-base text-ink-secondary mb-10">
-            A framework, speaking.
-          </p>
+          {isReturning ? (
+            <>
+              <p className="text-lg text-ink-secondary leading-relaxed mb-4">
+                You've been here before.
+              </p>
+              <p className="text-base text-ink-secondary mb-10">
+                Something brought you back. Pick up where you left off.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-lg text-ink-secondary leading-relaxed mb-4">
+                A philosophical conversation. It sees connections you haven't seen.
+              </p>
+              <p className="text-base text-ink-secondary mb-10">
+                A framework, speaking.
+              </p>
+            </>
+          )}
 
           <button
             onClick={startConversation}
             className="btn btn-primary"
           >
-            Begin
+            {isReturning ? 'Continue' : 'Begin'}
           </button>
 
-          <div className="mt-14">
-            <p className="text-xs text-ink-secondary mb-3 tracking-[0.15em] uppercase">Try asking</p>
-            <div className="flex flex-wrap justify-center gap-2">
-              {[
-                'What is the loss of control?',
-                'I\'m torn between two things',
-                'I don\'t believe in anything',
-                'What is enlightenment?',
-              ].map((prompt, i) => (
-                <button
-                  key={i}
-                  onClick={() => {
-                    setStarted(true);
-                    setMessages([{
-                      role: 'assistant',
-                      content: 'Something brought you here. Whatever it is — say it.',
-                    }]);
-                    setTimeout(() => setInput(prompt), 300);
-                  }}
-                  className="text-sm px-4 py-2 border border-white/[0.2] text-ink-secondary hover:text-ink hover:border-white/[0.4] transition-colors rounded-full"
-                >
-                  {prompt}
-                </button>
-              ))}
+          {!isReturning && (
+            <div className="mt-14">
+              <p className="text-xs text-ink-secondary mb-3 tracking-[0.15em] uppercase">Try saying</p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {[
+                  'I can\'t stop thinking about something',
+                  'I\'m afraid of what I\'d do if I let go',
+                  'Nothing makes sense anymore',
+                  'I think I might already know the answer',
+                ].map((prompt, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setStarted(true);
+                      setMessages([{
+                        role: 'assistant',
+                        content: 'Something brought you here. Whatever it is — say it.',
+                      }]);
+                      setTimeout(() => setInput(prompt), 300);
+                    }}
+                    className="text-sm px-4 py-2 border border-white/[0.2] text-ink-secondary hover:text-ink hover:border-white/[0.4] transition-colors rounded-full"
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
     );
@@ -208,14 +315,14 @@ export default function MirrorPage() {
         </div>
       </div>
 
-      {/* CTA after enough messages */}
-      {messages.length >= 6 && (
+      {/* Contextual bridge — appears when deeply engaged */}
+      {deepEngagement && (
         <div className="relative px-4 py-3 bg-surface-secondary border-t border-white/[0.12] text-center z-10">
           <a
-            href="/offering"
+            href="/journey"
             className="text-sm text-ink-secondary hover:text-ink transition-colors"
           >
-            Turn this into a permanent document &rarr;
+            Ready to go deeper? Fifteen questions, then a document written for you &rarr;
           </a>
         </div>
       )}

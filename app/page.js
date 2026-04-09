@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-surface">
 
-      {/* ===== HERO ===== */}
+      {/* ===== HERO — THE DESTABILIZATION ===== */}
       <section className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden">
         <SacredGeometry opacity={0.06} />
 
@@ -24,42 +24,45 @@ export default function Home() {
             <OHero size={260} className="mx-auto" />
           </div>
 
-          <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl text-ink mb-10 animate-fade-in-up delay-2" style={{ letterSpacing: '-0.03em', fontWeight: 600, lineHeight: 1 }}>
-            The Eden Project
-          </h1>
+          <p className="font-serif text-4xl md:text-6xl lg:text-7xl text-ink leading-tight mb-10 animate-fade-in-up delay-2" style={{ letterSpacing: '-0.02em', fontWeight: 400 }}>
+            What would happen if you<br />
+            <span className="text-ink-secondary">lost all control?</span>
+          </p>
 
-          <p className="text-3xl md:text-4xl text-ink-secondary leading-snug max-w-2xl mx-auto mb-14 animate-fade-in-up delay-3">
-            A philosophical experience, built around you.
+          <p className="text-xl md:text-2xl text-ink-secondary leading-relaxed max-w-xl mx-auto mb-14 animate-fade-in-up delay-3">
+            Even the thought of losing control is an act of control.
+            That realization is the beginning of everything.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-5 animate-fade-in-up delay-4">
-            <a href="/journey" className="btn btn-primary text-lg px-10 py-4">
-              Begin
+            <a href="/mirror" className="btn btn-primary text-lg px-10 py-4">
+              Enter the Mirror
             </a>
             <a href="#more" className="btn btn-secondary text-lg px-10 py-4">
-              Learn More
+              What Is This
             </a>
           </div>
         </div>
 
       </section>
 
-      {/* ===== THE QUESTION ===== */}
+      {/* ===== THE TENSION — NOT THE RESOLUTION ===== */}
       <section id="more" className="relative py-32 md:py-40 px-6">
         <div className="relative max-w-3xl mx-auto text-center">
           <p className="font-serif text-4xl md:text-6xl text-ink leading-tight mb-10">
-            What if the thing you're looking for
-            <span className="text-ink-secondary"> is already here?</span>
+            You are already what you're looking for.
           </p>
 
           <p className="text-2xl md:text-3xl text-ink-secondary leading-relaxed">
-            As a structure — one that every tradition has found
-            and most people walk past every day.
+            There is a structure underneath enlightenment — not a feeling,
+            not a vibe — a logical structure that every tradition has found
+            and most people walk past every day. The Eden Project delivers
+            that structure, tailored to your life.
           </p>
         </div>
       </section>
 
-      {/* ===== HOW IT WORKS ===== */}
+      {/* ===== THE PATH — SINGLE FLOW ===== */}
       <section className="relative py-32 px-6 border-t border-white/[0.12]">
         <div className="relative max-w-5xl mx-auto">
           <p className="text-sm md:text-base text-ink-secondary tracking-[0.3em] uppercase mb-16 text-center">
@@ -71,22 +74,25 @@ export default function Home() {
               <div className="w-16 h-16 mx-auto mb-8 rounded-full bg-surface-secondary flex items-center justify-center">
                 <span className="text-ink text-xl font-semibold">01</span>
               </div>
-              <h3 className="font-serif text-3xl text-ink mb-4">Fifteen questions</h3>
+              <h3 className="font-serif text-3xl text-ink mb-4">Talk to the Mirror</h3>
               <p className="text-xl text-ink-secondary leading-relaxed">
-                Open-ended. They adapt to what you say.
-                No right answers. Just honesty.
+                A philosophical conversation that meets you where you are.
+                Free. No commitment. Say whatever is on your mind.
               </p>
+              <a href="/mirror" className="inline-block mt-5 text-base text-ink-secondary hover:text-ink transition-colors">
+                Start here &rarr;
+              </a>
             </div>
 
             <div className="text-center">
               <div className="w-16 h-16 mx-auto mb-8 rounded-full bg-surface-secondary flex items-center justify-center">
                 <span className="text-ink text-xl font-semibold">02</span>
               </div>
-              <h3 className="font-serif text-3xl text-ink mb-4">A framework meets your words</h3>
+              <h3 className="font-serif text-3xl text-ink mb-4">Fifteen questions</h3>
               <p className="text-xl text-ink-secondary leading-relaxed">
-                Your responses are woven through a philosophical system
-                with references drawn from across traditions, science,
-                and literature.
+                Open-ended. They adapt to what you say.
+                No right answers. Just honesty. Your responses
+                shape everything that follows.
               </p>
             </div>
 
@@ -96,8 +102,9 @@ export default function Home() {
               </div>
               <h3 className="font-serif text-3xl text-ink mb-4">A document written for you</h3>
               <p className="text-xl text-ink-secondary leading-relaxed">
-                A 5,000+ word PDF — a philosophical conversation
-                with your life at the center.
+                5,000+ words of genuine philosophical engagement —
+                a conversation between your life, a framework,
+                and the full landscape of human thought.
               </p>
             </div>
           </div>
@@ -133,7 +140,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== ABOUT ===== */}
+      {/* ===== ABOUT — THE REAL STORY ===== */}
       <section className="relative py-32 px-6">
         <div className="relative max-w-3xl mx-auto">
           <p className="text-sm md:text-base text-ink-secondary tracking-[0.3em] uppercase mb-10">
@@ -141,33 +148,40 @@ export default function Home() {
           </p>
 
           <p className="text-2xl md:text-3xl text-ink-secondary leading-relaxed mb-8">
-            My name is Daniel Edmondson. I have an English degree and a decade of
-            writing about consciousness, faith, control, and what happens when you
-            stop pretending you have the answers.
+            My name is Daniel Edmondson. I have a schizoaffective diagnosis, three
+            psychotic episodes, a history with psychedelics, an English degree,
+            and a decade of writing about consciousness, control, faith, and
+            what happens when you stop pretending you have the answers.
+          </p>
+
+          <p className="text-2xl md:text-3xl text-ink-secondary leading-relaxed mb-8">
+            Out of that came a formal logical framework — a triadic structure
+            that maps onto every faith tradition, resolves the paradoxes that
+            keep people stuck, and explains how people actually break through.
+            Not a feeling. Not a platitude. A structure.
           </p>
 
           <p className="text-2xl md:text-3xl text-ink-secondary leading-relaxed">
-            What I found is a structure — not a feeling, not a vibe —
-            that I think explains how people actually break through. The Eden Project
-            delivers that structure to anyone who wants it, tailored
-            to their life.
+            The Eden Project delivers that structure to anyone who wants it,
+            tailored to their life. The philosophy is human.
+            The AI is the delivery mechanism.
           </p>
         </div>
       </section>
 
-      {/* ===== THE MIRROR ===== */}
+      {/* ===== THE MIRROR CTA ===== */}
       <section className="relative py-32 px-6 bg-surface-secondary">
         <div className="relative max-w-2xl mx-auto text-center">
           <OBreathing size={80} className="mx-auto mb-10" />
 
           <p className="font-serif text-3xl md:text-4xl text-ink mb-8">
-            Curious? Talk to it first.
+            Not sure yet? Talk to it.
           </p>
 
           <p className="text-xl md:text-2xl text-ink-secondary mb-12 leading-relaxed">
-            The Mirror is a philosophical conversation. Ask it anything.
-            Challenge it. It speaks in whatever language
-            your belief system understands.
+            The Mirror is a philosophical conversation — free, no signup,
+            no obligation. It speaks in whatever language your belief system
+            understands. Say what you're carrying and see what comes back.
           </p>
 
           <a href="/mirror" className="btn btn-secondary text-lg px-10 py-4">
@@ -195,8 +209,8 @@ export default function Home() {
       {/* ===== FINAL CTA ===== */}
       <section className="relative py-28 px-6">
         <div className="relative max-w-md mx-auto text-center">
-          <a href="/journey" className="btn btn-primary text-lg px-10 py-4">
-            Begin the Experience
+          <a href="/mirror" className="btn btn-primary text-lg px-10 py-4">
+            Begin
           </a>
         </div>
       </section>

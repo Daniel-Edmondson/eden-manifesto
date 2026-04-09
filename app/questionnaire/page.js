@@ -150,7 +150,7 @@ function QuestionnaireContent() {
       const pdfRes = await fetch('/api/generate-pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, name }),
+        body: JSON.stringify({ text, name, faithSystem: answers.faith_system || '' }),
       });
 
       if (!pdfRes.ok) throw new Error('PDF formatting failed.');
@@ -337,7 +337,7 @@ function QuestionnaireContent() {
         pdfRes = await fetch('/api/generate-pdf', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text, name: answers.name || 'friend' }),
+          body: JSON.stringify({ text, name: answers.name || 'friend', faithSystem: answers.faith_system || '' }),
         });
       } catch (fetchErr) {
         throw new Error('Could not reach the PDF service. Try again.');

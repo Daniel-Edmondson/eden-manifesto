@@ -26,11 +26,11 @@ export default function RootLayout({ children }) {
               The Eden Project
             </a>
             <div className="flex items-center gap-8">
-              <a href="/journey" className="text-sm text-ink-secondary hover:text-ink transition-colors">
-                Begin
-              </a>
               <a href="/mirror" className="text-sm text-ink-secondary hover:text-ink transition-colors">
                 Mirror
+              </a>
+              <a href="/journey" className="text-sm text-ink-secondary hover:text-ink transition-colors">
+                Journey
               </a>
               <a href="/offering" className="text-sm text-ink-secondary hover:text-ink transition-colors">
                 Offering
